@@ -250,7 +250,10 @@ const DATA = {
       label: "R",
       desc: "",
       body: [],
-      links: [{ label: "rungoapp.com", url: "https://www.rungoapp.com/" }],
+      links: [
+        { label: "rungoapp.com", url: "https://www.rungoapp.com/" },
+        { label: "App Store", url: "https://apps.apple.com/ca/app/rungo-the-best-routes-to-run/id712628644" },
+      ],
     },
     {
       name: "HK Characters",
@@ -262,7 +265,7 @@ const DATA = {
       label: "H",
       desc: "",
       body: [],
-      links: [],
+      links: [{ label: "App Store", url: "https://apps.apple.com/ca/app/hk-characters/id6502965916" }],
     },
     {
       name: "Fencathon 2",
@@ -329,7 +332,10 @@ const DATA = {
       label: "M",
       desc: "",
       body: [],
-      links: [{ label: "GitHub", url: "https://github.com/mlemgroup/mlem" }],
+      links: [
+        { label: "GitHub", url: "https://github.com/mlemgroup/mlem" },
+        { label: "App Store", url: "https://apps.apple.com/ca/app/mlem-for-lemmy/id6450543782" },
+      ],
     },
   ],
   articles: [
@@ -855,7 +861,6 @@ function HomePage({ navigate, theme, onTheme }) {
                       marginRight: isHover && i < last ? 9 : 0,
                       transform: isHover ? "rotateX(0deg) rotateY(0deg) rotateZ(0deg) scale(1.55) translateY(-4px)" : baseTransform,
                       transformStyle: "preserve-3d",
-                      border: "1.5px solid rgba(255,255,255,0.9)",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
