@@ -930,7 +930,7 @@ function MainGrid({ onArticle, onApp, onAllApps, onAllArticles, theme, onTheme }
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '14px', marginBottom: '4px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
             <p style={{
-              fontWeight: 700, fontSize: '17px',
+              fontWeight: 700, fontSize: '19px',
               letterSpacing: '-0.01em',
               fontStretch: '125%',
               fontVariationSettings: '"wdth" 125',
@@ -957,10 +957,10 @@ function MainGrid({ onArticle, onApp, onAllApps, onAllArticles, theme, onTheme }
                   onClick={() => onAppClick(i)}
                   aria-label={a.name}
                   style={{
-                  width: 22, height: 22,
+                  width: 26, height: 26,
                   padding: 0,
                   background: 'none',
-                  borderRadius: 5,
+                  borderRadius: 6,
                   marginLeft: i === 0 ? 0 : (isHover ? 2 : -7),
                   marginRight: isHover && i < last ? 9 : 0,
                   transform: isHover
@@ -977,7 +977,7 @@ function MainGrid({ onArticle, onApp, onAllApps, onAllArticles, theme, onTheme }
                   transition: 'transform 0.18s cubic-bezier(0.34, 1.4, 0.64, 1), margin 0.18s ease, box-shadow 0.18s ease',
                   overflow: 'hidden',
                 }}>
-                  <img src={a.icon} width={22} height={22} alt={a.name}
+                  <img src={a.icon} width={26} height={26} alt={a.name}
                     style={{ display: 'block', borderRadius: 4, pointerEvents: 'none' }} />
                 </button>
               );})}
