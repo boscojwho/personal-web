@@ -49,8 +49,10 @@ function articleSummary(body) {
 }
 
 const ROUTE_ROOTS = new Set(["apps", "writing"]);
+const IS_FILE_PROTOCOL = window.location.protocol === "file:";
 
 function detectSiteBasePath(pathname) {
+  if (IS_FILE_PROTOCOL) return "/";
   const segs = pathname.split("/").filter(Boolean);
   if (!segs.length) return "/";
   if (ROUTE_ROOTS.has(segs[0])) return "/";
@@ -87,6 +89,10 @@ function resolveRouteFromLocation() {
   const params = new URLSearchParams(window.location.search);
   const fallbackRoute = params.get("route");
   const currentHash = window.location.hash || "";
+
+  if (IS_FILE_PROTOCOL) {
+    return parseInternalRoute(fallbackRoute || "/", currentHash);
+  }
 
   if (fallbackRoute) {
     const url = new URL(fallbackRoute, window.location.origin);
@@ -127,6 +133,11 @@ const ROUTES = {
 };
 
 function routeHref(internalPath) {
+  if (IS_FILE_PROTOCOL) {
+    const clean = normalizeInternalPath(internalPath);
+    const search = clean === "/" ? "" : `?route=${encodeURIComponent(clean)}`;
+    return `${window.location.pathname}${search}`;
+  }
   return internalToActualPath(internalPath);
 }
 
@@ -576,7 +587,7 @@ function AppDetail({ app, navigate, theme, onTheme }) {
                         transition: "transform 0.20s cubic-bezier(0.34, 1.4, 0.64, 1), margin 0.20s ease, box-shadow 0.20s ease",
                       }}
                     >
-                      {app.icon && variants.length === 1 ? (
+                      {app.icon ? (
                         <img src={app.icon} width="72" height="72" alt={app.name} style={{ display: "block", borderRadius: 13, pointerEvents: "none" }} />
                       ) : (
                         variant.label

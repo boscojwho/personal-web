@@ -987,7 +987,7 @@ function AppDetail({ app, onBack, theme, onTheme }) {
                       cursor: variants.length > 1 ? 'pointer' : 'default',
                       transition: 'transform 0.20s cubic-bezier(0.34, 1.4, 0.64, 1), margin 0.20s ease, box-shadow 0.20s ease',
                     }}>
-                      {app.icon && variants.length === 1
+                      {app.icon
                         ? <img src={app.icon} width={72} height={72} alt={app.name} style={{ display: 'block', borderRadius: 13, pointerEvents: 'none' }} />
                         : v.label}
                     </div>
