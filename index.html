@@ -355,11 +355,11 @@ Text(Date.distantPast, formatter: Self.dateFormatter)
 
 This code resolves to the following views:
 
-![](/assets/blog/Screenshot_2024-06-18_at_6.55.32_PM.png)
+![](assets/blog/Screenshot_2024-06-18_at_6.55.32_PM.png)
 
 However, this could be an issue if the \`Text\` view's width is forced to shrink to accommodate other content, and is constrained to a line limit of 1.
 
-![](/assets/blog/Screenshot_2024-06-18_at_6.59.23_PM.png)
+![](assets/blog/Screenshot_2024-06-18_at_6.59.23_PM.png)
 
 Previously, we would have to use \`ViewThatFits\` or conditional views to avoid truncation:
 
@@ -383,7 +383,7 @@ Text(Date.distantPast, format: .dateTime)
 
 The text variant modifier generates even shorter variants than \`DateFormatter\` offers out of the box:
 
-![](/assets/blog/Screenshot_2024-06-19_at_1.08.27_AM.png)
+![](assets/blog/Screenshot_2024-06-19_at_1.08.27_AM.png)
 
 It's worth noting this modifier differs from \`ViewThatFits\` "both in usage and behavior" ([see Apple's docs](https://developer.apple.com/documentation/swiftui/textvariantpreference/sizedependent#Difference-to-doccomappleSwiftUIdocumentationSwiftUIViewThatFits)).
 
