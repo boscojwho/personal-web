@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Redirecting...</title>
+  <script>
+    (function () {
+      var segs = window.location.pathname.split("/").filter(Boolean);
+      var base = "/";
+      if (segs.length && segs[0] !== "apps" && segs[0] !== "writing") {
+        base = "/" + segs[0] + "/";
+      }
+      var route = window.location.pathname + window.location.search + window.location.hash;
+      window.location.replace(base + "?route=" + encodeURIComponent(route));
+    })();
+  </script>
+</head>
+<body></body>
+</html>

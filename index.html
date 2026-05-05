@@ -313,6 +313,10 @@
       text-decoration: none;
       color: inherit;
     }
+    .nav-link-fit {
+      width: fit-content;
+      max-width: 100%;
+    }
     .nav-link .nav-link-title { text-decoration: underline; overflow-wrap: anywhere; }
     .nav-link:hover { background: rgba(0,0,0,0.05); }
     .app-row.is-hover { background: rgba(0,0,0,0.05); }
@@ -320,6 +324,7 @@
     :root[data-theme="dark"] .app-row.is-hover,
     :root[data-theme="dark"] .nav-link:hover { background: rgba(255,255,255,0.06); }
     :root[data-theme="dark"] .app-row.is-flash { background: rgba(255, 220, 80, 0.16); }
+    :root[data-theme="dark"] .site-icons > a,
     :root[data-theme="dark"] .site-icons > button {
       border: none !important;
     }
@@ -327,6 +332,7 @@
       :root[data-theme="system"] .app-row.is-hover,
       :root[data-theme="system"] .nav-link:hover { background: rgba(255,255,255,0.06); }
       :root[data-theme="system"] .app-row.is-flash { background: rgba(255, 220, 80, 0.16); }
+      :root[data-theme="system"] .site-icons > a,
       :root[data-theme="system"] .site-icons > button {
         border: none !important;
       }
@@ -438,7 +444,7 @@
 </head>
 <body>
 <div id="root"></div>
-<script type="text/babel">
+<script type="text/plain">
 const { useState, useEffect, useRef, useMemo } = React;
 
 const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
@@ -1390,5 +1396,6 @@ function TweaksPanel({ theme, onTheme, font, onFont }) {
 
 ReactDOM.createRoot(document.getElementById('root')).render(<App />);
 </script>
+<script type="text/babel" src="app.js"></script>
 </body>
 </html>

@@ -9,24 +9,24 @@
 
     <item>
       <title>Text Variant Preference View Modifier in SwiftUI</title>
-      <link>https://boscojwho.github.io/personal-web</link>
-      <guid isPermaLink="false">boscoho-2024-06-19-text-variant-preference</guid>
+      <link>https://boscojwho.github.io/personal-web/writing/text-variant-preference-view-modifier-in-swiftui</link>
+      <guid isPermaLink="true">https://boscojwho.github.io/personal-web/writing/text-variant-preference-view-modifier-in-swiftui</guid>
       <pubDate>Wed, 19 Jun 2024 00:00:00 +0000</pubDate>
       <description><![CDATA[Use the .textVariant(.sizeDependent) view modifier to automatically format and fit text inside Text view's size. New in iOS 18, this simplifies code that previously required ViewThatFits or conditional views to avoid text truncation.]]></description>
     </item>
 
     <item>
       <title>Unicode + Swift: Transforming Mandarin Pinyin Diacritics into IPA (Numeric) Form</title>
-      <link>https://boscojwho.github.io/personal-web</link>
-      <guid isPermaLink="false">boscoho-2024-06-14-pinyin-diacritic-ipa</guid>
+      <link>https://boscojwho.github.io/personal-web/writing/unicode-swift-transforming-mandarin-pinyin-diacritics-into-ipa-numeric-form</link>
+      <guid isPermaLink="true">https://boscojwho.github.io/personal-web/writing/unicode-swift-transforming-mandarin-pinyin-diacritics-into-ipa-numeric-form</guid>
       <pubDate>Fri, 14 Jun 2024 00:00:00 +0000</pubDate>
       <description><![CDATA[A note on converting Mandarin Pinyin diacritic tone marks into numeric IPA form using Swift's Unicode decomposition APIs — motivated by a speech synthesis use-case on Apple platforms.]]></description>
     </item>
 
     <item>
       <title>Navigation Split View — 3 Columns for Non-List Views</title>
-      <link>https://boscojwho.github.io/personal-web</link>
-      <guid isPermaLink="false">boscoho-2024-04-23-nav-split-view-3-columns</guid>
+      <link>https://boscojwho.github.io/personal-web/writing/navigation-split-view-3-columns-for-non-list-views</link>
+      <guid isPermaLink="true">https://boscojwho.github.io/personal-web/writing/navigation-split-view-3-columns-for-non-list-views</guid>
       <pubDate>Tue, 23 Apr 2024 00:00:00 +0000</pubDate>
       <description><![CDATA[A workaround for NavigationSplitView's three-column API not working as expected on iPhone compact size when the content column is a non-List view such as LazyVGrid.]]></description>
     </item>
