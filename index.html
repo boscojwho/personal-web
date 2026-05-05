@@ -48,15 +48,34 @@
     @media (max-width: 420px) {
       :root { --gap: 18px; }
       .detail-topbar { flex-wrap: wrap; align-items: flex-start !important; }
-      .site-header { flex-wrap: wrap; align-items: flex-start !important; gap: 10px !important; }
-      .site-header-brand { flex-wrap: wrap; gap: 10px !important; }
-      .site-icons { width: 100%; }
+      .site-header { flex-wrap: nowrap !important; align-items: flex-start !important; gap: 10px !important; }
+      .site-header-brand {
+        flex-wrap: nowrap !important;
+        align-items: flex-start !important;
+        gap: 10px !important;
+        min-width: 0;
+      }
+      .site-icons {
+        width: 132px !important;
+        display: flex !important;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        align-content: start;
+        gap: 0 !important;
+      }
       .site-icons > button {
         width: 28px !important;
         height: 28px !important;
-        margin-left: -5px !important;
+        margin-left: -4px !important;
+        margin-right: 0 !important;
       }
-      .site-icons > button:first-child { margin-left: 0 !important; }
+      .site-icons > button:first-child {
+        margin-left: 0 !important;
+      }
+      .site-icons > button:nth-child(n+6) {
+        margin-top: -6px !important;
+        margin-left: 5px !important;
+      }
       .site-icons > button img {
         width: 28px !important;
         height: 28px !important;
@@ -100,10 +119,29 @@
       .site-header {
         gap: 8px !important;
       }
+      .site-header-brand {
+        gap: 8px !important;
+      }
+      .site-icons {
+        width: 114px !important;
+        display: flex !important;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        align-content: flex-start;
+        gap: 0 !important;
+      }
       .site-icons > button {
         width: 26px !important;
         height: 26px !important;
         margin-left: -4px !important;
+        margin-right: 0 !important;
+      }
+      .site-icons > button:first-child {
+        margin-left: 0 !important;
+      }
+      .site-icons > button:nth-child(n+6) {
+        margin-top: -6px !important;
+        margin-left: 5px !important;
       }
       .site-icons > button img {
         width: 26px !important;
@@ -282,10 +320,16 @@
     :root[data-theme="dark"] .app-row.is-hover,
     :root[data-theme="dark"] .nav-link:hover { background: rgba(255,255,255,0.06); }
     :root[data-theme="dark"] .app-row.is-flash { background: rgba(255, 220, 80, 0.16); }
+    :root[data-theme="dark"] .site-icons > button {
+      border: none !important;
+    }
     @media (prefers-color-scheme: dark) {
       :root[data-theme="system"] .app-row.is-hover,
       :root[data-theme="system"] .nav-link:hover { background: rgba(255,255,255,0.06); }
       :root[data-theme="system"] .app-row.is-flash { background: rgba(255, 220, 80, 0.16); }
+      :root[data-theme="system"] .site-icons > button {
+        border: none !important;
+      }
     }
 
     .toc-link {
@@ -1107,6 +1151,11 @@ function MainGrid({ onArticle, onApp, onAllApps, onAllArticles, theme, onTheme }
                 const t = tilts[i % tilts.length];
                 const isHover = hoverIcon === i;
                 const last = DATA.apps.length - 1;
+                const baseTransform = i === 1
+                  ? 'rotateX(16deg) rotateY(-30deg) rotateZ(14deg) scale(1.12) translateY(-1px)'
+                  : i === 0
+                    ? 'none'
+                    : `rotateX(${t.rx}deg) rotateY(${t.ry}deg) rotateZ(${t.rz}deg)`;
                 return (
                 <button key={i}
                   onMouseEnter={() => setHoverIcon(i)}
@@ -1120,11 +1169,11 @@ function MainGrid({ onArticle, onApp, onAllApps, onAllArticles, theme, onTheme }
                   borderRadius: 7,
                   marginLeft: i === 0 ? 0 : (isHover ? 2 : -7),
                   marginRight: isHover && i < last ? 9 : 0,
-                  transform: i === 0 ? 'none' : isHover
-                    ? `rotateX(0deg) rotateY(0deg) rotateZ(0deg) scale(1.35) translateY(-3px)`
-                    : `rotateX(${t.rx}deg) rotateY(${t.ry}deg) rotateZ(${t.rz}deg)`,
+                  transform: isHover
+                    ? `rotateX(0deg) rotateY(0deg) rotateZ(0deg) scale(1.55) translateY(-4px)`
+                    : baseTransform,
                   transformStyle: 'preserve-3d',
-                  border: '1.5px solid var(--bg)',
+                  border: '1.5px solid rgba(255,255,255,0.9)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   cursor: 'pointer', flexShrink: 0,
                   boxShadow: isHover
