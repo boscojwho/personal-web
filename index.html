@@ -352,7 +352,7 @@ const DATA = {
       links: [{ label: 'GitHub', url: 'https://github.com/boscojwho/Chinotto' }],
     },
     {
-      name: "Mlem", year: "2023", tags: "iOS · Open Source",
+      name: "Mlem", year: "2023", tags: "iOS · Open Source (Contributor)",
       icon: "assets/icons/mlem_logo.png",
       bg: '#E67E22', label: 'M',
       desc: "", body: [],
@@ -807,7 +807,11 @@ function AppDetail({ app, onBack, theme, onTheme }) {
                       zIndex: isHover ? 50 : variants.length - i,
                       cursor: variants.length > 1 ? 'pointer' : 'default',
                       transition: 'transform 0.20s cubic-bezier(0.34, 1.4, 0.64, 1), margin 0.20s ease, box-shadow 0.20s ease',
-                    }}>{v.label}</div>
+                    }}>
+                      {app.icon && variants.length === 1
+                        ? <img src={app.icon} width={72} height={72} alt={app.name} style={{ display: 'block', borderRadius: 13, pointerEvents: 'none' }} />
+                        : v.label}
+                    </div>
                   );
                 })}
               </div>
@@ -987,7 +991,7 @@ function MainGrid({ onArticle, onApp, onAllApps, onAllArticles, theme, onTheme }
                   borderRadius: 7,
                   marginLeft: i === 0 ? 0 : (isHover ? 2 : -7),
                   marginRight: isHover && i < last ? 9 : 0,
-                  transform: isHover
+                  transform: i === 0 ? 'none' : isHover
                     ? `rotateX(0deg) rotateY(0deg) rotateZ(0deg) scale(1.35) translateY(-3px)`
                     : `rotateX(${t.rx}deg) rotateY(${t.ry}deg) rotateZ(${t.rz}deg)`,
                   transformStyle: 'preserve-3d',
