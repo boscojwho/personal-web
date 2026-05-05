@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="system">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Alex Mercer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=Inter:wght@400;500;600&family=Geist:wght@400;500;600&family=Space+Grotesk:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/marked@9.1.6/marked.min.js"></script>
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:  #ffffff;
+      --fg:  #111111;
+      --mid: #555555;
+      --f:   14px;
+      --lh:  1.55;
+      --gap: 48px;
+    }
+
+    @media (max-width: 640px) {
+      :root { --gap: 24px; }
+    }
+
+    /* Force vertical stack on narrow viewports */
+    @media (max-width: 700px) {
+      .main-grid { grid-template-columns: 1fr !important; }
+      .main-grid > div { padding-right: 0 !important; }
+      .compact-only { display: flex !important; }
+      .theme-picker-inline { display: none !important; }
+    }
+
+    /* Article TOC: sidebar on desktop, overlay on mobile */
+    .toc-fab { display: none; }
+    @media (max-width: 700px) {
+      .article-grid { grid-template-columns: 1fr !important; gap: 0 !important; }
+      .toc-sidebar { display: none !important; }
+      .toc-fab { display: flex !important; }
+    }
+
+    .toc-fab {
+      position: fixed;
+      bottom: 24px; right: 24px;
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      background: var(--fg);
+      color: var(--bg);
+      border: none;
+      cursor: pointer;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+      z-index: 250;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .toc-fab:hover, .toc-fab:focus-visible {
+      transform: scale(1.06);
+      box-shadow: 0 6px 22px rgba(0,0,0,0.25);
+      outline: none;
+    }
+    .toc-fab:active { transform: scale(0.96); }
+
+    .toc-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.3);
+      z-index: 200;
+      animation: fadeIn 0.15s ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+    .toc-sheet {
+      background: var(--bg);
+      padding: 20px 24px calc(env(safe-area-inset-bottom, 0px) + 88px);
+      border-top-left-radius: 16px;
+      border-top-right-radius: 16px;
+      max-height: 70vh;
+      overflow-y: auto;
+      animation: slideUp 0.2s ease;
+      box-shadow: 0 -8px 30px rgba(0,0,0,0.18);
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to   { transform: none; opacity: 1; }
+    }
+
+    :root[data-theme="dark"] {
+      --bg: #111111;
+      --fg: #e8e8e8;
+      --mid: #888888;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root[data-theme="system"] {
+        --bg: #111111;
+        --fg: #e8e8e8;
+        --mid: #888888;
+      }
+    }
+
+    html, body {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: 'DM Sans', Helvetica, Arial, sans-serif;
+      font-size: var(--f);
+      line-height: var(--lh);
+      font-weight: 400;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100dvh;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    a { color: var(--fg); }
+    a:hover { color: var(--mid); }
+
+    #root { min-height: 100dvh; }
+
+    /* Article body styles */
+    .ab h2 { font-size: 14px; font-weight: 600; margin: 2em 0 0.4em; }
+    .ab h3 { font-size: 14px; font-weight: 500; margin: 1.4em 0 0.3em; }
+    .ab p  { margin-bottom: 0.9em; color: var(--mid); }
+    .ab strong { font-weight: 600; color: var(--fg); }
+    .ab em { font-style: italic; }
+    .ab ul, .ab ol { margin: 0 0 0.9em 1.2em; color: var(--mid); }
+    .ab li { margin-bottom: 0.2em; }
+
+    .app-row, .nav-link {
+      padding: 4px 8px;
+      margin: 0 -8px;
+      border-radius: 5px;
+      transition: background 0.18s ease;
+    }
+    .nav-link {
+      display: block;
+      width: fit-content;
+      max-width: 100%;
+      text-decoration: none;
+      color: inherit;
+    }
+    .nav-link .nav-link-title { text-decoration: underline; }
+    .nav-link:hover { background: rgba(0,0,0,0.05); }
+    .app-row.is-hover { background: rgba(0,0,0,0.05); }
+    .app-row.is-flash { background: rgba(255, 200, 0, 0.18); }
+    :root[data-theme="dark"] .app-row.is-hover,
+    :root[data-theme="dark"] .nav-link:hover { background: rgba(255,255,255,0.06); }
+    :root[data-theme="dark"] .app-row.is-flash { background: rgba(255, 220, 80, 0.16); }
+    @media (prefers-color-scheme: dark) {
+      :root[data-theme="system"] .app-row.is-hover,
+      :root[data-theme="system"] .nav-link:hover { background: rgba(255,255,255,0.06); }
+      :root[data-theme="system"] .app-row.is-flash { background: rgba(255, 220, 80, 0.16); }
+    }
+
+    .toc-link {
+      display: block;
+      font-size: 13px;
+      color: var(--mid);
+      text-decoration: none;
+      padding: 4px 8px;
+      margin: 0 -8px;
+      border-radius: 5px;
+      transition: color 0.1s, background 0.1s;
+    }
+    .toc-link:hover { color: var(--fg); background: rgba(0,0,0,0.05); }
+    .toc-link.on { color: var(--fg); }
+    :root[data-theme="dark"] .toc-link:hover { background: rgba(255,255,255,0.08); }
+    @media (prefers-color-scheme: dark) {
+      :root[data-theme="system"] .toc-link:hover { background: rgba(255,255,255,0.08); }
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(4px); }
+      to   { opacity: 1; transform: none; }
+    }
+
+    /* OS X Tiger Aqua segmented control — translucent gel pill ("Tide pod") */
+    .aqua {
+      display: inline-flex;
+      background:
+        /* top gloss highlight */
+        linear-gradient(
+          to bottom,
+          rgba(255,255,255,0.85) 0%,
+          rgba(255,255,255,0.35) 45%,
+          rgba(255,255,255,0.05) 50%,
+          rgba(255,255,255,0.18) 100%
+        ),
+        /* base translucent fill */
+        rgba(220, 230, 240, 0.55);
+      backdrop-filter: blur(4px) saturate(140%);
+      -webkit-backdrop-filter: blur(4px) saturate(140%);
+      border: 1px solid rgba(60, 80, 110, 0.45);
+      border-radius: 999px;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.95),
+        inset 0 -1px 1px rgba(255,255,255,0.4),
+        0 1px 1px rgba(0,0,0,0.12),
+        0 0 0 0.5px rgba(255,255,255,0.4);
+      overflow: hidden;
+      position: relative;
+      height: 26px;
+    }
+    /* Bright top sheen — the "capsule" gloss */
+    .aqua::before {
+      content: '';
+      position: absolute;
+      inset: 1px 1px auto 1px;
+      height: 50%;
+      border-radius: 999px 999px 50% 50% / 999px 999px 100% 100%;
+      background: linear-gradient(to bottom, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.15) 100%);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .aqua-btn {
+      background: transparent;
+      border: none;
+      color: #1a3a5c;
+      cursor: pointer;
+      padding: 0 14px;
+      font: inherit;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      z-index: 2;
+      transition: background 0.08s ease;
+      height: 100%;
+      text-shadow: 0 1px 0 rgba(255,255,255,0.55);
+    }
+    .aqua-btn:not(:first-child) {
+      border-left: 1px solid rgba(60, 80, 110, 0.45);
+      box-shadow: inset 1px 0 0 rgba(255,255,255,0.55);
+    }
+    .aqua-btn:hover:not(.aqua-btn-active) {
+      background: rgba(255,255,255,0.25);
+    }
+    .aqua-btn-active {
+      background:
+        linear-gradient(
+          to bottom,
+          rgba(180, 215, 245, 0.85) 0%,
+          rgba(110, 165, 220, 0.85) 45%,
+          rgba(70, 130, 200, 0.92) 55%,
+          rgba(55, 115, 190, 0.95) 100%
+        );
+      color: #fff;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.7),
+        inset 0 -1px 1px rgba(0,0,0,0.18),
+        inset 1px 0 0 rgba(0,0,0,0.12),
+        inset -1px 0 0 rgba(0,0,0,0.12);
+      text-shadow: 0 -1px 0 rgba(0,30,80,0.45);
+    }
+
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect, useRef, useMemo } = React;
+
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "theme": "system",
+  "font": "Geist"
+}/*EDITMODE-END*/;
+
+const FONT_OPTIONS = [
+  { label: "DM Sans",       stack: "'DM Sans', Helvetica, Arial, sans-serif" },
+  { label: "Inter",         stack: "'Inter', Helvetica, Arial, sans-serif" },
+  { label: "Geist",         stack: "'Geist', Helvetica, Arial, sans-serif" },
+  { label: "Space Grotesk", stack: "'Space Grotesk', Helvetica, Arial, sans-serif" },
+  { label: "IBM Plex",      stack: "'IBM Plex Sans', Helvetica, Arial, sans-serif" },
+  { label: "Work Sans",     stack: "'Work Sans', Helvetica, Arial, sans-serif" },
+  { label: "JetBrains Mono",stack: "'JetBrains Mono', ui-monospace, monospace" },
+  { label: "System",        stack: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" },
+];
+
+// Apply theme immediately to avoid flash
+document.documentElement.setAttribute('data-theme', TWEAK_DEFAULTS.theme);
+
+// ─── DATA ─────────────────────────────────────────────────────────────────────
+
+const DATA = {
+  name:     "Alex Mercer",
+  tagline:  "Designer & developer working at the intersection of craft and code.",
+  location: "San Francisco, CA",
+
+  links: [
+    { label: "GitHub",    url: "#" },
+    { label: "Read.cv",   url: "#" },
+    { label: "Twitter",   url: "#" },
+    { label: "Email",     url: "#" },
+  ],
+
+  apps: [
+    {
+      name: "Tempo", year: "2024", tags: "iOS · SwiftUI",
+      bg: '#FF6B6B', label: 'T',
+      variants: [
+        { bg: '#FF6B6B', label: 'T' },
+        { bg: '#1F2937', label: 'T' },
+        { bg: '#F4B942', label: 'T' },
+      ],
+      desc: "Minimalist time-blocking for people who find calendars stressful.",
+      body: [
+        { kind: 'p', text: "Tempo started as a personal frustration with how calendar apps treat time. Most of them are inventory tools — they show you what you've committed to. Tempo treats time as something you allocate intentionally, in blocks, before the day starts." },
+        { kind: 'h', text: "How it works" },
+        { kind: 'p', text: "Each morning, you pull blocks from a small palette into the day. Each block has a color and an intention. As the day progresses, blocks move from 'planned' to 'lived' — you can adjust on the fly without the bookkeeping of moving meetings around." },
+        { kind: 'h', text: "What I learned" },
+        { kind: 'p', text: "The hardest part wasn't the interaction model — it was getting people to trust that time spent planning isn't time wasted. The onboarding flow went through nine versions before settling on a 30-second guided block." },
+      ],
+      links: [
+        { label: 'App Store',  url: '#' },
+        { label: 'Case study', url: '#' },
+      ],
+    },
+    {
+      name: "Patchwork", year: "2023", tags: "Web · React",
+      bg: '#4D9DE0', label: 'P',
+      variants: [
+        { bg: '#4D9DE0', label: 'P' },
+        { bg: '#7B5EA7', label: 'P' },
+      ],
+      desc: "Local-first journaling with structured daily templates.",
+      body: [
+        { kind: 'p', text: "Patchwork is a journal that grows with you. It started as a single template — morning, mid-day, evening prompts — and grew into a small library of prompt sets you can mix." },
+        { kind: 'h', text: "Local-first" },
+        { kind: 'p', text: "All entries live on your device by default. Sync is opt-in and end-to-end encrypted. The app works offline, opens instantly, and never holds your writing hostage to a server." },
+        { kind: 'h', text: "Templates" },
+        { kind: 'p', text: "You can author templates in plain Markdown with a small set of slot directives. The app understands time-of-day, mood scales, and freeform fields." },
+      ],
+      links: [
+        { label: 'patchwork.app', url: '#' },
+        { label: 'GitHub',        url: '#' },
+      ],
+    },
+    {
+      name: "Carto", year: "2022", tags: "Electron · Canvas",
+      bg: '#3BB273', label: 'C',
+      desc: "Spatial note-taking built around a freeform canvas.",
+      body: [
+        { kind: 'p', text: "Carto is what happens when you stop forcing notes into trees and folders. Every note lives somewhere on a shared infinite canvas. Spatial proximity becomes the organizing principle." },
+        { kind: 'h', text: "Why a canvas" },
+        { kind: 'p', text: "The act of placing a note next to another note is itself a kind of writing. You can group, cluster, and sketch relationships without naming them. When the meaning is ready, you promote it to text." },
+        { kind: 'h', text: "Performance" },
+        { kind: 'p', text: "Rendering 50,000 nodes at 120 fps required a custom GPU-backed renderer with virtualized hit-testing. The codebase is mostly TypeScript with a thin C++ core for the spatial index." },
+      ],
+      links: [
+        { label: 'carto.app',  url: '#' },
+        { label: 'Tech notes', url: '#' },
+      ],
+    },
+    {
+      name: "Dwell", year: "2021", tags: "Web · Web Audio",
+      bg: '#E1BC29', label: 'D',
+      variants: [
+        { bg: '#E1BC29', label: 'D' },
+        { bg: '#2C5F7E', label: 'D' },
+      ],
+      desc: "Ambient sound mixer with curated atmospheres.",
+      body: [
+        { kind: 'p', text: "Dwell is a small web app for building soundscapes. Eight layers of ambient texture, each with its own gain and a few timbral controls. Mix until the room feels right." },
+        { kind: 'h', text: "Field recordings" },
+        { kind: 'p', text: "Most layers are first-party field recordings made over a year of travel — a fjord in Norway, a cafe in Lisbon, the underground level of a parking garage at 3am. Some layers are synthesized." },
+        { kind: 'h', text: "Why the browser" },
+        { kind: 'p', text: "Web Audio is genuinely good now. The latency is low enough, the API is rich, and it lets the app live anywhere without an install step." },
+      ],
+      links: [
+        { label: 'dwell.fm', url: '#' },
+      ],
+    },
+  ],
+
+  articles: [
+    {
+      title: "On the patience required to design well",
+      date:  "Mar 2026",
+      body: `## The problem with speed
+
+Everyone is in a hurry. Deadlines compress, stakeholders push, and the culture of shipping fast has become so normalized that slowness feels like a moral failing.
+
+But good design doesn't emerge from speed. It emerges from iteration, reflection, and the willingness to throw away something almost-right in search of something better.
+
+## What patience actually looks like
+
+Patience in design is not passive. It's not waiting around. It's the active practice of sitting with a problem long enough to understand it properly before reaching for solutions.
+
+It means resisting the first idea. The first idea is almost always a reflex — a pattern you've seen before, applied to a new surface. It feels right because it's familiar. It rarely is.
+
+## The cost of impatience
+
+Impatient design is everywhere. You can feel it in products that almost work — where the interactions are slightly off, where the copy doesn't quite match the context, where the visual hierarchy tells you one thing and the behavior tells you another.
+
+These aren't failures of skill. They're failures of time. The designer knew, on some level, that something was wrong. They shipped anyway.
+
+## A practice, not a talent
+
+Patience can be cultivated. It starts with giving yourself permission to not know yet — to hold the problem open a little longer, to make one more prototype, to ask one more question.
+
+The best designers I've worked with aren't the fastest. They're the most comfortable with uncertainty.`
+    },
+    {
+      title: "Why I keep redesigning my own portfolio",
+      date:  "Mar 2026",
+      body: `## A useful exercise
+
+My own site is the project I've redesigned more than any other. Every six months or so I scrap most of it and start again. It's a habit that sounds wasteful but has paid off more than any course I've taken.
+
+## The shape of the practice
+
+Each time I rebuild, I pick one constraint to obey and one assumption to test. The constraint forces me out of my defaults. The assumption forces me to defend a choice.
+
+This time it was "no images" and "text-first as a feature, not a fallback." Both have changed how I think about layout in client work.
+
+## What it teaches
+
+Designing for yourself is one of the few places where the brief is fully under your control. That's a gift. Use it to test ideas you can't sell to a client yet.`
+    },
+    {
+      title: "What I learned shipping a native app alone",
+      date:  "Nov 2025",
+      body: `## You already know enough
+
+The most surprising thing about shipping Tempo was realizing, about halfway through, that I'd known enough to build it for years. The delay wasn't technical. It was psychological.
+
+## The solo bottleneck
+
+When you're building alone, every decision lands on you. There's no one to sanity-check the interaction model, no designer to push back on a bad layout, no PM to question a feature that seemed important at 2am.
+
+## What actually slows you down
+
+It's not the hard parts. The hard parts — the architecture, the sync engine, the edge cases — those get solved eventually. You grind through them.
+
+What slows you down is the soft stuff. The naming. The onboarding. The App Store description. The icon.
+
+## What I'd tell myself
+
+Start smaller. Ship sooner. The feedback you get from real users in week one is worth more than six months of solo iteration.`
+    },
+    {
+      title: "A small system for keeping focus during long projects",
+      date:  "Nov 2025",
+      body: `## The drift problem
+
+Long projects drift. Not all at once — a small compromise here, a deferred decision there, and six weeks later the thing in front of you only resembles the thing you set out to build.
+
+## Anchors
+
+I keep three anchors visible at my desk during any project that runs longer than a month: a one-line description of who it's for, a list of three things it does not do, and the rough shape of the first version. Whenever a decision feels heavy, I check it against these.
+
+## Why it works
+
+Focus isn't really a personal trait. It's a function of how loudly your priorities are declared and how often you're forced to reconcile against them.`
+    },
+    {
+      title: "How I think about the cost of features",
+      date:  "Nov 2025",
+      body: `## Features aren't free
+
+Every feature you ship is a future support ticket, a future bug, a future conversation about deprecation. The build cost is the smallest part of the total cost.
+
+## A simple test
+
+Before I add anything new, I write down three sentences: who asked for this, what would they do without it, and what does adding it prevent us from doing later. If those three sentences don't sit comfortably together, I wait.
+
+## What this looks like
+
+Most features that pass this test are smaller than the original idea. That's the point. The smaller version usually carries 80% of the value at 20% of the long-term cost.`
+    },
+    {
+      title: "Notes on writing better changelogs",
+      date:  "Nov 2025",
+      body: `## Changelogs are a design surface
+
+The changelog is one of the few places where users feel the human shape of a product. Most are written like internal commit summaries. They don't have to be.
+
+## Three rules
+
+Lead with what changed for the reader, not what we did. Group related items together so the story is legible. End with a small note in the team's voice — a thanks, a confession, a tease about what's next.
+
+## What it earns you
+
+A changelog people actually read becomes a slow, durable channel for trust. It's worth more than most marketing.`
+    },
+    {
+      title: "The underrated power of negative space in UI",
+      date:  "Aug 2025",
+      body: `## Space is not decoration
+
+Most designers learn about whitespace early. It shows up in every design principles list. And yet it remains one of the most consistently misapplied concepts in interface design.
+
+## What space actually does
+
+Space creates grouping. Elements that are close together are perceived as related; elements that are far apart are perceived as distinct.
+
+Space creates hierarchy. A heading with generous space above it signals a new section.
+
+Space creates breathing room. Dense interfaces feel anxious. Airy interfaces feel calm.
+
+## A simple heuristic
+
+When something feels cluttered, the answer is rarely to remove elements. It's to increase the space between them. Start by doubling your margins. See what happens.`
+    },
+    {
+      title: "On the discipline of cutting half your ideas",
+      date:  "Aug 2025",
+      body: `## The first cut
+
+Most projects I've worked on improved the moment I deleted something. Rarely a feature — more often a section, a paragraph, a panel of metadata I'd assumed was load-bearing.
+
+## Why it works
+
+A design with too many ideas asks too much of the viewer. Each element competes for attention with every other element. Cutting half your ideas doesn't lose half the value — it concentrates the remaining half until each one carries its weight.
+
+## The hard part
+
+The hard part isn't deciding what to cut. The hard part is admitting that the thing you spent a week on is the thing weakening the result. Practice doing it anyway. The second time is easier.`
+    },
+    {
+      title: "Against the hero section",
+      date:  "Apr 2025",
+      body: `## The hero section is a stall
+
+Every portfolio has one. A full-viewport block with a name, a tagline, and a call to action. Sometimes an abstract illustration. Sometimes a looping video. Always a scroll prompt.
+
+It's theater. It performs the presence of a website without committing to any actual content.
+
+## What visitors actually want
+
+Someone landing on your portfolio wants to know: can this person do the thing I need? They want to see work. They want to read your perspective. They want to understand your process.
+
+## The alternative
+
+Get to the point. Lead with your work. Put your most interesting project first, above the fold, with enough context to make someone want to keep reading.`
+    },
+    {
+      title: "Notes on using type as the primary design element",
+      date:  "Jan 2025",
+      body: `## An experiment
+
+Last year I redesigned my portfolio with a single constraint: no images, no icons, no decorative elements of any kind. Only type, spacing, and color.
+
+I expected to feel limited. Instead, I felt free. Removing the crutches forced me to make the typography work harder — and in doing so, I learned more about type in three weeks than in the previous three years.
+
+## What type can carry
+
+Typography is capable of far more than most interfaces ask of it. Size creates hierarchy. Weight creates emphasis. Letter-spacing creates register — tight for display, open for labels. Line-height controls density and pace.
+
+A well-set paragraph is a designed object. Most interfaces treat it as a container for content rather than content itself. The text is something to be "filled in" after the real design decisions are made. This is exactly backwards.
+
+## The variables that matter most
+
+**Size ratio.** The contrast between your largest and smallest type determines how much visual drama the page has. Most interfaces are too compressed — everything sits within a 12–18px range and nothing stands out.
+
+**Weight.** A single weight can work, but the jump from light (300) to medium (500) is often more interesting than bold. Bold is a hammer — effective, but blunt.
+
+**Spacing.** Generous line-height (1.7–1.9 for body text) makes prose readable and gives the page air. Tight line-height (1.1–1.2) makes display text feel intentional and compressed.
+
+**Tracking.** Letter-spacing on uppercase labels (0.08–0.15em) signals metadata, navigation, supporting information.
+
+## On choosing typefaces
+
+A typeface is not decoration. It carries tone before a single word is read. A grotesque sans feels different from a humanist sans feels different from a geometric sans.
+
+The mistake most designers make is optimizing for novelty. An unusual typeface feels like a design decision, so it reads as intentional. But novelty fades. What lasts is how the type behaves at 14px in a dense paragraph at 11pm on a tired reader's phone.
+
+## Rhythm and pace
+
+Reading is temporal. A page of text is not experienced all at once — it's experienced in time, sentence by sentence, paragraph by paragraph. Good typography controls that pace.
+
+Short paragraphs create speed. Long paragraphs slow the reader down. Section headers are rest stops.
+
+## What gets removed
+
+When type is doing everything, you start to notice how many design elements exist to compensate for weak typography.
+
+Borders that separate things type-hierarchy could separate. Colors that signal importance that weight could signal. Icons that label things the words themselves could label.
+
+## The result
+
+The portfolio I built under this constraint is the one you're reading now. It's the design I've received the most comments on, and almost all of them have been about how it feels to read.
+
+That's the point. Type is not the absence of design. It's design in its most direct form — meaning, made visible.
+
+## What to try
+
+If you want to test this yourself, pick a page in your current project and remove everything that isn't text. Then ask: is the hierarchy still clear? Can you tell what's important? Does the page have rhythm?
+
+If the answer is no, you don't have a visual design problem. You have a typography problem. Fix that first.`
+    },
+    {
+      title: "Why constraints make better designers",
+      date:  "Sep 2024",
+      body: `## The myth of total freedom
+
+A blank canvas is rarely a gift. Most designers do their best work when something has been taken away — a budget, a timeline, a palette, a single constraint imposed on the rest.
+
+## What constraints really do
+
+They don't limit creativity. They focus it. A tight constraint forces you to look harder at what you have rather than wishing for what you don't.
+
+## A small habit
+
+Before starting any new project, I write down two constraints I'll respect for the duration. Sometimes they're technical, sometimes formal, sometimes purely about taste. They become the thing I lean on when the work gets hard.`
+    },
+    {
+      title: "Designing for boring tasks",
+      date:  "Jun 2024",
+      body: `## The unglamorous middle
+
+Most software people use every day handles boring tasks: filing receipts, scheduling appointments, tracking inventory. The design discourse rarely talks about them. That's a mistake.
+
+## Where the real wins are
+
+Tools for boring tasks have a strict honesty test. Either they save time or they don't. There's no aesthetic justification that survives the user's actual stopwatch.
+
+## What it teaches
+
+Designing for boring tasks teaches you to value clarity over delight, throughput over polish. Those skills make you better at the more glamorous work, too.`
+    },
+    {
+      title: "On staying small as a studio",
+      date:  "Mar 2024",
+      body: `## Growth isn't a virtue
+
+There's a quiet assumption in studio life that bigger is better. More clients, more billables, more headcount. I've come to think the opposite is closer to true for most of us.
+
+## What small earns you
+
+A small studio can say no. It can take fewer projects, do them more carefully, and keep the people involved closer to the work. The economics are simpler. The decisions are quicker. The quality of the work has fewer hands diluting it.
+
+## The cost
+
+Small means less leverage and fewer big swings. That's a real trade. But for the kind of work I want to do, it's a trade I'd make again every time.`
+    },
+  ],
+};
+
+// ─── ARTICLE DETAIL ───────────────────────────────────────────────────────────
+
+function ArticleDetail({ article, onBack, theme, onTheme }) {
+  const [activeId, setActiveId] = useState(null);
+  const contentRef = useRef(null);
+
+  const headings = useMemo(() => {
+    return [...article.body.matchAll(/^## (.+)$/gm)].map(m => ({
+      text: m[1],
+      id: 'h-' + m[1].toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+    }));
+  }, [article]);
+
+  const [tocOpen, setTocOpen] = useState(false);
+
+  const html = useMemo(() => {
+    let md = article.body;
+    headings.forEach(h => {
+      md = md.replace(
+        new RegExp(`^## ${h.text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'm'),
+        `## <span id="${h.id}">${h.text}</span>`
+      );
+    });
+    return marked.parse(md);
+  }, [article, headings]);
+
+  useEffect(() => {
+    if (!contentRef.current) return;
+    const els = headings.map(h => document.getElementById(h.id)).filter(Boolean);
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) setActiveId(e.target.id); });
+    }, { rootMargin: '-10% 0px -80% 0px' });
+    els.forEach(el => obs.observe(el));
+    return () => obs.disconnect();
+  }, [headings]);
+
+  return (
+    <div style={{ animation: 'fadeUp 0.2s ease', padding: '40px var(--gap)' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 14, marginBottom: '32px' }}>
+        <button onClick={onBack} style={{
+          background: 'none', border: 'none', cursor: 'pointer',
+          font: 'inherit', color: 'var(--mid)', padding: 0,
+          display: 'block',
+          textDecoration: 'underline',
+        }}>← All writing</button>
+        <CompactThemeToggle theme={theme} onTheme={onTheme} />
+      </div>
+
+      <div className="article-grid" style={{
+        display: 'grid',
+        gridTemplateColumns: headings.length ? 'minmax(0,1fr) 180px' : '1fr',
+        gap: '60px',
+        maxWidth: '760px',
+        alignItems: 'start',
+      }}>
+        <div>
+          <p style={{ fontWeight: 600, marginBottom: '4px' }}>{article.title}</p>
+          <p style={{ color: 'var(--mid)', marginBottom: '28px' }}>{article.date}</p>
+          <div ref={contentRef} className="ab" dangerouslySetInnerHTML={{ __html: html }} />
+        </div>
+
+        {headings.length > 0 && (
+          <nav className="toc-sidebar" style={{ position: 'sticky', top: '40px' }}>
+            <p style={{ fontWeight: 600, marginBottom: '8px' }}>Contents</p>
+            {headings.map(h => (
+              <a key={h.id} href={'#' + h.id}
+                className={'toc-link' + (activeId === h.id ? ' on' : '')}>
+                {h.text}
+              </a>
+            ))}
+          </nav>
+        )}
+      </div>
+
+      {headings.length > 0 && (
+        <button
+          className="toc-fab"
+          onClick={() => setTocOpen(o => !o)}
+          aria-label={tocOpen ? "Close table of contents" : "Open table of contents"}
+          aria-expanded={tocOpen}
+        >
+          {tocOpen ? (
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+          ) : (
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+          )}
+        </button>
+      )}
+
+      {tocOpen && (
+        <div className="toc-overlay" onClick={() => setTocOpen(false)}>
+          <div className="toc-sheet" onClick={e => e.stopPropagation()}>
+            <p style={{ fontWeight: 600, marginBottom: '12px' }}>Contents</p>
+            {headings.map(h => (
+              <a key={h.id} href={'#' + h.id}
+                onClick={() => setTocOpen(false)}
+                className={'toc-link' + (activeId === h.id ? ' on' : '')}
+                style={{ fontSize: '15px', padding: '10px 8px' }}>
+                {h.text}
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── MAIN GRID ────────────────────────────────────────────────────────────────
+
+function ThemePicker({ theme, onTheme, expanded = true, onExpand }) {
+  const items = [
+    { v: 'light', title: 'Light', icon: (
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+    )},
+    { v: 'system', title: 'System', icon: (
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="14" rx="2"/><path d="M8 22h8M12 18v4"/></svg>
+    )},
+    { v: 'dark', title: 'Dark', icon: (
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    )},
+  ];
+
+  if (!expanded) {
+    const active = items.find(i => i.v === theme) || items[1];
+    return (
+      <div className="aqua">
+        <button onClick={onExpand} title="Appearance"
+          className="aqua-btn"
+          aria-label="Appearance"
+        >{active.icon}</button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="aqua">
+      {items.map((b, i) => (
+        <button key={b.v} onClick={() => onTheme(b.v)} title={b.title}
+          className={'aqua-btn' + (theme === b.v ? ' aqua-btn-active' : '')}
+        >{b.icon}</button>
+      ))}
+    </div>
+  );
+}
+
+function CompactThemeToggle({ theme, onTheme, alwaysVisible = false }) {
+  const order = ['light', 'system', 'dark'];
+  const items = {
+    light: { title: 'Light', icon: (
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+    )},
+    system: { title: 'System', icon: (
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="14" rx="2"/><path d="M8 22h8M12 18v4"/></svg>
+    )},
+    dark: { title: 'Dark', icon: (
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    )},
+  };
+  const cur = items[theme] || items.system;
+  const cycle = () => {
+    const next = order[(order.indexOf(theme) + 1) % order.length];
+    onTheme(next);
+  };
+
+  return (
+    <div className={alwaysVisible ? 'compact-theme-wrap' : 'compact-theme-wrap compact-only'}
+         style={alwaysVisible ? undefined : { display: 'none' }}>
+      <button onClick={cycle}
+        title={`Appearance: ${cur.title}`}
+        aria-label={`Appearance: ${cur.title}. Tap to switch.`}
+        style={{
+          background: 'none',
+          border: 'none',
+          padding: 6,
+          margin: -6,
+          cursor: 'pointer',
+          color: 'var(--fg)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          font: 'inherit',
+          borderRadius: 4,
+          transition: 'color 0.1s',
+        }}
+        onMouseEnter={e => e.currentTarget.style.color = 'var(--mid)'}
+        onMouseLeave={e => e.currentTarget.style.color = 'var(--fg)'}
+      >{cur.icon}</button>
+    </div>
+  );
+}
+
+// ─── APP DETAIL ─────────────────────────────────────────────────────────────
+
+function AppDetail({ app, onBack, theme, onTheme }) {
+  const [hoverV, setHoverV] = useState(null);
+  return (
+    <div style={{ animation: 'fadeUp 0.2s ease', padding: '40px var(--gap)' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 14, marginBottom: '32px' }}>
+        <button onClick={onBack} style={{
+          background: 'none', border: 'none', cursor: 'pointer',
+          font: 'inherit', color: 'var(--mid)', padding: 0,
+          display: 'block',
+          textDecoration: 'underline',
+        }}>← All apps</button>
+        <CompactThemeToggle theme={theme} onTheme={onTheme} />
+      </div>
+
+      <div style={{ maxWidth: '620px' }}>
+        {/* Hero */}
+        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '24px', marginBottom: '32px' }}>
+          {(() => {
+            const variants = app.variants && app.variants.length > 0 ? app.variants : [{ bg: app.bg, label: app.label }];
+            // Per-variant tilts so they read as tiles in 3D space
+            const tilts = [
+              { rx: -6,  ry: -22, rz: -4 },
+              { rx:  4,  ry: -8,  rz:  2 },
+              { rx: -3,  ry:  16, rz: -2 },
+              { rx:  8,  ry:  26, rz:  6 },
+            ];
+            return (
+              <div style={{
+                perspective: '700px',
+                display: 'flex',
+                alignItems: 'center',
+                flexShrink: 0,
+                paddingLeft: variants.length > 1 ? '6px' : 0,
+              }}>
+                {variants.map((v, i) => {
+                  const t = tilts[i % tilts.length];
+                  const isHover = hoverV === i;
+                  const baseLeft = i === 0 ? 0 : -22;
+                  return (
+                    <div key={i}
+                      onMouseEnter={() => setHoverV(i)}
+                      onMouseLeave={() => setHoverV(null)}
+                      style={{
+                      width: 72, height: 72,
+                      background: v.bg,
+                      borderRadius: 16,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      color: '#fff', fontSize: 32, fontWeight: 600,
+                      marginLeft: isHover ? (i === 0 ? 8 : -6) : baseLeft,
+                      marginRight: isHover && i < variants.length - 1 ? 16 : 0,
+                      transform: isHover
+                        ? `rotateX(0deg) rotateY(0deg) rotateZ(0deg) scale(1.18) translateY(-6px)`
+                        : `rotateX(${t.rx}deg) rotateY(${t.ry}deg) rotateZ(${t.rz}deg)`,
+                      transformStyle: 'preserve-3d',
+                      border: variants.length > 1 ? '2px solid var(--bg)' : 'none',
+                      boxShadow: isHover
+                        ? '0 16px 30px rgba(0,0,0,0.28), 0 4px 8px rgba(0,0,0,0.18)'
+                        : '0 10px 22px rgba(0,0,0,0.20), 0 2px 5px rgba(0,0,0,0.12)',
+                      zIndex: isHover ? 50 : variants.length - i,
+                      cursor: variants.length > 1 ? 'pointer' : 'default',
+                      transition: 'transform 0.20s cubic-bezier(0.34, 1.4, 0.64, 1), margin 0.20s ease, box-shadow 0.20s ease',
+                    }}>{v.label}</div>
+                  );
+                })}
+              </div>
+            );
+          })()}
+          <div style={{ paddingTop: '8px' }}>
+            <p style={{ fontWeight: 600, fontSize: '1.1em', marginBottom: '4px' }}>{app.name}</p>
+            <p style={{ color: 'var(--mid)', marginBottom: '2px' }}>{app.year}  ·  {app.tags}</p>
+          </div>
+        </div>
+
+        {/* Tagline */}
+        <p style={{ marginBottom: '28px', fontSize: '1.05em' }}>{app.desc}</p>
+
+        {/* Body */}
+        <div className="ab">
+          {app.body.map((blk, i) => (
+            blk.kind === 'h'
+              ? <h2 key={i} style={{ fontWeight: 600, fontSize: '1em', marginTop: '24px', marginBottom: '8px' }}>{blk.text}</h2>
+              : <p key={i} style={{ marginBottom: '14px' }}>{blk.text}</p>
+          ))}
+        </div>
+
+        {/* Links */}
+        {app.links && app.links.length > 0 && (
+          <div style={{ marginTop: '32px', paddingTop: '20px', borderTop: '1px solid var(--rule)' }}>
+            <p style={{ fontWeight: 600, marginBottom: '8px' }}>Links</p>
+            {app.links.map((l, i) => (
+              <a key={i} href={l.url} className="nav-link" style={{ display: 'inline-block', marginRight: '8px' }}>
+                <span className="nav-link-title">{l.label}</span>
+              </a>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─── ALL APPS / ALL ARTICLES ────────────────────────────────────────────────
+
+function AllApps({ onBack, onApp, theme, onTheme }) {
+  return (
+    <div style={{ animation: 'fadeUp 0.2s ease', padding: '40px var(--gap)' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 14, marginBottom: '32px' }}>
+        <button onClick={onBack} style={{
+          background: 'none', border: 'none', cursor: 'pointer',
+          font: 'inherit', color: 'var(--mid)', padding: 0,
+          display: 'block', textDecoration: 'underline',
+        }}>← Back</button>
+        <CompactThemeToggle theme={theme} onTheme={onTheme} />
+      </div>
+
+      <div style={{ maxWidth: '620px' }}>
+        <p style={{ fontWeight: 600, marginBottom: '4px' }}>All apps</p>
+        <p style={{ color: 'var(--mid)', marginBottom: '28px' }}>{DATA.apps.length} total</p>
+        {DATA.apps.map((a, i) => (
+          <a key={i} href="#"
+            onClick={e => { e.preventDefault(); onApp(i); }}
+            className="app-row"
+            style={{ display: 'block', textDecoration: 'none', color: 'inherit', marginBottom: '10px' }}>
+            <span style={{ textDecoration: 'underline' }}>{a.name}</span>
+            <span style={{ color: 'var(--mid)' }}> — {a.year}</span>
+            <br />
+            <span style={{ color: 'var(--mid)' }}>{a.tags} · {a.desc}</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function AllArticles({ onBack, onArticle, theme, onTheme }) {
+  const groups = [];
+  DATA.articles.forEach((a, i) => {
+    if (groups.length && groups[groups.length - 1].date === a.date) {
+      groups[groups.length - 1].items.push({ ...a, idx: i });
+    } else {
+      groups.push({ date: a.date, items: [{ ...a, idx: i }] });
+    }
+  });
+  return (
+    <div style={{ animation: 'fadeUp 0.2s ease', padding: '40px var(--gap)' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 14, marginBottom: '32px' }}>
+        <button onClick={onBack} style={{
+          background: 'none', border: 'none', cursor: 'pointer',
+          font: 'inherit', color: 'var(--mid)', padding: 0,
+          display: 'block', textDecoration: 'underline',
+        }}>← Back</button>
+        <CompactThemeToggle theme={theme} onTheme={onTheme} />
+      </div>
+
+      <div style={{ maxWidth: '620px' }}>
+        <p style={{ fontWeight: 600, marginBottom: '4px' }}>All writing</p>
+        <p style={{ color: 'var(--mid)', marginBottom: '28px' }}>{DATA.articles.length} total</p>
+        {groups.map((g, gi) => (
+          <div key={gi} style={{ marginBottom: '24px' }}>
+            <p style={{ color: 'var(--mid)', marginBottom: '10px' }}>{g.date}</p>
+            {g.items.map(a => (
+              <a key={a.idx} href="#"
+                onClick={e => { e.preventDefault(); onArticle(a.idx); }}
+                className="nav-link"
+                style={{ marginBottom: '2px' }}>
+                <span className="nav-link-title">{a.title}</span>
+              </a>
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function MainGrid({ onArticle, onApp, onAllApps, onAllArticles, theme, onTheme }) {
+  const [hoverIcon, setHoverIcon] = useState(null);
+  const [flashApp, setFlashApp] = useState(null);
+  const onAppClick = (i) => {
+    onApp(i);
+  };
+  return (
+    <div style={{
+      padding: '40px var(--gap)',
+      animation: 'fadeUp 0.2s ease',
+    }}>
+      {/* Header: name + tagline */}
+      <div style={{ marginBottom: '32px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '14px', marginBottom: '4px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+            <p style={{
+              fontWeight: 700, fontSize: '17px',
+              letterSpacing: '-0.01em',
+              fontStretch: '125%',
+              fontVariationSettings: '"wdth" 125',
+            }}>{DATA.name}</p>
+            <div style={{ display: 'flex', alignItems: 'center', perspective: '600px' }}>
+              {[
+                { bg: '#FF6B6B', label: 'T' },
+                { bg: '#4D9DE0', label: 'P' },
+                { bg: '#3BB273', label: 'C' },
+                { bg: '#E1BC29', label: 'D' },
+              ].map((a, i) => {
+                // Each icon tilts a different way to suggest a 3D space
+                const tilts = [
+                  { rx: -8,  ry: -22, rz: -6 },
+                  { rx:  6,  ry: -10, rz:  4 },
+                  { rx: -4,  ry:  14, rz: -3 },
+                  { rx:  10, ry:  26, rz:  8 },
+                ];
+                const t = tilts[i];
+                const isHover = hoverIcon === i;
+                return (
+                <button key={i}
+                  onMouseEnter={() => setHoverIcon(i)}
+                  onMouseLeave={() => setHoverIcon(null)}
+                  onClick={() => onAppClick(i)}
+                  aria-label={`Jump to app ${i + 1}`}
+                  style={{
+                  width: 22, height: 22,
+                  padding: 0,
+                  background: a.bg,
+                  borderRadius: 5,
+                  marginLeft: i === 0 ? 0 : (isHover ? 2 : -7),
+                  marginRight: isHover && i < 3 ? 9 : 0,
+                  transform: isHover
+                    ? `rotateX(0deg) rotateY(0deg) rotateZ(0deg) scale(1.35) translateY(-3px)`
+                    : `rotateX(${t.rx}deg) rotateY(${t.ry}deg) rotateZ(${t.rz}deg)`,
+                  transformStyle: 'preserve-3d',
+                  border: '1.5px solid var(--bg)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  color: '#fff', fontSize: 11, fontWeight: 600,
+                  cursor: 'pointer',
+                  boxShadow: isHover
+                    ? '0 8px 18px rgba(0,0,0,0.22), 0 2px 4px rgba(0,0,0,0.14)'
+                    : '0 4px 8px rgba(0,0,0,0.18), 0 1px 2px rgba(0,0,0,0.12)',
+                  zIndex: isHover ? 20 : 10 - i,
+                  transition: 'transform 0.18s cubic-bezier(0.34, 1.4, 0.64, 1), margin 0.18s ease, box-shadow 0.18s ease',
+                  fontFamily: 'inherit',
+                }}>{a.label}</button>
+              );})}
+            </div>
+          </div>
+          <CompactThemeToggle theme={theme} onTheme={onTheme} />
+        </div>
+      </div>
+
+      <div className="main-grid" style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+        gap: '0',
+      }}>
+
+      {/* Col 1: Identity / contact */}
+      {/* Col 1: Apps */}
+      <div style={{ paddingRight: '40px', marginBottom: '32px' }}>
+        <p style={{ fontWeight: 600, marginBottom: '10px' }}>Apps</p>
+        {DATA.apps.slice(0, 10).map((a, i) => (
+          <a key={i} id={'app-' + i} href="#"
+            onClick={e => { e.preventDefault(); onApp(i); }}
+            onMouseEnter={() => setHoverIcon(i)}
+            onMouseLeave={() => setHoverIcon(null)}
+            className={'app-row' + (flashApp === i ? ' is-flash' : '') + (hoverIcon === i ? ' is-hover' : '')}
+            style={{ display: 'block', textDecoration: 'none', color: 'inherit' }}
+          >
+            <span style={{ textDecoration: 'underline' }}>{a.name}</span>
+            <span style={{ color: 'var(--mid)' }}> — {a.year}</span>
+            <br />
+            <span style={{ color: 'var(--mid)' }}>{a.tags}</span>
+          </a>
+        ))}
+        {DATA.apps.length > 10 && (
+          <a href="#" onClick={e => { e.preventDefault(); onAllApps(); }}
+            className="nav-link" style={{ marginTop: '10px' }}>
+            <span className="nav-link-title">View all {DATA.apps.length} apps →</span>
+          </a>
+        )}
+      </div>
+
+      {/* Col 2: Writing */}
+      <div style={{ paddingRight: '40px', marginBottom: '32px' }}>
+        <p style={{ fontWeight: 600, marginBottom: '10px' }}>Writing</p>
+        {(() => {
+          const capped = DATA.articles.slice(0, 10);
+          const groups = [];
+          capped.forEach((a, i) => {
+            if (groups.length && groups[groups.length - 1].date === a.date) {
+              groups[groups.length - 1].items.push({ ...a, idx: i });
+            } else {
+              groups.push({ date: a.date, items: [{ ...a, idx: i }] });
+            }
+          });
+          return groups.map((g, gi) => (
+            <div key={gi} style={{ marginBottom: '20px' }}>
+              <p style={{ color: 'var(--mid)', marginBottom: '10px', textTransform: 'none' }}>{g.date}</p>
+              {g.items.map(a => (
+                <a key={a.idx} href="#"
+                  onClick={e => { e.preventDefault(); onArticle(a.idx); }}
+                  className="nav-link"
+                  style={{ marginBottom: '2px' }}>
+                  <span className="nav-link-title">{a.title}</span>
+                </a>
+              ))}
+            </div>
+          ));
+        })()}
+        {DATA.articles.length > 10 && (
+          <a href="#" onClick={e => { e.preventDefault(); onAllArticles(); }}
+            className="nav-link">
+            <span className="nav-link-title">View all {DATA.articles.length} articles →</span>
+          </a>
+        )}
+      </div>
+
+      {/* Col 3: About */}
+      <div style={{ paddingRight: '40px', marginBottom: '32px' }}>
+        <p style={{ fontWeight: 600, marginBottom: '10px' }}>About</p>
+        <p style={{ color: 'var(--mid)', marginBottom: '12px', maxWidth: '220px' }}>
+          Designer &amp; developer. Previously at Figma, Linear, and a handful of early-stage startups.
+        </p>
+        <p style={{ color: 'var(--mid)', maxWidth: '220px' }}>
+          Long walks, cold coffee, notebooks I rarely finish.
+        </p>
+      </div>
+
+      {/* Col 4: Contact */}
+      <div style={{ marginBottom: '32px' }}>
+        <p style={{ fontWeight: 600, marginBottom: '10px' }}>Contact</p>
+        <p style={{ color: 'var(--mid)', marginBottom: '12px' }}>{DATA.location}</p>
+        {DATA.links.map((l, i) => (
+          <a key={i} href={l.url} className="nav-link" style={{ marginBottom: '2px' }}>
+            <span className="nav-link-title">{l.label}</span>
+          </a>
+        ))}
+        <div className="theme-picker-inline" style={{ marginTop: '20px' }}>
+          <CompactThemeToggle theme={theme} onTheme={onTheme} alwaysVisible />
+        </div>
+      </div>
+
+      </div>
+    </div>
+  );
+}
+
+// ─── APP ──────────────────────────────────────────────────────────────────────
+
+function App() {
+  const [article, setArticle] = useState(null);
+  const [app, setApp] = useState(null);
+  const [allApps, setAllApps] = useState(false);
+  const [allArticles, setAllArticles] = useState(false);
+  const [theme, setTheme] = useState(TWEAK_DEFAULTS.theme || 'system');
+  const [font, setFont] = useState(TWEAK_DEFAULTS.font || 'DM Sans');
+  const [tweaksVisible, setTweaksVisible] = useState(false);
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+  }, [theme]);
+
+  useEffect(() => {
+    const opt = FONT_OPTIONS.find(o => o.label === font) || FONT_OPTIONS[0];
+    document.body.style.fontFamily = opt.stack;
+  }, [font]);
+
+  const persist = (next) => {
+    window.parent.postMessage({ type: '__edit_mode_set_keys', edits: next }, '*');
+  };
+
+  useEffect(() => {
+    const handler = e => {
+      if (e.data?.type === '__activate_edit_mode') setTweaksVisible(true);
+      if (e.data?.type === '__deactivate_edit_mode') setTweaksVisible(false);
+    };
+    window.addEventListener('message', handler);
+    window.parent.postMessage({ type: '__edit_mode_available' }, '*');
+    return () => window.removeEventListener('message', handler);
+  }, []);
+
+  const openArticle = i => { setArticle(i); window.scrollTo(0, 0); };
+  const closeArticle = () => { setArticle(null); window.scrollTo(0, 0); };
+  const openApp = i => { setApp(i); window.scrollTo(0, 0); };
+  const closeApp = () => { setApp(null); window.scrollTo(0, 0); };
+  const openAllApps = () => { setAllApps(true); window.scrollTo(0, 0); };
+  const closeAllApps = () => { setAllApps(false); window.scrollTo(0, 0); };
+  const openAllArticles = () => { setAllArticles(true); window.scrollTo(0, 0); };
+  const closeAllArticles = () => { setAllArticles(false); window.scrollTo(0, 0); };
+  const openAppFromAll = i => { setAllApps(false); setApp(i); window.scrollTo(0, 0); };
+  const openArticleFromAll = i => { setAllArticles(false); setArticle(i); window.scrollTo(0, 0); };
+
+  const setThemeP = t => { setTheme(t); persist({ theme: t, font }); };
+  const setFontP  = f => { setFont(f);  persist({ theme, font: f }); };
+
+  return (
+    <>
+      {article !== null
+        ? <ArticleDetail article={DATA.articles[article]} onBack={closeArticle} theme={theme} onTheme={setThemeP} />
+        : app !== null
+          ? <AppDetail app={DATA.apps[app]} onBack={closeApp} theme={theme} onTheme={setThemeP} />
+          : allApps
+            ? <AllApps onBack={closeAllApps} onApp={openAppFromAll} theme={theme} onTheme={setThemeP} />
+            : allArticles
+              ? <AllArticles onBack={closeAllArticles} onArticle={openArticleFromAll} theme={theme} onTheme={setThemeP} />
+              : <MainGrid onArticle={openArticle} onApp={openApp} onAllApps={openAllApps} onAllArticles={openAllArticles} theme={theme} onTheme={setThemeP} font={font} onFont={setFontP} />}
+      {tweaksVisible && <TweaksPanel theme={theme} onTheme={setThemeP} font={font} onFont={setFontP} />}
+    </>
+  );
+}
+
+function TweaksPanel({ theme, onTheme, font, onFont }) {
+  return (
+    <div style={{
+      position: 'fixed', bottom: 24, right: 24, zIndex: 9999,
+      background: 'var(--bg)', border: '1px solid var(--mid)',
+      padding: 20, width: 220, fontSize: 13,
+    }}>
+      <p style={{ fontWeight: 600, marginBottom: 12 }}>Tweaks</p>
+
+      <p style={{ color: 'var(--mid)', marginBottom: 6 }}>Theme</p>
+      <div style={{ display: 'flex', gap: 4, marginBottom: 16 }}>
+        {['light','dark','system'].map(t => (
+          <button key={t} onClick={() => onTheme(t)} style={{
+            flex: 1, padding: '4px 0',
+            background: theme === t ? 'var(--fg)' : 'transparent',
+            color: theme === t ? 'var(--bg)' : 'var(--fg)',
+            border: '1px solid var(--mid)', cursor: 'pointer',
+            font: 'inherit', textTransform: 'capitalize',
+          }}>{t}</button>
+        ))}
+      </div>
+
+      <p style={{ color: 'var(--mid)', marginBottom: 6 }}>Font</p>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        {FONT_OPTIONS.map(o => (
+          <button key={o.label} onClick={() => onFont(o.label)} style={{
+            textAlign: 'left', padding: '6px 8px',
+            background: font === o.label ? 'var(--fg)' : 'transparent',
+            color: font === o.label ? 'var(--bg)' : 'var(--fg)',
+            border: 'none', cursor: 'pointer',
+            fontFamily: o.stack, fontSize: 13,
+          }}>{o.label}</button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
