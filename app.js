@@ -114,7 +114,7 @@ function parseInternalRoute(internalPath, hash = "") {
 
   const segs = clean.split("/").filter(Boolean);
   if (segs[0] === "apps") {
-    if (segs.length === 1) return { kind: "apps", path: "/apps", hash };
+    if (segs.length === 1) return { kind: "home", path: "/", hash };
     if (segs.length === 2) return { kind: "app", path: clean, slug: segs[1], hash };
   }
   if (segs[0] === "writing") {
@@ -126,7 +126,6 @@ function parseInternalRoute(internalPath, hash = "") {
 
 const ROUTES = {
   home: "/",
-  apps: "/apps",
   writing: "/writing",
   app: slug => `/apps/${slug}`,
   article: slug => `/writing/${slug}`,
@@ -167,11 +166,7 @@ function updatePageMetadata(route, app, article) {
   let description = "iOS and macOS developer in Vancouver.";
   let canonical = routeHref(route.path);
 
-  if (route.kind === "apps") {
-    title = `Apps · ${baseTitle}`;
-    description = "Selected apps and projects by Bosco Ho.";
-    canonical = routeHref("/apps");
-  } else if (route.kind === "app" && app) {
+  if (route.kind === "app" && app) {
     title = `${app.name} · Apps · ${baseTitle}`;
     description = app.desc || `${app.year} ${app.tags}`.trim();
     canonical = routeHref(route.path);
@@ -538,8 +533,8 @@ function AppDetail({ app, navigate, theme, onTheme }) {
   return (
     <div style={{ animation: "fadeUp 0.2s ease", padding: "40px var(--gap)" }}>
       <div className="detail-topbar" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 14, marginBottom: "32px" }}>
-        <RouteLink to={ROUTES.apps} navigate={navigate} style={{ color: "var(--mid)", textDecoration: "underline" }}>
-          ← All apps
+        <RouteLink to={ROUTES.home} navigate={navigate} style={{ color: "var(--mid)", textDecoration: "underline" }}>
+          ← Home
         </RouteLink>
         <CompactThemeToggle theme={theme} onTheme={onTheme} />
       </div>
@@ -744,38 +739,6 @@ function ArticleDetail({ article, navigate, theme, onTheme, routeHash }) {
   );
 }
 
-function AllApps({ navigate, theme, onTheme }) {
-  return (
-    <div style={{ animation: "fadeUp 0.2s ease", padding: "40px var(--gap)" }}>
-      <div className="detail-topbar" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 14, marginBottom: "32px" }}>
-        <RouteLink to={ROUTES.home} navigate={navigate} style={{ color: "var(--mid)", textDecoration: "underline" }}>
-          ← Home
-        </RouteLink>
-        <CompactThemeToggle theme={theme} onTheme={onTheme} />
-      </div>
-
-      <div style={{ maxWidth: "620px" }}>
-        <p style={{ fontWeight: 600, marginBottom: "4px" }}>All apps</p>
-        <p style={{ color: "var(--mid)", marginBottom: "28px" }}>{DATA.apps.length} total</p>
-        {DATA.apps.map(app => (
-          <RouteLink
-            key={app.slug}
-            to={ROUTES.app(app.slug)}
-            navigate={navigate}
-            className="app-row"
-            style={{ display: "block", textDecoration: "none", color: "inherit", marginBottom: "10px", marginTop: app.groupStart ? "20px" : undefined }}
-          >
-            <span style={{ textDecoration: "underline" }}>{app.name}</span>
-            {app.year && <span style={{ color: "var(--mid)" }}> — {app.year}</span>}
-            {app.tags && <span style={{ color: "var(--mid)" }}> · {app.tags}</span>}
-            {app.desc && <span style={{ color: "var(--mid)" }}> · {app.desc}</span>}
-          </RouteLink>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 function AllArticles({ navigate, theme, onTheme }) {
   const groups = [];
   DATA.articles.forEach(article => {
@@ -932,11 +895,6 @@ function HomePage({ navigate, theme, onTheme }) {
               {app.tags && <span style={{ color: "var(--mid)" }}> · {app.tags}</span>}
             </RouteLink>
           ))}
-          {DATA.apps.length > 10 && (
-            <RouteLink to={ROUTES.apps} navigate={navigate} className="nav-link" style={{ marginTop: "10px" }}>
-              <span className="nav-link-title">View all {DATA.apps.length} apps →</span>
-            </RouteLink>
-          )}
         </div>
 
         <div style={{ paddingRight: "40px", marginBottom: "32px" }}>
@@ -1011,9 +969,6 @@ function NotFoundPage({ navigate, theme, onTheme }) {
       <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
         <RouteLink to={ROUTES.home} navigate={navigate} className="nav-link">
           <span className="nav-link-title">Home</span>
-        </RouteLink>
-        <RouteLink to={ROUTES.apps} navigate={navigate} className="nav-link">
-          <span className="nav-link-title">Apps</span>
         </RouteLink>
         <RouteLink to={ROUTES.writing} navigate={navigate} className="nav-link">
           <span className="nav-link-title">Writing</span>
@@ -1226,8 +1181,6 @@ function App() {
   let page = null;
   if (route.kind === "home") {
     page = <HomePage navigate={navigate} theme={theme} onTheme={onTheme} onFont={onFont} />;
-  } else if (route.kind === "apps") {
-    page = <AllApps navigate={navigate} theme={theme} onTheme={onTheme} />;
   } else if (route.kind === "app") {
     const app = APP_BY_SLUG.get(route.slug);
     page = app ? <AppDetail app={app} navigate={navigate} theme={theme} onTheme={onTheme} /> : <NotFoundPage navigate={navigate} theme={theme} onTheme={onTheme} />;
