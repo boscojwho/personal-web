@@ -6,7 +6,7 @@
   <title>Bosco Ho</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=Inter:wght@400;500;600&family=Geist:wght@400;500;600&family=Space+Grotesk:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet" />
   <script src="https://unpkg.com/marked@9.1.6/marked.min.js"></script>
   <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
   <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
@@ -301,19 +301,51 @@ const DATA = {
 
   apps: [
     {
-      name: "HK Characters", year: "2023", tags: "iOS · SwiftUI",
-      icon: "assets/icons/hkscs_icon.png",
-      bg: '#C0392B', label: 'H',
-      desc: "", body: [], links: [],
-    },
-    {
-      name: "Castro", year: "2023", tags: "iOS",
+      name: "Castro", year: "2018–2020, 2025–2026", tags: "iOS · Apple Watch",
       icon: "assets/icons/castro_icon.png",
       bg: '#5856D6', label: 'C',
       desc: "", body: [], links: [],
     },
     {
-      name: "Chinotto", year: "2022", tags: "macOS · Open Source",
+      name: "RunGo", year: "2014–2016", tags: "iOS · Pebble · Apple Watch",
+      icon: "assets/icons/rungo_icon_old.png",
+      bg: '#E74C3C', label: 'R',
+      desc: "", body: [],
+      links: [{ label: 'rungoapp.com', url: 'https://www.rungoapp.com/' }],
+    },
+    {
+      name: "HK Characters", year: "2024", tags: "iOS · SwiftUI", groupStart: true,
+      icon: "assets/icons/hkscs_icon.png",
+      bg: '#C0392B', label: 'H',
+      desc: "", body: [], links: [],
+    },
+    {
+      name: "Fencathon 2", year: "2016", tags: "iOS",
+      icon: "assets/icons/fencathon_2_logo.png",
+      bg: '#2980B9', label: 'F',
+      desc: "", body: [], links: [],
+    },
+    {
+      name: "Fencathon 1", year: "2014", tags: "iOS",
+      icon: "assets/icons/fencathon_1_logo.png",
+      bg: '#1ABC9C', label: 'F',
+      desc: "", body: [], links: [],
+    },
+    {
+      name: "At-The-Piste", year: "2014", tags: "iOS",
+      icon: "assets/icons/atp_logo.png",
+      bg: '#8E44AD', label: 'A',
+      desc: "", body: [], links: [],
+    },
+    {
+      name: "PipPy", year: "2024", tags: "macOS · SwiftUI · Open Source", groupStart: true,
+      icon: "assets/icons/pippy_icon.png",
+      bg: '#3572A5', label: 'P',
+      desc: "A GUI app for Python Pip package manager on macOS.", body: [],
+      links: [{ label: 'GitHub', url: 'https://github.com/boscojwho/PipPy' }],
+    },
+    {
+      name: "Chinotto", year: "2023", tags: "macOS · Open Source",
       icon: "assets/icons/chinotto_placeholder_logo.png",
       bg: '#27AE60', label: 'N',
       desc: "", body: [],
@@ -325,31 +357,6 @@ const DATA = {
       bg: '#E67E22', label: 'M',
       desc: "", body: [],
       links: [{ label: 'GitHub', url: 'https://github.com/mlemgroup/mlem' }],
-    },
-    {
-      name: "Fencathon", year: "", tags: "iOS",
-      icon: "assets/icons/fencathon_2_logo.png",
-      bg: '#2980B9', label: 'F',
-      desc: "", body: [], links: [],
-    },
-    {
-      name: "Fencathon", year: "", tags: "iOS",
-      icon: "assets/icons/fencathon_1_logo.png",
-      bg: '#1ABC9C', label: 'F',
-      desc: "", body: [], links: [],
-    },
-    {
-      name: "ATP", year: "", tags: "iOS",
-      icon: "assets/icons/atp_logo.png",
-      bg: '#8E44AD', label: 'A',
-      desc: "", body: [], links: [],
-    },
-    {
-      name: "RunGo", year: "", tags: "iOS",
-      icon: "assets/icons/rungo_icon_old.png",
-      bg: '#E74C3C', label: 'R',
-      desc: "", body: [],
-      links: [{ label: 'rungoapp.com', url: 'https://www.rungoapp.com/' }],
     },
   ],
 
@@ -861,11 +868,11 @@ function AllApps({ onBack, onApp, theme, onTheme }) {
           <a key={i} href="#"
             onClick={e => { e.preventDefault(); onApp(i); }}
             className="app-row"
-            style={{ display: 'block', textDecoration: 'none', color: 'inherit', marginBottom: '10px' }}>
+            style={{ display: 'block', textDecoration: 'none', color: 'inherit', marginBottom: '10px', marginTop: a.groupStart ? '20px' : undefined }}>
             <span style={{ textDecoration: 'underline' }}>{a.name}</span>
-            <span style={{ color: 'var(--mid)' }}> — {a.year}</span>
-            <br />
-            <span style={{ color: 'var(--mid)' }}>{a.tags} · {a.desc}</span>
+            {a.year && <span style={{ color: 'var(--mid)' }}> — {a.year}</span>}
+            {a.tags && <span style={{ color: 'var(--mid)' }}> · {a.tags}</span>}
+            {a.desc && <span style={{ color: 'var(--mid)' }}> · {a.desc}</span>}
           </a>
         ))}
       </div>
@@ -930,11 +937,28 @@ function MainGrid({ onArticle, onApp, onAllApps, onAllArticles, theme, onTheme }
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '14px', marginBottom: '4px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
             <p style={{
-              fontWeight: 700, fontSize: '19px',
-              letterSpacing: '-0.01em',
-              fontStretch: '125%',
-              fontVariationSettings: '"wdth" 125',
-            }}>{DATA.name}</p>
+              fontWeight: 800, fontSize: '21px',
+              fontFamily: "'Plus Jakarta Sans', sans-serif",
+              perspective: '300px',
+              display: 'inline-flex', letterSpacing: '-0.01em',
+            }}>{[...DATA.name].map((char, i) => {
+              const transforms = [
+                'rotateY(-10deg) rotateX(4deg)',   // B
+                'rotateY(7deg) rotateX(-5deg)',    // o
+                'rotateY(-6deg) rotateX(6deg)',    // s
+                'rotateY(11deg) rotateX(-3deg)',   // c
+                'rotateY(-8deg) rotateX(5deg)',    // o
+                '',                                // space
+                'rotateY(9deg) rotateX(-4deg)',    // H
+                'rotateY(-7deg) rotateX(3deg)',    // o
+              ];
+              return (
+                <span key={i} style={{
+                  display: 'inline-block',
+                  transform: transforms[i] || 'none',
+                }}>{char === ' ' ? ' ' : char}</span>
+              );
+            })}</p>
             <div style={{ display: 'flex', alignItems: 'center', perspective: '600px' }}>
               {DATA.apps.map((a, i) => {
                 const tilts = [
@@ -1003,12 +1027,11 @@ function MainGrid({ onArticle, onApp, onAllApps, onAllArticles, theme, onTheme }
             onMouseEnter={() => setHoverIcon(i)}
             onMouseLeave={() => setHoverIcon(null)}
             className={'app-row' + (flashApp === i ? ' is-flash' : '') + (hoverIcon === i ? ' is-hover' : '')}
-            style={{ display: 'block', textDecoration: 'none', color: 'inherit' }}
+            style={{ display: 'block', textDecoration: 'none', color: 'inherit', marginTop: a.groupStart ? '20px' : undefined }}
           >
             <span style={{ textDecoration: 'underline' }}>{a.name}</span>
-            <span style={{ color: 'var(--mid)' }}> — {a.year}</span>
-            <br />
-            <span style={{ color: 'var(--mid)' }}>{a.tags}</span>
+            {a.year && <span style={{ color: 'var(--mid)' }}> — {a.year}</span>}
+            {a.tags && <span style={{ color: 'var(--mid)' }}> · {a.tags}</span>}
           </a>
         ))}
         {DATA.apps.length > 10 && (
