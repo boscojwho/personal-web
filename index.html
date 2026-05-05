@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Alex Mercer</title>
+  <title>Bosco Ho</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=Inter:wght@400;500;600&family=Geist:wght@400;500;600&family=Space+Grotesk:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
@@ -290,357 +290,235 @@ document.documentElement.setAttribute('data-theme', TWEAK_DEFAULTS.theme);
 // ─── DATA ─────────────────────────────────────────────────────────────────────
 
 const DATA = {
-  name:     "Alex Mercer",
-  tagline:  "Designer & developer working at the intersection of craft and code.",
-  location: "San Francisco, CA",
+  name:     "Bosco Ho",
+  location: "Vancouver, BC",
 
   links: [
-    { label: "GitHub",    url: "#" },
-    { label: "Read.cv",   url: "#" },
-    { label: "Twitter",   url: "#" },
-    { label: "Email",     url: "#" },
+    { label: "GitHub",   url: "https://github.com/boscojwho" },
+    { label: "Mastodon", url: "https://mastodon.social/@sideshow_boz" },
+    { label: "RSS",      url: "feed.xml" },
   ],
 
   apps: [
     {
-      name: "Tempo", year: "2024", tags: "iOS · SwiftUI",
-      bg: '#FF6B6B', label: 'T',
-      variants: [
-        { bg: '#FF6B6B', label: 'T' },
-        { bg: '#1F2937', label: 'T' },
-        { bg: '#F4B942', label: 'T' },
-      ],
-      desc: "Minimalist time-blocking for people who find calendars stressful.",
-      body: [
-        { kind: 'p', text: "Tempo started as a personal frustration with how calendar apps treat time. Most of them are inventory tools — they show you what you've committed to. Tempo treats time as something you allocate intentionally, in blocks, before the day starts." },
-        { kind: 'h', text: "How it works" },
-        { kind: 'p', text: "Each morning, you pull blocks from a small palette into the day. Each block has a color and an intention. As the day progresses, blocks move from 'planned' to 'lived' — you can adjust on the fly without the bookkeeping of moving meetings around." },
-        { kind: 'h', text: "What I learned" },
-        { kind: 'p', text: "The hardest part wasn't the interaction model — it was getting people to trust that time spent planning isn't time wasted. The onboarding flow went through nine versions before settling on a 30-second guided block." },
-      ],
+      name: "HK Characters", year: "2023", tags: "iOS · SwiftUI",
+      bg: '#C0392B', label: 'H',
+      desc: "",
+      body: [],
+      links: [],
+    },
+    {
+      name: "Castro", year: "2023", tags: "iOS",
+      bg: '#5856D6', label: 'C',
+      desc: "",
+      body: [],
+      links: [],
+    },
+    {
+      name: "Chinotto", year: "2022", tags: "macOS · Open Source",
+      bg: '#27AE60', label: 'N',
+      desc: "",
+      body: [],
       links: [
-        { label: 'App Store',  url: '#' },
-        { label: 'Case study', url: '#' },
+        { label: 'GitHub', url: 'https://github.com/boscojwho/Chinotto' },
       ],
     },
     {
-      name: "Patchwork", year: "2023", tags: "Web · React",
-      bg: '#4D9DE0', label: 'P',
-      variants: [
-        { bg: '#4D9DE0', label: 'P' },
-        { bg: '#7B5EA7', label: 'P' },
-      ],
-      desc: "Local-first journaling with structured daily templates.",
-      body: [
-        { kind: 'p', text: "Patchwork is a journal that grows with you. It started as a single template — morning, mid-day, evening prompts — and grew into a small library of prompt sets you can mix." },
-        { kind: 'h', text: "Local-first" },
-        { kind: 'p', text: "All entries live on your device by default. Sync is opt-in and end-to-end encrypted. The app works offline, opens instantly, and never holds your writing hostage to a server." },
-        { kind: 'h', text: "Templates" },
-        { kind: 'p', text: "You can author templates in plain Markdown with a small set of slot directives. The app understands time-of-day, mood scales, and freeform fields." },
-      ],
+      name: "Mlem", year: "2023", tags: "iOS · Open Source",
+      bg: '#E67E22', label: 'M',
+      desc: "",
+      body: [],
       links: [
-        { label: 'patchwork.app', url: '#' },
-        { label: 'GitHub',        url: '#' },
-      ],
-    },
-    {
-      name: "Carto", year: "2022", tags: "Electron · Canvas",
-      bg: '#3BB273', label: 'C',
-      desc: "Spatial note-taking built around a freeform canvas.",
-      body: [
-        { kind: 'p', text: "Carto is what happens when you stop forcing notes into trees and folders. Every note lives somewhere on a shared infinite canvas. Spatial proximity becomes the organizing principle." },
-        { kind: 'h', text: "Why a canvas" },
-        { kind: 'p', text: "The act of placing a note next to another note is itself a kind of writing. You can group, cluster, and sketch relationships without naming them. When the meaning is ready, you promote it to text." },
-        { kind: 'h', text: "Performance" },
-        { kind: 'p', text: "Rendering 50,000 nodes at 120 fps required a custom GPU-backed renderer with virtualized hit-testing. The codebase is mostly TypeScript with a thin C++ core for the spatial index." },
-      ],
-      links: [
-        { label: 'carto.app',  url: '#' },
-        { label: 'Tech notes', url: '#' },
-      ],
-    },
-    {
-      name: "Dwell", year: "2021", tags: "Web · Web Audio",
-      bg: '#E1BC29', label: 'D',
-      variants: [
-        { bg: '#E1BC29', label: 'D' },
-        { bg: '#2C5F7E', label: 'D' },
-      ],
-      desc: "Ambient sound mixer with curated atmospheres.",
-      body: [
-        { kind: 'p', text: "Dwell is a small web app for building soundscapes. Eight layers of ambient texture, each with its own gain and a few timbral controls. Mix until the room feels right." },
-        { kind: 'h', text: "Field recordings" },
-        { kind: 'p', text: "Most layers are first-party field recordings made over a year of travel — a fjord in Norway, a cafe in Lisbon, the underground level of a parking garage at 3am. Some layers are synthesized." },
-        { kind: 'h', text: "Why the browser" },
-        { kind: 'p', text: "Web Audio is genuinely good now. The latency is low enough, the API is rich, and it lets the app live anywhere without an install step." },
-      ],
-      links: [
-        { label: 'dwell.fm', url: '#' },
+        { label: 'GitHub', url: 'https://github.com/mlemgroup/mlem' },
       ],
     },
   ],
 
   articles: [
     {
-      title: "On the patience required to design well",
-      date:  "Mar 2026",
-      body: `## The problem with speed
-
-Everyone is in a hurry. Deadlines compress, stakeholders push, and the culture of shipping fast has become so normalized that slowness feels like a moral failing.
-
-But good design doesn't emerge from speed. It emerges from iteration, reflection, and the willingness to throw away something almost-right in search of something better.
-
-## What patience actually looks like
-
-Patience in design is not passive. It's not waiting around. It's the active practice of sitting with a problem long enough to understand it properly before reaching for solutions.
-
-It means resisting the first idea. The first idea is almost always a reflex — a pattern you've seen before, applied to a new surface. It feels right because it's familiar. It rarely is.
-
-## The cost of impatience
-
-Impatient design is everywhere. You can feel it in products that almost work — where the interactions are slightly off, where the copy doesn't quite match the context, where the visual hierarchy tells you one thing and the behavior tells you another.
-
-These aren't failures of skill. They're failures of time. The designer knew, on some level, that something was wrong. They shipped anyway.
-
-## A practice, not a talent
-
-Patience can be cultivated. It starts with giving yourself permission to not know yet — to hold the problem open a little longer, to make one more prototype, to ask one more question.
-
-The best designers I've worked with aren't the fastest. They're the most comfortable with uncertainty.`
-    },
-    {
-      title: "Why I keep redesigning my own portfolio",
-      date:  "Mar 2026",
-      body: `## A useful exercise
-
-My own site is the project I've redesigned more than any other. Every six months or so I scrap most of it and start again. It's a habit that sounds wasteful but has paid off more than any course I've taken.
-
-## The shape of the practice
-
-Each time I rebuild, I pick one constraint to obey and one assumption to test. The constraint forces me out of my defaults. The assumption forces me to defend a choice.
-
-This time it was "no images" and "text-first as a feature, not a fallback." Both have changed how I think about layout in client work.
-
-## What it teaches
-
-Designing for yourself is one of the few places where the brief is fully under your control. That's a gift. Use it to test ideas you can't sell to a client yet.`
-    },
-    {
-      title: "What I learned shipping a native app alone",
-      date:  "Nov 2025",
-      body: `## You already know enough
-
-The most surprising thing about shipping Tempo was realizing, about halfway through, that I'd known enough to build it for years. The delay wasn't technical. It was psychological.
-
-## The solo bottleneck
-
-When you're building alone, every decision lands on you. There's no one to sanity-check the interaction model, no designer to push back on a bad layout, no PM to question a feature that seemed important at 2am.
-
-## What actually slows you down
-
-It's not the hard parts. The hard parts — the architecture, the sync engine, the edge cases — those get solved eventually. You grind through them.
-
-What slows you down is the soft stuff. The naming. The onboarding. The App Store description. The icon.
-
-## What I'd tell myself
-
-Start smaller. Ship sooner. The feedback you get from real users in week one is worth more than six months of solo iteration.`
-    },
-    {
-      title: "A small system for keeping focus during long projects",
-      date:  "Nov 2025",
-      body: `## The drift problem
-
-Long projects drift. Not all at once — a small compromise here, a deferred decision there, and six weeks later the thing in front of you only resembles the thing you set out to build.
-
-## Anchors
-
-I keep three anchors visible at my desk during any project that runs longer than a month: a one-line description of who it's for, a list of three things it does not do, and the rough shape of the first version. Whenever a decision feels heavy, I check it against these.
-
-## Why it works
-
-Focus isn't really a personal trait. It's a function of how loudly your priorities are declared and how often you're forced to reconcile against them.`
-    },
-    {
-      title: "How I think about the cost of features",
-      date:  "Nov 2025",
-      body: `## Features aren't free
-
-Every feature you ship is a future support ticket, a future bug, a future conversation about deprecation. The build cost is the smallest part of the total cost.
-
-## A simple test
-
-Before I add anything new, I write down three sentences: who asked for this, what would they do without it, and what does adding it prevent us from doing later. If those three sentences don't sit comfortably together, I wait.
-
-## What this looks like
-
-Most features that pass this test are smaller than the original idea. That's the point. The smaller version usually carries 80% of the value at 20% of the long-term cost.`
-    },
-    {
-      title: "Notes on writing better changelogs",
-      date:  "Nov 2025",
-      body: `## Changelogs are a design surface
-
-The changelog is one of the few places where users feel the human shape of a product. Most are written like internal commit summaries. They don't have to be.
-
-## Three rules
-
-Lead with what changed for the reader, not what we did. Group related items together so the story is legible. End with a small note in the team's voice — a thanks, a confession, a tease about what's next.
-
-## What it earns you
-
-A changelog people actually read becomes a slow, durable channel for trust. It's worth more than most marketing.`
-    },
-    {
-      title: "The underrated power of negative space in UI",
-      date:  "Aug 2025",
-      body: `## Space is not decoration
-
-Most designers learn about whitespace early. It shows up in every design principles list. And yet it remains one of the most consistently misapplied concepts in interface design.
-
-## What space actually does
-
-Space creates grouping. Elements that are close together are perceived as related; elements that are far apart are perceived as distinct.
-
-Space creates hierarchy. A heading with generous space above it signals a new section.
-
-Space creates breathing room. Dense interfaces feel anxious. Airy interfaces feel calm.
-
-## A simple heuristic
-
-When something feels cluttered, the answer is rarely to remove elements. It's to increase the space between them. Start by doubling your margins. See what happens.`
-    },
-    {
-      title: "On the discipline of cutting half your ideas",
-      date:  "Aug 2025",
-      body: `## The first cut
-
-Most projects I've worked on improved the moment I deleted something. Rarely a feature — more often a section, a paragraph, a panel of metadata I'd assumed was load-bearing.
-
-## Why it works
-
-A design with too many ideas asks too much of the viewer. Each element competes for attention with every other element. Cutting half your ideas doesn't lose half the value — it concentrates the remaining half until each one carries its weight.
-
-## The hard part
-
-The hard part isn't deciding what to cut. The hard part is admitting that the thing you spent a week on is the thing weakening the result. Practice doing it anyway. The second time is easier.`
-    },
-    {
-      title: "Against the hero section",
-      date:  "Apr 2025",
-      body: `## The hero section is a stall
-
-Every portfolio has one. A full-viewport block with a name, a tagline, and a call to action. Sometimes an abstract illustration. Sometimes a looping video. Always a scroll prompt.
-
-It's theater. It performs the presence of a website without committing to any actual content.
-
-## What visitors actually want
-
-Someone landing on your portfolio wants to know: can this person do the thing I need? They want to see work. They want to read your perspective. They want to understand your process.
-
-## The alternative
-
-Get to the point. Lead with your work. Put your most interesting project first, above the fold, with enough context to make someone want to keep reading.`
-    },
-    {
-      title: "Notes on using type as the primary design element",
-      date:  "Jan 2025",
-      body: `## An experiment
-
-Last year I redesigned my portfolio with a single constraint: no images, no icons, no decorative elements of any kind. Only type, spacing, and color.
-
-I expected to feel limited. Instead, I felt free. Removing the crutches forced me to make the typography work harder — and in doing so, I learned more about type in three weeks than in the previous three years.
-
-## What type can carry
-
-Typography is capable of far more than most interfaces ask of it. Size creates hierarchy. Weight creates emphasis. Letter-spacing creates register — tight for display, open for labels. Line-height controls density and pace.
-
-A well-set paragraph is a designed object. Most interfaces treat it as a container for content rather than content itself. The text is something to be "filled in" after the real design decisions are made. This is exactly backwards.
-
-## The variables that matter most
-
-**Size ratio.** The contrast between your largest and smallest type determines how much visual drama the page has. Most interfaces are too compressed — everything sits within a 12–18px range and nothing stands out.
-
-**Weight.** A single weight can work, but the jump from light (300) to medium (500) is often more interesting than bold. Bold is a hammer — effective, but blunt.
-
-**Spacing.** Generous line-height (1.7–1.9 for body text) makes prose readable and gives the page air. Tight line-height (1.1–1.2) makes display text feel intentional and compressed.
-
-**Tracking.** Letter-spacing on uppercase labels (0.08–0.15em) signals metadata, navigation, supporting information.
-
-## On choosing typefaces
-
-A typeface is not decoration. It carries tone before a single word is read. A grotesque sans feels different from a humanist sans feels different from a geometric sans.
-
-The mistake most designers make is optimizing for novelty. An unusual typeface feels like a design decision, so it reads as intentional. But novelty fades. What lasts is how the type behaves at 14px in a dense paragraph at 11pm on a tired reader's phone.
-
-## Rhythm and pace
-
-Reading is temporal. A page of text is not experienced all at once — it's experienced in time, sentence by sentence, paragraph by paragraph. Good typography controls that pace.
-
-Short paragraphs create speed. Long paragraphs slow the reader down. Section headers are rest stops.
-
-## What gets removed
-
-When type is doing everything, you start to notice how many design elements exist to compensate for weak typography.
-
-Borders that separate things type-hierarchy could separate. Colors that signal importance that weight could signal. Icons that label things the words themselves could label.
-
-## The result
-
-The portfolio I built under this constraint is the one you're reading now. It's the design I've received the most comments on, and almost all of them have been about how it feels to read.
-
-That's the point. Type is not the absence of design. It's design in its most direct form — meaning, made visible.
-
-## What to try
-
-If you want to test this yourself, pick a page in your current project and remove everything that isn't text. Then ask: is the hierarchy still clear? Can you tell what's important? Does the page have rhythm?
-
-If the answer is no, you don't have a visual design problem. You have a typography problem. Fix that first.`
-    },
-    {
-      title: "Why constraints make better designers",
-      date:  "Sep 2024",
-      body: `## The myth of total freedom
-
-A blank canvas is rarely a gift. Most designers do their best work when something has been taken away — a budget, a timeline, a palette, a single constraint imposed on the rest.
-
-## What constraints really do
-
-They don't limit creativity. They focus it. A tight constraint forces you to look harder at what you have rather than wishing for what you don't.
-
-## A small habit
-
-Before starting any new project, I write down two constraints I'll respect for the duration. Sometimes they're technical, sometimes formal, sometimes purely about taste. They become the thing I lean on when the work gets hard.`
-    },
-    {
-      title: "Designing for boring tasks",
+      title: "Text Variant Preference View Modifier in SwiftUI",
       date:  "Jun 2024",
-      body: `## The unglamorous middle
+      body: `> 💡 TL;DR: Use the \`.textVariant(.sizeDependent)\` view modifier to automatically format and fit text inside \`Text\` view's size.
 
-Most software people use every day handles boring tasks: filing receipts, scheduling appointments, tracking inventory. The design discourse rarely talks about them. That's a mistake.
+I stumbled upon this new SwiftUI view modifier called \`.textVariant(...)\` while looking for a way to scale font size to fit inside any \`Text\` view. It makes rendering text that can be formatted in various variants easier — think short or long dates — without needing conditional views or \`ViewThatFits\`.
 
-## Where the real wins are
+### Use Case
 
-Tools for boring tasks have a strict honesty test. Either they save time or they don't. There's no aesthetic justification that survives the user's actual stopwatch.
+Imagine a \`Text\` view displaying the date a record was updated. We can achieve this in a few ways in SwiftUI:
 
-## What it teaches
+\`\`\`swift
+Text(Date.distantPast, style: .date)
+Text(Date.distantPast, format: .dateTime)
+// e.g. DateFormatter where dateStyle = .full
+Text(Date.distantPast, formatter: Self.dateFormatter)
+\`\`\`
 
-Designing for boring tasks teaches you to value clarity over delight, throughput over polish. Those skills make you better at the more glamorous work, too.`
+This code resolves to the following views:
+
+![](/assets/blog/Screenshot_2024-06-18_at_6.55.32_PM.png)
+
+However, this could be an issue if the \`Text\` view's width is forced to shrink to accommodate other content, and is constrained to a line limit of 1.
+
+![](/assets/blog/Screenshot_2024-06-18_at_6.59.23_PM.png)
+
+Previously, we would have to use \`ViewThatFits\` or conditional views to avoid truncation:
+
+\`\`\`swift
+ViewThatFits {
+    Text(Date.distantPast, formatter: Self.fullDateFormatter)
+    Text(Date.distantPast, formatter: Self.longDateFormatter)
+    Text(Date.distantPast, formatter: Self.mediumDateFormatter)
+    Text(Date.distantPast, formatter: Self.shortDateFormatter)
+}
+.lineLimit(1)
+\`\`\`
+
+Now, new in iOS 18, we can achieve this with a single call to \`.textVariant(.sizeDependent)\`:
+
+\`\`\`swift
+Text(Date.distantPast, format: .dateTime)
+    .textVariant(.sizeDependent)
+    .lineLimit(1)
+\`\`\`
+
+The text variant modifier generates even shorter variants than \`DateFormatter\` offers out of the box:
+
+![](/assets/blog/Screenshot_2024-06-19_at_1.08.27_AM.png)
+
+It's worth noting this modifier differs from \`ViewThatFits\` "both in usage and behavior" ([see Apple's docs](https://developer.apple.com/documentation/swiftui/textvariantpreference/sizedependent#Difference-to-doccomappleSwiftUIdocumentationSwiftUIViewThatFits)).
+
+This API works on all Apple platforms — visionOS, macOS, iOS — and works with other new format styles like \`.stopwatch(...)\` in iOS 18.
+
+### References
+
+- Full working example: [gist.github.com/boscojwho](https://gist.github.com/boscojwho/a21ede6943a435ea600fd51cab2f24fb)
+- [Text.textVariant(_:)](https://developer.apple.com/documentation/swiftui/text/textvariant(_:))
+- [TextVariantPreference](https://developer.apple.com/documentation/swiftui/textvariantpreference)`
     },
     {
-      title: "On staying small as a studio",
-      date:  "Mar 2024",
-      body: `## Growth isn't a virtue
+      title: "Unicode + Swift: Transforming Mandarin Pinyin Diacritics into IPA (Numeric) Form",
+      date:  "Jun 2024",
+      body: `> 💡 A brief note on converting Mandarin Pinyin diacritic tone marks into numeric form. Code examples are written in Swift for Apple platforms.
 
-There's a quiet assumption in studio life that bigger is better. More clients, more billables, more headcount. I've come to think the opposite is closer to true for most of us.
+### Why
 
-## What small earns you
+Unicode's "Unihan" working group includes Mandarin pronunciations for CJKV logographs written in Pinyin, encoding tone marks as diacritics.
 
-A small studio can say no. It can take fewer projects, do them more carefully, and keep the people involved closer to the work. The economics are simpler. The decisions are quicker. The quality of the work has fewer hands diluting it.
+Apple's \`AVSpeechSynthesizer\` has trouble reproducing some Pinyin pronunciations when tone marks are encoded as Combining Diacritical Marks. The same synthesizers correctly reproduce speech when pronunciations are written using numeric tone marks in IPA form.
 
-## The cost
+This means we need a way to convert diacritic tone marks into IPA (numeric) form.
 
-Small means less leverage and fewer big swings. That's a real trade. But for the kind of work I want to do, it's a trade I'd make again every time.`
+### Background on Pinyin
+
+In Mandarin, Pinyin includes four tone marks (plus a neutral tone):
+
+| Tone | Diacritic | Numeral | Example |
+|:---:|:---:|:---:|:---:|
+| First | ◌̄ | 1 | mā (ma1) |
+| Second | ◌́ | 2 | má (ma2) |
+| Third | ◌̌ | 3 | mǎ (ma3) |
+| Fourth | ◌̀ | 4 | mà (ma4) |
+
+Pinyin can be written in two forms: IPA form (\`chuang1\`) or diacritic form (\`chuāng\`). We need to convert from the latter to the former.
+
+### Technical Discussion
+
+Most Pinyin letters with tone marks consist of a "base" character and a single **Combining Diacritic Mark**. The letter \`ā\` is a Unicode compositional character: \`a\` (\`U+0061\`) + macron (\`U+0304\`) = \`U+0101\`.
+
+Swift's \`String\` supports character decomposition via \`decomposedStringWithCanonicalMapping\`, which separates the base letter from its diacritic.
+
+**Canonical vs compatibility mapping:** Canonical equivalence is a fundamental equivalency between characters representing the same abstract character. Compatibility equivalence is weaker — characters may have distinct visual appearances. For decomposing Pinyin, canonical mapping is the right choice.
+
+![Canonical equivalence examples](/assets/blog/Screenshot_2024-06-13_at_5_07_29_PM.png)
+
+![Compatibility equivalence examples](/assets/blog/Screenshot_2024-06-13_at_5_12_20_PM.png)
+
+### Code Snippets
+
+Decompose a Pinyin letter to retrieve its tone mark:
+
+\`\`\`swift
+let decomposedString = "chuāng".decomposedStringWithCanonicalMapping
+let scalarView = decomposedString.unicodeScalars
+// ["c", "h", "u", "a", "\\u{0304}", "n", "g"]
+// The combining diacritic comes after the letter it modifies.
+\`\`\`
+
+Match the diacritic codepoint to a tone number:
+
+\`\`\`swift
+// Lookup table — Combining Diacritic Marks
+let diacriticToNumeric: [Unicode.Scalar: Int] = [
+    "\\u{0304}": 1,  // First tone  (macron)
+    "\\u{0301}": 2,  // Second tone (acute)
+    "\\u{030C}": 3,  // Third tone  (caron)
+    "\\u{0300}": 4,  // Fourth tone (grave)
+]
+\`\`\`
+
+Then concatenate the stripped base reading with the numeric value:
+
+\`\`\`swift
+// e.g. "chuang" + 1 = "chuang1"
+let pinyinIPA = strippedBase + String(toneNumeric)
+\`\`\`
+
+I've implemented **PinyinParse** to wrap this in one line:
+
+\`\`\`swift
+Pinyin(diacriticForm: $0.pinyinReading).ipaForm
+\`\`\`
+
+Full implementation: [PinyinParse on GitHub](https://github.com/boscojwho/PinyinParse)`
+    },
+    {
+      title: "Navigation Split View — 3 Columns for Non-List Views",
+      date:  "Apr 2024",
+      body: `For some reason, using split view's three-column API doesn't work as expected on iPhone (compact size) when the content column is a non-List view. There is a workaround.
+
+\`\`\`swift
+// This works
+NavigationSplitView {
+    sidebar
+} content: {
+    List(selection: ...) { ... }
+} detail: {
+    detail
+}
+
+// This doesn't
+NavigationSplitView {
+    sidebar
+} content: {
+    CustomView() // e.g. LazyVGrid
+} detail: {
+    detail
+}
+\`\`\`
+
+Turns out you can use \`NavigationLink\` and \`NavigationStack\` in a two-column setup, and it will still show three columns in regular size. The system collapses views into a \`NavigationStack\` in compact size.
+
+\`\`\`swift
+// Workaround
+NavigationSplitView {
+    sidebar
+} content: {
+    NavigationStack {
+        CustomNonListView() { // e.g. LazyVGrid
+            NavigationLink(value: item) { ... }
+        }
+        .navigationDestination(for: Item.self) {
+            DetailView(item: $0)
+        }
+    }
+} detail: {
+    if selection == nil {
+        ContentUnavailableView(...)
+    }
+}
+\`\`\`
+
+For this to work, you still need to use the three-column API — otherwise the system complains there is no next column on which to present a detail view.`
     },
   ],
 };
@@ -652,9 +530,10 @@ function ArticleDetail({ article, onBack, theme, onTheme }) {
   const contentRef = useRef(null);
 
   const headings = useMemo(() => {
-    return [...article.body.matchAll(/^## (.+)$/gm)].map(m => ({
-      text: m[1],
-      id: 'h-' + m[1].toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+    return [...article.body.matchAll(/^(#{2,3}) (.+)$/gm)].map(m => ({
+      level: m[1],
+      text: m[2],
+      id: 'h-' + m[2].toLowerCase().replace(/[^a-z0-9]+/g, '-'),
     }));
   }, [article]);
 
@@ -663,9 +542,11 @@ function ArticleDetail({ article, onBack, theme, onTheme }) {
   const html = useMemo(() => {
     let md = article.body;
     headings.forEach(h => {
+      const escapedLevel = h.level.replace(/#/g, '\\#');
+      const escapedText = h.text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       md = md.replace(
-        new RegExp(`^## ${h.text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'm'),
-        `## <span id="${h.id}">${h.text}</span>`
+        new RegExp(`^${escapedLevel} ${escapedText}$`, 'm'),
+        `${h.level} <span id="${h.id}">${h.text}</span>`
       );
     });
     return marked.parse(md);
@@ -926,7 +807,7 @@ function AppDetail({ app, onBack, theme, onTheme }) {
 
         {/* Links */}
         {app.links && app.links.length > 0 && (
-          <div style={{ marginTop: '32px', paddingTop: '20px', borderTop: '1px solid var(--rule)' }}>
+          <div style={{ marginTop: '32px', paddingTop: '20px', borderTop: '1px solid var(--mid)' }}>
             <p style={{ fontWeight: 600, marginBottom: '8px' }}>Links</p>
             {app.links.map((l, i) => (
               <a key={i} href={l.url} className="nav-link" style={{ display: 'inline-block', marginRight: '8px' }}>
@@ -1036,12 +917,7 @@ function MainGrid({ onArticle, onApp, onAllApps, onAllArticles, theme, onTheme }
               fontVariationSettings: '"wdth" 125',
             }}>{DATA.name}</p>
             <div style={{ display: 'flex', alignItems: 'center', perspective: '600px' }}>
-              {[
-                { bg: '#FF6B6B', label: 'T' },
-                { bg: '#4D9DE0', label: 'P' },
-                { bg: '#3BB273', label: 'C' },
-                { bg: '#E1BC29', label: 'D' },
-              ].map((a, i) => {
+              {DATA.apps.slice(0, 4).map((a, i) => {
                 // Each icon tilts a different way to suggest a 3D space
                 const tilts = [
                   { rx: -8,  ry: -22, rz: -6 },
@@ -1156,11 +1032,8 @@ function MainGrid({ onArticle, onApp, onAllApps, onAllArticles, theme, onTheme }
       {/* Col 3: About */}
       <div style={{ paddingRight: '40px', marginBottom: '32px' }}>
         <p style={{ fontWeight: 600, marginBottom: '10px' }}>About</p>
-        <p style={{ color: 'var(--mid)', marginBottom: '12px', maxWidth: '220px' }}>
-          Designer &amp; developer. Previously at Figma, Linear, and a handful of early-stage startups.
-        </p>
         <p style={{ color: 'var(--mid)', maxWidth: '220px' }}>
-          Long walks, cold coffee, notebooks I rarely finish.
+          iOS &amp; macOS developer in Vancouver. 🍁
         </p>
       </div>
 

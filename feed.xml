@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Bosco Ho</title>
+    <link>https://boscoho.com</link>
+    <description>Writing by Bosco Ho — iOS &amp; macOS developer in Vancouver.</description>
+    <language>en</language>
+    <atom:link href="https://boscoho.com/feed.xml" rel="self" type="application/rss+xml"/>
+
+    <item>
+      <title>Text Variant Preference View Modifier in SwiftUI</title>
+      <link>https://boscoho.com</link>
+      <guid isPermaLink="false">boscoho-2024-06-19-text-variant-preference</guid>
+      <pubDate>Wed, 19 Jun 2024 00:00:00 +0000</pubDate>
+      <description><![CDATA[Use the .textVariant(.sizeDependent) view modifier to automatically format and fit text inside Text view's size. New in iOS 18, this simplifies code that previously required ViewThatFits or conditional views to avoid text truncation.]]></description>
+    </item>
+
+    <item>
+      <title>Unicode + Swift: Transforming Mandarin Pinyin Diacritics into IPA (Numeric) Form</title>
+      <link>https://boscoho.com</link>
+      <guid isPermaLink="false">boscoho-2024-06-14-pinyin-diacritic-ipa</guid>
+      <pubDate>Fri, 14 Jun 2024 00:00:00 +0000</pubDate>
+      <description><![CDATA[A note on converting Mandarin Pinyin diacritic tone marks into numeric IPA form using Swift's Unicode decomposition APIs — motivated by a speech synthesis use-case on Apple platforms.]]></description>
+    </item>
+
+    <item>
+      <title>Navigation Split View — 3 Columns for Non-List Views</title>
+      <link>https://boscoho.com</link>
+      <guid isPermaLink="false">boscoho-2024-04-23-nav-split-view-3-columns</guid>
+      <pubDate>Tue, 23 Apr 2024 00:00:00 +0000</pubDate>
+      <description><![CDATA[A workaround for NavigationSplitView's three-column API not working as expected on iPhone compact size when the content column is a non-List view such as LazyVGrid.]]></description>
+    </item>
+
+  </channel>
+</rss>
