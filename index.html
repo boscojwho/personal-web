@@ -302,35 +302,54 @@ const DATA = {
   apps: [
     {
       name: "HK Characters", year: "2023", tags: "iOS · SwiftUI",
+      icon: "assets/icons/hkscs_icon.png",
       bg: '#C0392B', label: 'H',
-      desc: "",
-      body: [],
-      links: [],
+      desc: "", body: [], links: [],
     },
     {
       name: "Castro", year: "2023", tags: "iOS",
+      icon: "assets/icons/castro_icon.png",
       bg: '#5856D6', label: 'C',
-      desc: "",
-      body: [],
-      links: [],
+      desc: "", body: [], links: [],
     },
     {
       name: "Chinotto", year: "2022", tags: "macOS · Open Source",
+      icon: "assets/icons/chinotto_placeholder_logo.png",
       bg: '#27AE60', label: 'N',
-      desc: "",
-      body: [],
-      links: [
-        { label: 'GitHub', url: 'https://github.com/boscojwho/Chinotto' },
-      ],
+      desc: "", body: [],
+      links: [{ label: 'GitHub', url: 'https://github.com/boscojwho/Chinotto' }],
     },
     {
       name: "Mlem", year: "2023", tags: "iOS · Open Source",
+      icon: "assets/icons/mlem_logo.png",
       bg: '#E67E22', label: 'M',
-      desc: "",
-      body: [],
-      links: [
-        { label: 'GitHub', url: 'https://github.com/mlemgroup/mlem' },
-      ],
+      desc: "", body: [],
+      links: [{ label: 'GitHub', url: 'https://github.com/mlemgroup/mlem' }],
+    },
+    {
+      name: "Fencathon", year: "", tags: "iOS",
+      icon: "assets/icons/fencathon_2_logo.png",
+      bg: '#2980B9', label: 'F',
+      desc: "", body: [], links: [],
+    },
+    {
+      name: "Fencathon", year: "", tags: "iOS",
+      icon: "assets/icons/fencathon_1_logo.png",
+      bg: '#1ABC9C', label: 'F',
+      desc: "", body: [], links: [],
+    },
+    {
+      name: "ATP", year: "", tags: "iOS",
+      icon: "assets/icons/atp_logo.png",
+      bg: '#8E44AD', label: 'A',
+      desc: "", body: [], links: [],
+    },
+    {
+      name: "RunGo", year: "", tags: "iOS",
+      icon: "assets/icons/rungo_icon_new.png",
+      bg: '#E74C3C', label: 'R',
+      desc: "", body: [],
+      links: [{ label: 'rungoapp.com', url: 'https://www.rungoapp.com/' }],
     },
   ],
 
@@ -917,44 +936,50 @@ function MainGrid({ onArticle, onApp, onAllApps, onAllArticles, theme, onTheme }
               fontVariationSettings: '"wdth" 125',
             }}>{DATA.name}</p>
             <div style={{ display: 'flex', alignItems: 'center', perspective: '600px' }}>
-              {DATA.apps.slice(0, 4).map((a, i) => {
-                // Each icon tilts a different way to suggest a 3D space
+              {DATA.apps.map((a, i) => {
                 const tilts = [
                   { rx: -8,  ry: -22, rz: -6 },
                   { rx:  6,  ry: -10, rz:  4 },
                   { rx: -4,  ry:  14, rz: -3 },
                   { rx:  10, ry:  26, rz:  8 },
+                  { rx: -6,  ry: -16, rz:  5 },
+                  { rx:  8,  ry:  18, rz: -4 },
+                  { rx: -3,  ry:  8,  rz:  7 },
+                  { rx:  5,  ry: -28, rz: -2 },
                 ];
-                const t = tilts[i];
+                const t = tilts[i % tilts.length];
                 const isHover = hoverIcon === i;
+                const last = DATA.apps.length - 1;
                 return (
                 <button key={i}
                   onMouseEnter={() => setHoverIcon(i)}
                   onMouseLeave={() => setHoverIcon(null)}
                   onClick={() => onAppClick(i)}
-                  aria-label={`Jump to app ${i + 1}`}
+                  aria-label={a.name}
                   style={{
                   width: 22, height: 22,
                   padding: 0,
-                  background: a.bg,
+                  background: 'none',
                   borderRadius: 5,
                   marginLeft: i === 0 ? 0 : (isHover ? 2 : -7),
-                  marginRight: isHover && i < 3 ? 9 : 0,
+                  marginRight: isHover && i < last ? 9 : 0,
                   transform: isHover
                     ? `rotateX(0deg) rotateY(0deg) rotateZ(0deg) scale(1.35) translateY(-3px)`
                     : `rotateX(${t.rx}deg) rotateY(${t.ry}deg) rotateZ(${t.rz}deg)`,
                   transformStyle: 'preserve-3d',
                   border: '1.5px solid var(--bg)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  color: '#fff', fontSize: 11, fontWeight: 600,
-                  cursor: 'pointer',
+                  cursor: 'pointer', flexShrink: 0,
                   boxShadow: isHover
                     ? '0 8px 18px rgba(0,0,0,0.22), 0 2px 4px rgba(0,0,0,0.14)'
                     : '0 4px 8px rgba(0,0,0,0.18), 0 1px 2px rgba(0,0,0,0.12)',
-                  zIndex: isHover ? 20 : 10 - i,
+                  zIndex: isHover ? 20 : DATA.apps.length - i,
                   transition: 'transform 0.18s cubic-bezier(0.34, 1.4, 0.64, 1), margin 0.18s ease, box-shadow 0.18s ease',
-                  fontFamily: 'inherit',
-                }}>{a.label}</button>
+                  overflow: 'hidden',
+                }}>
+                  <img src={a.icon} width={22} height={22} alt={a.name}
+                    style={{ display: 'block', borderRadius: 4, pointerEvents: 'none' }} />
+                </button>
               );})}
             </div>
           </div>
