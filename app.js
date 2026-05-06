@@ -543,7 +543,7 @@ function AppDetail({ app, navigate, theme, onTheme }) {
   return (
     <div style={{ animation: "fadeUp 0.2s ease", padding: "40px var(--gap)" }}>
       <div className="detail-topbar" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 14, marginBottom: "32px" }}>
-        <RouteLink to={ROUTES.home} navigate={navigate} style={{ color: "var(--mid)", textDecoration: "underline" }}>
+        <RouteLink to={ROUTES.home} navigate={navigate} style={{ color: "var(--mid)", textDecoration: "underline", textDecorationColor: "var(--ul)" }}>
           ← Home
         </RouteLink>
         <CompactThemeToggle theme={theme} onTheme={onTheme} />
@@ -683,7 +683,7 @@ function ArticleDetail({ article, navigate, theme, onTheme, routeHash }) {
   return (
     <div style={{ animation: "fadeUp 0.2s ease", padding: "40px var(--gap)" }}>
       <div className="detail-topbar" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 14, marginBottom: "32px" }}>
-        <RouteLink to={ROUTES.writing} navigate={navigate} style={{ color: "var(--mid)", textDecoration: "underline" }}>
+        <RouteLink to={ROUTES.writing} navigate={navigate} style={{ color: "var(--mid)", textDecoration: "underline", textDecorationColor: "var(--ul)" }}>
           ← All writing
         </RouteLink>
         <CompactThemeToggle theme={theme} onTheme={onTheme} />
@@ -762,7 +762,7 @@ function AllArticles({ navigate, theme, onTheme }) {
   return (
     <div style={{ animation: "fadeUp 0.2s ease", padding: "40px var(--gap)" }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 14, marginBottom: "32px" }}>
-        <RouteLink to={ROUTES.home} navigate={navigate} style={{ color: "var(--mid)", textDecoration: "underline" }}>
+        <RouteLink to={ROUTES.home} navigate={navigate} style={{ color: "var(--mid)", textDecoration: "underline", textDecorationColor: "var(--ul)" }}>
           ← Home
         </RouteLink>
         <CompactThemeToggle theme={theme} onTheme={onTheme} />
@@ -1087,7 +1087,7 @@ function HomePage({ navigate, theme, onTheme }) {
               onMouseEnter={() => setHoverIcon(i)}
               onMouseLeave={() => setHoverIcon(null)}
             >
-              <span style={{ textDecoration: "underline" }}>{app.name}</span>
+              <span style={{ textDecoration: "underline", textDecorationColor: "var(--ul)" }}>{app.name}</span>
               {app.year && <span style={{ color: "var(--mid)" }}> — {app.year}</span>}
               {app.tags && <span style={{ color: "var(--mid)" }}> · {app.tags}</span>}
             </RouteLink>
@@ -1152,7 +1152,7 @@ function NotFoundPage({ navigate, theme, onTheme }) {
   return (
     <div style={{ padding: "40px var(--gap)", animation: "fadeUp 0.2s ease", maxWidth: "620px" }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 14, marginBottom: "32px" }}>
-        <RouteLink to={ROUTES.home} navigate={navigate} style={{ color: "var(--mid)", textDecoration: "underline" }}>
+        <RouteLink to={ROUTES.home} navigate={navigate} style={{ color: "var(--mid)", textDecoration: "underline", textDecorationColor: "var(--ul)" }}>
           ← Home
         </RouteLink>
         <CompactThemeToggle theme={theme} onTheme={onTheme} />
