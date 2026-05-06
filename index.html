@@ -490,13 +490,16 @@ const DATA = {
       icon: "assets/icons/rungo_icon_old.png",
       bg: '#E74C3C', label: 'R',
       desc: "", body: [],
-      links: [{ label: 'rungoapp.com', url: 'https://www.rungoapp.com/' }],
+      links: [
+        { label: 'rungoapp.com', url: 'https://www.rungoapp.com/' },
+        { label: 'App Store', url: 'https://apps.apple.com/ca/app/rungo-the-best-routes-to-run/id712628644' },
+      ],
     },
     {
       name: "HK Characters", year: "2024", tags: "iOS · SwiftUI", groupStart: true,
       icon: "assets/icons/hkscs_icon.png",
       bg: '#C0392B', label: 'H',
-      desc: "", body: [], links: [],
+      desc: "", body: [], links: [{ label: 'App Store', url: 'https://apps.apple.com/ca/app/hk-characters/id6502965916' }],
     },
     {
       name: "Fencathon 2", year: "2016", tags: "iOS",
@@ -535,7 +538,10 @@ const DATA = {
       icon: "assets/icons/mlem_logo.png",
       bg: '#E67E22', label: 'M',
       desc: "", body: [],
-      links: [{ label: 'GitHub', url: 'https://github.com/mlemgroup/mlem' }],
+      links: [
+        { label: 'GitHub', url: 'https://github.com/mlemgroup/mlem' },
+        { label: 'App Store', url: 'https://apps.apple.com/ca/app/mlem-for-lemmy/id6450543782' },
+      ],
     },
   ],
 
@@ -987,7 +993,7 @@ function AppDetail({ app, onBack, theme, onTheme }) {
                       cursor: variants.length > 1 ? 'pointer' : 'default',
                       transition: 'transform 0.20s cubic-bezier(0.34, 1.4, 0.64, 1), margin 0.20s ease, box-shadow 0.20s ease',
                     }}>
-                      {app.icon && variants.length === 1
+                      {app.icon
                         ? <img src={app.icon} width={72} height={72} alt={app.name} style={{ display: 'block', borderRadius: 13, pointerEvents: 'none' }} />
                         : v.label}
                     </div>
@@ -1251,7 +1257,6 @@ function MainGrid({ onArticle, onApp, onAllApps, onAllArticles, theme, onTheme }
                     ? `rotateX(0deg) rotateY(0deg) rotateZ(0deg) scale(1.55) translateY(-4px)`
                     : baseTransform,
                   transformStyle: 'preserve-3d',
-                  border: '1.5px solid rgba(255,255,255,0.9)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   cursor: 'pointer', flexShrink: 0,
                   boxShadow: isHover
