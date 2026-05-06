@@ -21,6 +21,7 @@
       --f:   15px;
       --lh:  1.55;
       --gap: 48px;
+      --ul:  color-mix(in srgb, var(--fg) 32%, transparent);
     }
 
     @media (max-width: 640px) {
@@ -251,7 +252,7 @@
       transition: background 0.2s, color 0.2s;
     }
 
-    a { color: var(--fg); }
+    a { color: var(--fg); text-decoration-color: var(--ul); }
     a:hover { color: var(--mid); }
 
     #root { min-height: 100dvh; }
@@ -317,7 +318,7 @@
       width: fit-content;
       max-width: 100%;
     }
-    .nav-link .nav-link-title { text-decoration: underline; overflow-wrap: anywhere; }
+    .nav-link .nav-link-title { text-decoration: underline; text-decoration-color: var(--ul); overflow-wrap: anywhere; }
     .nav-link:hover { background: rgba(0,0,0,0.05); }
     .app-row.is-hover { background: rgba(0,0,0,0.05); }
     .app-row.is-flash { background: rgba(255, 200, 0, 0.18); }
@@ -780,7 +781,7 @@ function ArticleDetail({ article, onBack, theme, onTheme }) {
           background: 'none', border: 'none', cursor: 'pointer',
           font: 'inherit', color: 'var(--mid)', padding: 0,
           display: 'block',
-          textDecoration: 'underline',
+          textDecoration: 'underline', textDecorationColor: 'var(--ul)',
         }}>← All writing</button>
         <CompactThemeToggle theme={theme} onTheme={onTheme} />
       </div>
@@ -940,7 +941,7 @@ function AppDetail({ app, onBack, theme, onTheme }) {
           background: 'none', border: 'none', cursor: 'pointer',
           font: 'inherit', color: 'var(--mid)', padding: 0,
           display: 'block',
-          textDecoration: 'underline',
+          textDecoration: 'underline', textDecorationColor: 'var(--ul)',
         }}>← All apps</button>
         <CompactThemeToggle theme={theme} onTheme={onTheme} />
       </div>
@@ -1045,7 +1046,7 @@ function AllApps({ onBack, onApp, theme, onTheme }) {
         <button onClick={onBack} style={{
           background: 'none', border: 'none', cursor: 'pointer',
           font: 'inherit', color: 'var(--mid)', padding: 0,
-          display: 'block', textDecoration: 'underline',
+          display: 'block', textDecoration: 'underline', textDecorationColor: 'var(--ul)',
         }}>← Back</button>
         <CompactThemeToggle theme={theme} onTheme={onTheme} />
       </div>
@@ -1058,7 +1059,7 @@ function AllApps({ onBack, onApp, theme, onTheme }) {
             onClick={e => { e.preventDefault(); onApp(i); }}
             className="app-row"
             style={{ display: 'block', textDecoration: 'none', color: 'inherit', marginBottom: '10px', marginTop: a.groupStart ? '20px' : undefined }}>
-            <span style={{ textDecoration: 'underline' }}>{a.name}</span>
+            <span style={{ textDecoration: 'underline', textDecorationColor: 'var(--ul)' }}>{a.name}</span>
             {a.year && <span style={{ color: 'var(--mid)' }}> — {a.year}</span>}
             {a.tags && <span style={{ color: 'var(--mid)' }}> · {a.tags}</span>}
             {a.desc && <span style={{ color: 'var(--mid)' }}> · {a.desc}</span>}
@@ -1084,7 +1085,7 @@ function AllArticles({ onBack, onArticle, theme, onTheme }) {
         <button onClick={onBack} style={{
           background: 'none', border: 'none', cursor: 'pointer',
           font: 'inherit', color: 'var(--mid)', padding: 0,
-          display: 'block', textDecoration: 'underline',
+          display: 'block', textDecoration: 'underline', textDecorationColor: 'var(--ul)',
         }}>← Back</button>
         <CompactThemeToggle theme={theme} onTheme={onTheme} />
       </div>
@@ -1294,7 +1295,7 @@ function MainGrid({ onArticle, onApp, onAllApps, onAllArticles, theme, onTheme }
             className={'app-row' + (flashApp === i ? ' is-flash' : '') + (hoverIcon === i ? ' is-hover' : '')}
             style={{ display: 'block', textDecoration: 'none', color: 'inherit', marginTop: a.groupStart ? '20px' : undefined }}
           >
-            <span style={{ textDecoration: 'underline' }}>{a.name}</span>
+            <span style={{ textDecoration: 'underline', textDecorationColor: 'var(--ul)' }}>{a.name}</span>
             {a.year && <span style={{ color: 'var(--mid)' }}> — {a.year}</span>}
             {a.tags && <span style={{ color: 'var(--mid)' }}> · {a.tags}</span>}
           </a>
