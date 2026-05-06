@@ -67,6 +67,10 @@ function normalizeInternalPath(pathname) {
 }
 
 function actualToInternalPath(actualPathname) {
+  if (window.location.protocol === "file:") {
+    const cleanFile = normalizeInternalPath(actualPathname);
+    if (cleanFile.endsWith("/index.html") || cleanFile === "/index.html") return "/";
+  }
   const clean = normalizeInternalPath(actualPathname);
   if (SITE_BASE_PATH === "/") return clean;
   if (clean === SITE_BASE_NO_SLASH || clean === SITE_BASE_PATH) return "/";
@@ -564,7 +568,7 @@ function AppDetail({ app, navigate, theme, onTheme }) {
                         justifyContent: "center",
                         color: "#fff",
                         fontSize: 32,
-                        fontWeight: 600,
+                        fontWeight: 700,
                         marginLeft: isHover ? (i === 0 ? 8 : -6) : baseLeft,
                         marginRight: isHover && i < variants.length - 1 ? 16 : 0,
                         transform: isHover ? "rotateX(0deg) rotateY(0deg) rotateZ(0deg) scale(1.18) translateY(-6px)" : `rotateX(${tilt.rx}deg) rotateY(${tilt.ry}deg) rotateZ(${tilt.rz}deg)`,
@@ -588,7 +592,7 @@ function AppDetail({ app, navigate, theme, onTheme }) {
             );
           })()}
           <div style={{ paddingTop: "8px" }}>
-            <p style={{ fontWeight: 600, fontSize: "1.1em", marginBottom: "4px" }}>{app.name}</p>
+            <p style={{ fontWeight: 700, fontSize: "1.1em", marginBottom: "4px" }}>{app.name}</p>
             <p style={{ color: "var(--mid)", marginBottom: "2px" }}>{app.year}  ·  {app.tags}</p>
           </div>
         </div>
@@ -598,7 +602,7 @@ function AppDetail({ app, navigate, theme, onTheme }) {
         <div className="ab">
           {app.body.map((blk, i) => (
             blk.kind === "h" ? (
-              <h2 key={i} style={{ fontWeight: 600, fontSize: "1em", marginTop: "24px", marginBottom: "8px" }}>{blk.text}</h2>
+              <h2 key={i} style={{ fontWeight: 700, fontSize: "1em", marginTop: "24px", marginBottom: "8px" }}>{blk.text}</h2>
             ) : (
               <p key={i} style={{ marginBottom: "14px" }}>{blk.text}</p>
             )
@@ -607,7 +611,7 @@ function AppDetail({ app, navigate, theme, onTheme }) {
 
         {app.links && app.links.length > 0 && (
           <div style={{ marginTop: "32px", paddingTop: "20px", borderTop: "1px solid var(--mid)" }}>
-            <p style={{ fontWeight: 600, marginBottom: "8px" }}>Links</p>
+            <p style={{ fontWeight: 700, marginBottom: "8px" }}>Links</p>
             {app.links.map((link, i) => (
               <a key={i} href={link.url} className="nav-link" style={{ display: "inline-block", marginRight: "8px" }}>
                 <span className="nav-link-title">{link.label}</span>
@@ -675,14 +679,14 @@ function ArticleDetail({ article, navigate, theme, onTheme, routeHash }) {
 
       <div className="article-grid" style={{ display: "grid", gridTemplateColumns: headings.length ? "minmax(0,1fr) 180px" : "1fr", gap: "60px", maxWidth: "760px", alignItems: "start" }}>
         <div>
-          <p style={{ fontWeight: 600, marginBottom: "4px" }}>{article.title}</p>
+          <p style={{ fontWeight: 700, marginBottom: "4px" }}>{article.title}</p>
           <p style={{ color: "var(--mid)", marginBottom: "28px" }}>{article.date}</p>
           <div ref={contentRef} className="ab" dangerouslySetInnerHTML={{ __html: html }} />
         </div>
 
         {headings.length > 0 && (
           <nav className="toc-sidebar" style={{ position: "sticky", top: "40px" }}>
-            <p style={{ fontWeight: 600, marginBottom: "8px" }}>Contents</p>
+            <p style={{ fontWeight: 700, marginBottom: "8px" }}>Contents</p>
             {headings.map(h => (
               <a key={h.id} href={`#${h.id}`} className={"toc-link" + (activeId === h.id ? " on" : "")}>
                 {h.text}
@@ -714,7 +718,7 @@ function ArticleDetail({ article, navigate, theme, onTheme, routeHash }) {
       {tocOpen && (
         <div className="toc-overlay" onClick={() => setTocOpen(false)}>
           <div className="toc-sheet" onClick={e => e.stopPropagation()}>
-            <p style={{ fontWeight: 600, marginBottom: "12px" }}>Contents</p>
+            <p style={{ fontWeight: 700, marginBottom: "12px" }}>Contents</p>
             {headings.map(h => (
               <a
                 key={h.id}
@@ -744,7 +748,7 @@ function AllApps({ navigate, theme, onTheme }) {
       </div>
 
       <div style={{ maxWidth: "620px" }}>
-        <p style={{ fontWeight: 600, marginBottom: "4px" }}>All apps</p>
+        <p style={{ fontWeight: 700, marginBottom: "4px" }}>All apps</p>
         <p style={{ color: "var(--mid)", marginBottom: "28px" }}>{DATA.apps.length} total</p>
         {DATA.apps.map(app => (
           <RouteLink
@@ -785,7 +789,7 @@ function AllArticles({ navigate, theme, onTheme }) {
       </div>
 
       <div style={{ maxWidth: "620px" }}>
-        <p style={{ fontWeight: 600, marginBottom: "4px" }}>All writing</p>
+        <p style={{ fontWeight: 700, marginBottom: "4px" }}>All writing</p>
         <p style={{ color: "var(--mid)", marginBottom: "28px" }}>{DATA.articles.length} total</p>
         {groups.map(group => (
           <div key={group.date} style={{ marginBottom: "24px" }}>
@@ -810,20 +814,39 @@ function AllArticles({ navigate, theme, onTheme }) {
 
 function HomePage({ navigate, theme, onTheme }) {
   const [hoverIcon, setHoverIcon] = useState(null);
+  const [hoverNameIndex, setHoverNameIndex] = useState(null);
+  const [hoverNamePose, setHoverNamePose] = useState({ x: -0.5, ry: 18, rx: -9, rz: 0, z: 10, y: -3, s: 1.4 });
+
+  const randomizeNamePose = () => {
+    setHoverNamePose({
+      x: -0.5 + (Math.random() * 1.4 - 0.7),
+      ry: 18 + (Math.random() * 14 - 7),
+      rx: -9 + (Math.random() * 10 - 5),
+      rz: Math.random() * 8 - 4,
+      z: 10 + (Math.random() * 8 - 4),
+      y: -3 + (Math.random() * 2.2 - 1.1),
+      s: 1.4 + (Math.random() * 0.08 - 0.04),
+    });
+  };
 
   return (
     <div style={{ padding: "40px var(--gap)", animation: "fadeUp 0.2s ease" }}>
       <div style={{ marginBottom: "32px" }}>
         <div className="site-header" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "14px", marginBottom: "4px" }}>
           <div className="site-header-brand" style={{ display: "flex", alignItems: "center", gap: "14px" }}>
-            <p style={{
-              fontWeight: 800,
-              fontSize: "21px",
+            <p
+              onMouseLeave={() => setHoverNameIndex(null)}
+              style={{
+              fontWeight: 900,
+              fontSize: "24px",
               fontFamily: "'Plus Jakarta Sans', sans-serif",
               perspective: "300px",
               display: "inline-flex",
               letterSpacing: "-0.01em",
-            }}>
+              transformStyle: "preserve-3d",
+              cursor: "default",
+            }}
+            >
               {[...DATA.name].map((char, i) => {
                 const transforms = [
                   "rotateY(-10deg) rotateX(4deg)",
@@ -835,8 +858,42 @@ function HomePage({ navigate, theme, onTheme }) {
                   "rotateY(9deg) rotateX(-4deg)",
                   "rotateY(-7deg) rotateX(3deg)",
                 ];
+                const colors = [
+                  "#1D4ED8",
+                  "#0EA5E9",
+                  "#10B981",
+                  "#F59E0B",
+                  "#EF4444",
+                  "",
+                  "#8B5CF6",
+                  "#EC4899",
+                ];
+                const baseTransform = transforms[i] || "none";
+                const isHovered = hoverNameIndex === i;
+                const distance = hoverNameIndex == null ? 0 : i - hoverNameIndex;
+                const isNeighbor = hoverNameIndex != null && !isHovered && char !== " ";
+                const bubbleStrength = isNeighbor ? Math.max(0, 1 - Math.min(Math.abs(distance), 3) / 3) : 0;
+                const bubbleX = bubbleStrength ? Math.sign(distance || 1) * (3.1 * bubbleStrength) : 0;
+                const bubbleY = bubbleStrength ? -(1.4 * bubbleStrength) : 0;
+                const hoverTransform = `${baseTransform} translateX(${hoverNamePose.x.toFixed(2)}px) rotateY(${hoverNamePose.ry.toFixed(2)}deg) rotateX(${hoverNamePose.rx.toFixed(2)}deg) rotateZ(${hoverNamePose.rz.toFixed(2)}deg) translateZ(${hoverNamePose.z.toFixed(2)}px) translateY(${hoverNamePose.y.toFixed(2)}px) scale(${hoverNamePose.s.toFixed(3)})`;
+                const neighborTransform = `${baseTransform} translateX(${bubbleX.toFixed(2)}px) translateY(${bubbleY.toFixed(2)}px)`;
                 return (
-                  <span key={i} style={{ display: "inline-block", transform: transforms[i] || "none" }}>
+                  <span
+                    key={i}
+                    onMouseEnter={() => {
+                      randomizeNamePose();
+                      setHoverNameIndex(i);
+                    }}
+                    style={{
+                      display: "inline-block",
+                      minWidth: char === " " ? "0.36em" : "0.62em",
+                      textAlign: "center",
+                      transformOrigin: "50% 50%",
+                      transform: isHovered ? hoverTransform : (isNeighbor ? neighborTransform : baseTransform),
+                      color: char === " " ? "inherit" : (isHovered ? colors[i % colors.length] : "inherit"),
+                      transition: "transform 0.42s cubic-bezier(0.22, 1.55, 0.36, 1), color 0.2s ease",
+                    }}
+                  >
                     {char === " " ? "\u00A0" : char}
                   </span>
                 );
@@ -905,7 +962,7 @@ function HomePage({ navigate, theme, onTheme }) {
 
       <div className="main-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 0 }}>
         <div style={{ paddingRight: "40px", marginBottom: "32px" }}>
-          <p style={{ fontWeight: 600, marginBottom: "10px" }}>Apps</p>
+          <p style={{ fontWeight: 700, marginBottom: "10px" }}>Apps</p>
           {DATA.apps.slice(0, 10).map((app, i) => (
             <RouteLink
               key={app.slug}
@@ -929,7 +986,7 @@ function HomePage({ navigate, theme, onTheme }) {
         </div>
 
         <div style={{ paddingRight: "40px", marginBottom: "32px" }}>
-          <p style={{ fontWeight: 600, marginBottom: "10px" }}>Writing</p>
+          <p style={{ fontWeight: 700, marginBottom: "10px" }}>Writing</p>
           {(() => {
             const capped = DATA.articles.slice(0, 10);
             const groups = [];
@@ -959,14 +1016,14 @@ function HomePage({ navigate, theme, onTheme }) {
         </div>
 
         <div style={{ paddingRight: "40px", marginBottom: "32px" }}>
-          <p style={{ fontWeight: 600, marginBottom: "10px" }}>About</p>
+          <p style={{ fontWeight: 700, marginBottom: "10px" }}>About</p>
           <p style={{ color: "var(--mid)", maxWidth: "220px" }}>
             iOS &amp; macOS developer in Vancouver. 🍁
           </p>
         </div>
 
         <div style={{ marginBottom: "32px" }}>
-          <p style={{ fontWeight: 600, marginBottom: "10px" }}>Contact</p>
+          <p style={{ fontWeight: 700, marginBottom: "10px" }}>Contact</p>
           <p style={{ color: "var(--mid)", marginBottom: "12px" }}>{DATA.location}</p>
           {DATA.links.map(link => (
             <a key={link.label} href={link.url} className="nav-link nav-link-fit" style={{ marginBottom: "2px" }}>
@@ -992,7 +1049,7 @@ function NotFoundPage({ navigate, theme, onTheme }) {
         <CompactThemeToggle theme={theme} onTheme={onTheme} />
       </div>
 
-      <p style={{ fontWeight: 600, marginBottom: "8px" }}>Page not found</p>
+      <p style={{ fontWeight: 700, marginBottom: "8px" }}>Page not found</p>
       <p style={{ color: "var(--mid)", marginBottom: "24px" }}>
         The route you requested does not exist.
       </p>
@@ -1025,7 +1082,7 @@ function TweaksPanel({ theme, onTheme, font, onFont }) {
       width: 220,
       fontSize: 13,
     }}>
-      <p style={{ fontWeight: 600, marginBottom: 12 }}>Tweaks</p>
+      <p style={{ fontWeight: 700, marginBottom: 12 }}>Tweaks</p>
 
       <p style={{ color: "var(--mid)", marginBottom: 6 }}>Theme</p>
       <div style={{ display: "flex", gap: 4, marginBottom: 16 }}>
