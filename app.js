@@ -272,6 +272,21 @@ const DATA = {
       links: [{ label: "App Store", url: "https://apps.apple.com/ca/app/hk-characters/id6502965916" }],
     },
     {
+      name: "Fencathon 3",
+      year: "2023",
+      tags: "iOS · iPadOS",
+      groupStart: true,
+      groupLabel: "Fencing",
+      icon: "",
+      bg: "#F7F3E8",
+      label: "🤺",
+      desc: "Built to beta, but did not ship.",
+      body: [
+        "Built to beta, but did not ship because the API was removed in 2023 after askFRED (askfred.net) ownership changed.",
+      ],
+      links: [],
+    },
+    {
       name: "Fencathon 2",
       year: "2016",
       tags: "iOS",
@@ -309,6 +324,7 @@ const DATA = {
       year: "2024",
       tags: "macOS · SwiftUI · Open Source",
       groupStart: true,
+      groupLabel: "Open Source",
       icon: "assets/icons/pippy_icon.png",
       bg: "#3572A5",
       label: "P",
@@ -1064,7 +1080,27 @@ function HomePage({ navigate, theme, onTheme }) {
                       overflow: "hidden",
                     }}
                   >
-                    <img src={app.icon} width="32" height="32" alt={app.name} style={{ display: "block", borderRadius: 4, pointerEvents: "none" }} />
+                    {app.icon ? (
+                      <img src={app.icon} width="32" height="32" alt={app.name} style={{ display: "block", borderRadius: 4, pointerEvents: "none" }} />
+                    ) : (
+                      <div
+                        style={{
+                          width: 32,
+                          height: 32,
+                          borderRadius: 4,
+                          background: app.bg,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          fontSize: "18px",
+                          lineHeight: 1,
+                          pointerEvents: "none",
+                        }}
+                        aria-hidden="true"
+                      >
+                        {app.label}
+                      </div>
+                    )}
                   </RouteLink>
                 );
               })}
@@ -1078,19 +1114,30 @@ function HomePage({ navigate, theme, onTheme }) {
         <div style={{ paddingRight: "40px", marginBottom: "32px" }}>
           <p style={{ fontWeight: 700, marginBottom: "10px" }}>Apps</p>
           {DATA.apps.slice(0, 10).map((app, i) => (
-            <RouteLink
-              key={app.slug}
-              to={ROUTES.app(app.slug)}
-              navigate={navigate}
-              className={"app-row" + (activeHoverIcon === i ? " is-hover" : "")}
-              style={{ display: "block", textDecoration: "none", color: "inherit", marginTop: app.groupStart ? "20px" : undefined }}
-              onMouseEnter={() => setHoverIcon(i)}
-              onMouseLeave={() => setHoverIcon(null)}
-            >
-              <span style={{ textDecoration: "underline", textDecorationColor: "var(--ul)" }}>{app.name}</span>
-              {app.year && <span style={{ color: "var(--mid)" }}> — {app.year}</span>}
-              {app.tags && <span style={{ color: "var(--mid)" }}> · {app.tags}</span>}
-            </RouteLink>
+            <React.Fragment key={app.slug}>
+              {app.groupStart && app.groupLabel && (
+                <p style={{ color: "var(--mid)", marginTop: "20px", marginBottom: "10px", textTransform: "none" }}>{app.groupLabel}</p>
+              )}
+              <RouteLink
+                to={ROUTES.app(app.slug)}
+                navigate={navigate}
+                className={"app-row" + (activeHoverIcon === i ? " is-hover" : "")}
+                style={{ display: "block", textDecoration: "none", color: "inherit", marginTop: app.groupStart && !app.groupLabel ? "20px" : undefined }}
+                onMouseEnter={() => setHoverIcon(i)}
+                onMouseLeave={() => setHoverIcon(null)}
+              >
+                <span style={{ textDecoration: "underline", textDecorationColor: "var(--ul)" }}>{app.name}</span>
+                {app.year && <span style={{ color: "var(--mid)" }}> — {app.year}</span>}
+                {app.tags && (() => {
+                  const homeTags = app.tags
+                    .split(" · ")
+                    .map(tag => (tag === "Open Source (Contributor)" ? "(Contributor)" : tag))
+                    .filter(tag => tag !== "Open Source")
+                    .join(" · ");
+                  return homeTags ? <span style={{ color: "var(--mid)" }}> · {homeTags}</span> : null;
+                })()}
+              </RouteLink>
+            </React.Fragment>
           ))}
         </div>
 

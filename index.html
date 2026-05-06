@@ -503,6 +503,14 @@ const DATA = {
       desc: "", body: [], links: [{ label: 'App Store', url: 'https://apps.apple.com/ca/app/hk-characters/id6502965916' }],
     },
     {
+      name: "Fencathon 3", year: "2023", tags: "iOS · iPadOS",
+      groupStart: true, groupLabel: "Fencing",
+      icon: "",
+      bg: '#F7F3E8', label: '🤺',
+      desc: "Built to beta, but did not ship.",
+      body: ["Built to beta, but did not ship because the API was removed in 2023 after askFRED (askfred.net) ownership changed."], links: [],
+    },
+    {
       name: "Fencathon 2", year: "2016", tags: "iOS",
       icon: "assets/icons/fencathon_2_logo.png",
       bg: '#2980B9', label: 'F',
@@ -521,7 +529,7 @@ const DATA = {
       desc: "", body: [], links: [],
     },
     {
-      name: "PipPy", year: "2024", tags: "macOS · SwiftUI · Open Source", groupStart: true,
+      name: "PipPy", year: "2024", tags: "macOS · SwiftUI · Open Source", groupStart: true, groupLabel: "Open Source",
       icon: "assets/icons/pippy_icon.png",
       bg: '#3572A5', label: 'P',
       desc: "A GUI app for Python Pip package manager on macOS.", body: [],
@@ -1055,15 +1063,20 @@ function AllApps({ onBack, onApp, theme, onTheme }) {
         <p style={{ fontWeight: 700, marginBottom: '4px' }}>All apps</p>
         <p style={{ color: 'var(--mid)', marginBottom: '28px' }}>{DATA.apps.length} total</p>
         {DATA.apps.map((a, i) => (
-          <a key={i} href="#"
-            onClick={e => { e.preventDefault(); onApp(i); }}
-            className="app-row"
-            style={{ display: 'block', textDecoration: 'none', color: 'inherit', marginBottom: '10px', marginTop: a.groupStart ? '20px' : undefined }}>
-            <span style={{ textDecoration: 'underline', textDecorationColor: 'var(--ul)' }}>{a.name}</span>
-            {a.year && <span style={{ color: 'var(--mid)' }}> — {a.year}</span>}
-            {a.tags && <span style={{ color: 'var(--mid)' }}> · {a.tags}</span>}
-            {a.desc && <span style={{ color: 'var(--mid)' }}> · {a.desc}</span>}
-          </a>
+          <React.Fragment key={i}>
+            {a.groupStart && a.groupLabel && (
+              <p style={{ color: 'var(--mid)', marginTop: '20px', marginBottom: '10px', textTransform: 'none' }}>{a.groupLabel}</p>
+            )}
+            <a href="#"
+              onClick={e => { e.preventDefault(); onApp(i); }}
+              className="app-row"
+              style={{ display: 'block', textDecoration: 'none', color: 'inherit', marginBottom: '10px', marginTop: a.groupStart && !a.groupLabel ? '20px' : undefined }}>
+              <span style={{ textDecoration: 'underline', textDecorationColor: 'var(--ul)' }}>{a.name}</span>
+              {a.year && <span style={{ color: 'var(--mid)' }}> — {a.year}</span>}
+              {a.tags && <span style={{ color: 'var(--mid)' }}> · {a.tags}</span>}
+              {a.desc && <span style={{ color: 'var(--mid)' }}> · {a.desc}</span>}
+            </a>
+          </React.Fragment>
         ))}
       </div>
     </div>
@@ -1267,8 +1280,24 @@ function MainGrid({ onArticle, onApp, onAllApps, onAllArticles, theme, onTheme }
                   transition: 'transform 0.18s cubic-bezier(0.34, 1.4, 0.64, 1), margin 0.18s ease, box-shadow 0.18s ease',
                   overflow: 'hidden',
                 }}>
-                  <img src={a.icon} width={32} height={32} alt={a.name}
-                    style={{ display: 'block', borderRadius: 4, pointerEvents: 'none' }} />
+                  {a.icon
+                    ? <img src={a.icon} width={32} height={32} alt={a.name}
+                        style={{ display: 'block', borderRadius: 4, pointerEvents: 'none' }} />
+                    : <div
+                        style={{
+                          width: 32,
+                          height: 32,
+                          borderRadius: 4,
+                          background: a.bg,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: '18px',
+                          lineHeight: 1,
+                          pointerEvents: 'none',
+                        }}
+                        aria-hidden="true"
+                      >{a.label}</div>}
                 </button>
               );})}
             </div>
@@ -1288,17 +1317,29 @@ function MainGrid({ onArticle, onApp, onAllApps, onAllArticles, theme, onTheme }
       <div style={{ paddingRight: '40px', marginBottom: '32px' }}>
         <p style={{ fontWeight: 700, marginBottom: '10px' }}>Apps</p>
         {DATA.apps.slice(0, 10).map((a, i) => (
-          <a key={i} id={'app-' + i} href="#"
-            onClick={e => { e.preventDefault(); onApp(i); }}
-            onMouseEnter={() => setHoverIcon(i)}
-            onMouseLeave={() => setHoverIcon(null)}
-            className={'app-row' + (flashApp === i ? ' is-flash' : '') + (hoverIcon === i ? ' is-hover' : '')}
-            style={{ display: 'block', textDecoration: 'none', color: 'inherit', marginTop: a.groupStart ? '20px' : undefined }}
-          >
-            <span style={{ textDecoration: 'underline', textDecorationColor: 'var(--ul)' }}>{a.name}</span>
-            {a.year && <span style={{ color: 'var(--mid)' }}> — {a.year}</span>}
-            {a.tags && <span style={{ color: 'var(--mid)' }}> · {a.tags}</span>}
-          </a>
+          <React.Fragment key={i}>
+            {a.groupStart && a.groupLabel && (
+              <p style={{ color: 'var(--mid)', marginTop: '20px', marginBottom: '10px', textTransform: 'none' }}>{a.groupLabel}</p>
+            )}
+            <a id={'app-' + i} href="#"
+              onClick={e => { e.preventDefault(); onApp(i); }}
+              onMouseEnter={() => setHoverIcon(i)}
+              onMouseLeave={() => setHoverIcon(null)}
+              className={'app-row' + (flashApp === i ? ' is-flash' : '') + (hoverIcon === i ? ' is-hover' : '')}
+              style={{ display: 'block', textDecoration: 'none', color: 'inherit', marginTop: a.groupStart && !a.groupLabel ? '20px' : undefined }}
+            >
+              <span style={{ textDecoration: 'underline', textDecorationColor: 'var(--ul)' }}>{a.name}</span>
+              {a.year && <span style={{ color: 'var(--mid)' }}> — {a.year}</span>}
+              {a.tags && (() => {
+                const homeTags = a.tags
+                  .split(" · ")
+                  .map(tag => (tag === "Open Source (Contributor)" ? "(Contributor)" : tag))
+                  .filter(tag => tag !== "Open Source")
+                  .join(" · ");
+                return homeTags ? <span style={{ color: 'var(--mid)' }}> · {homeTags}</span> : null;
+              })()}
+            </a>
+          </React.Fragment>
         ))}
         {DATA.apps.length > 10 && (
           <a href="#" onClick={e => { e.preventDefault(); onAllApps(); }}
