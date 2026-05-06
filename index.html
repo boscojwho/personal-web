@@ -6,7 +6,7 @@
   <title>Bosco Ho</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500;600&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Plus+Jakarta+Sans:wght@700;800;900&display=swap" rel="stylesheet" />
   <script src="https://unpkg.com/marked@9.1.6/marked.min.js"></script>
   <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
   <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
@@ -18,7 +18,7 @@
       --bg:  #ffffff;
       --fg:  #111111;
       --mid: #555555;
-      --f:   14px;
+      --f:   15px;
       --lh:  1.55;
       --gap: 48px;
     }
@@ -244,7 +244,7 @@
       font-family: 'DM Sans', Helvetica, Arial, sans-serif;
       font-size: var(--f);
       line-height: var(--lh);
-      font-weight: 400;
+      font-weight: 500;
       -webkit-font-smoothing: antialiased;
       min-height: 100dvh;
       overflow-x: hidden;
@@ -257,10 +257,10 @@
     #root { min-height: 100dvh; }
 
     /* Article body styles */
-    .ab h2 { font-size: 14px; font-weight: 600; margin: 2em 0 0.4em; overflow-wrap: anywhere; }
-    .ab h3 { font-size: 14px; font-weight: 500; margin: 1.4em 0 0.3em; overflow-wrap: anywhere; }
+    .ab h2 { font-size: 14px; font-weight: 700; margin: 2em 0 0.4em; overflow-wrap: anywhere; }
+    .ab h3 { font-size: 14px; font-weight: 600; margin: 1.4em 0 0.3em; overflow-wrap: anywhere; }
     .ab p  { margin-bottom: 0.9em; color: var(--mid); overflow-wrap: anywhere; }
-    .ab strong { font-weight: 600; color: var(--fg); }
+    .ab strong { font-weight: 700; color: var(--fg); }
     .ab em { font-style: italic; }
     .ab a { overflow-wrap: anywhere; word-break: break-word; }
     .ab ul, .ab ol { margin: 0 0 0.9em 1.2em; color: var(--mid); overflow-wrap: anywhere; }
@@ -793,14 +793,14 @@ function ArticleDetail({ article, onBack, theme, onTheme }) {
         alignItems: 'start',
       }}>
         <div>
-          <p style={{ fontWeight: 600, marginBottom: '4px' }}>{article.title}</p>
+          <p style={{ fontWeight: 700, marginBottom: '4px' }}>{article.title}</p>
           <p style={{ color: 'var(--mid)', marginBottom: '28px' }}>{article.date}</p>
           <div ref={contentRef} className="ab" dangerouslySetInnerHTML={{ __html: html }} />
         </div>
 
         {headings.length > 0 && (
           <nav className="toc-sidebar" style={{ position: 'sticky', top: '40px' }}>
-            <p style={{ fontWeight: 600, marginBottom: '8px' }}>Contents</p>
+            <p style={{ fontWeight: 700, marginBottom: '8px' }}>Contents</p>
             {headings.map(h => (
               <a key={h.id} href={'#' + h.id}
                 className={'toc-link' + (activeId === h.id ? ' on' : '')}>
@@ -829,7 +829,7 @@ function ArticleDetail({ article, onBack, theme, onTheme }) {
       {tocOpen && (
         <div className="toc-overlay" onClick={() => setTocOpen(false)}>
           <div className="toc-sheet" onClick={e => e.stopPropagation()}>
-            <p style={{ fontWeight: 600, marginBottom: '12px' }}>Contents</p>
+            <p style={{ fontWeight: 700, marginBottom: '12px' }}>Contents</p>
             {headings.map(h => (
               <a key={h.id} href={'#' + h.id}
                 onClick={() => setTocOpen(false)}
@@ -978,7 +978,7 @@ function AppDetail({ app, onBack, theme, onTheme }) {
                       background: v.bg,
                       borderRadius: 16,
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      color: '#fff', fontSize: 32, fontWeight: 600,
+                      color: '#fff', fontSize: 32, fontWeight: 700,
                       marginLeft: isHover ? (i === 0 ? 8 : -6) : baseLeft,
                       marginRight: isHover && i < variants.length - 1 ? 16 : 0,
                       transform: isHover
@@ -1003,7 +1003,7 @@ function AppDetail({ app, onBack, theme, onTheme }) {
             );
           })()}
           <div style={{ paddingTop: '8px' }}>
-            <p style={{ fontWeight: 600, fontSize: '1.1em', marginBottom: '4px' }}>{app.name}</p>
+            <p style={{ fontWeight: 700, fontSize: '1.1em', marginBottom: '4px' }}>{app.name}</p>
             <p style={{ color: 'var(--mid)', marginBottom: '2px' }}>{app.year}  ·  {app.tags}</p>
           </div>
         </div>
@@ -1015,7 +1015,7 @@ function AppDetail({ app, onBack, theme, onTheme }) {
         <div className="ab">
           {app.body.map((blk, i) => (
             blk.kind === 'h'
-              ? <h2 key={i} style={{ fontWeight: 600, fontSize: '1em', marginTop: '24px', marginBottom: '8px' }}>{blk.text}</h2>
+              ? <h2 key={i} style={{ fontWeight: 700, fontSize: '1em', marginTop: '24px', marginBottom: '8px' }}>{blk.text}</h2>
               : <p key={i} style={{ marginBottom: '14px' }}>{blk.text}</p>
           ))}
         </div>
@@ -1023,7 +1023,7 @@ function AppDetail({ app, onBack, theme, onTheme }) {
         {/* Links */}
         {app.links && app.links.length > 0 && (
           <div style={{ marginTop: '32px', paddingTop: '20px', borderTop: '1px solid var(--mid)' }}>
-            <p style={{ fontWeight: 600, marginBottom: '8px' }}>Links</p>
+            <p style={{ fontWeight: 700, marginBottom: '8px' }}>Links</p>
             {app.links.map((l, i) => (
               <a key={i} href={l.url} className="nav-link" style={{ display: 'inline-block', marginRight: '8px' }}>
                 <span className="nav-link-title">{l.label}</span>
@@ -1051,7 +1051,7 @@ function AllApps({ onBack, onApp, theme, onTheme }) {
       </div>
 
       <div style={{ maxWidth: '620px' }}>
-        <p style={{ fontWeight: 600, marginBottom: '4px' }}>All apps</p>
+        <p style={{ fontWeight: 700, marginBottom: '4px' }}>All apps</p>
         <p style={{ color: 'var(--mid)', marginBottom: '28px' }}>{DATA.apps.length} total</p>
         {DATA.apps.map((a, i) => (
           <a key={i} href="#"
@@ -1090,7 +1090,7 @@ function AllArticles({ onBack, onArticle, theme, onTheme }) {
       </div>
 
       <div style={{ maxWidth: '620px' }}>
-        <p style={{ fontWeight: 600, marginBottom: '4px' }}>All writing</p>
+        <p style={{ fontWeight: 700, marginBottom: '4px' }}>All writing</p>
         <p style={{ color: 'var(--mid)', marginBottom: '28px' }}>{DATA.articles.length} total</p>
         {groups.map((g, gi) => (
           <div key={gi} style={{ marginBottom: '24px' }}>
@@ -1113,6 +1113,25 @@ function AllArticles({ onBack, onArticle, theme, onTheme }) {
 function MainGrid({ onArticle, onApp, onAllApps, onAllArticles, theme, onTheme }) {
   const [hoverIcon, setHoverIcon] = useState(null);
   const [flashApp, setFlashApp] = useState(null);
+  const [hoverNameIndex, setHoverNameIndex] = useState(null);
+  const [bridgeSide, setBridgeSide] = useState(null);
+  const [hoverNamePose, setHoverNamePose] = useState({ x: -0.5, ry: 18, rx: -9, rz: 0, z: 10, y: -3, s: 1.4 });
+  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const isDarkMode = theme === 'dark' || (theme === 'system' && prefersDark);
+
+  const randomizeNamePose = () => {
+    setHoverNamePose({
+      x: -0.5 + (Math.random() * 1.4 - 0.7),
+      ry: 18 + (Math.random() * 14 - 7),
+      rx: -9 + (Math.random() * 10 - 5),
+      rz: Math.random() * 8 - 4,
+      z: 10 + (Math.random() * 8 - 4),
+      y: -3 + (Math.random() * 2.2 - 1.1),
+      s: 1.4 + (Math.random() * 0.08 - 0.04),
+    });
+  };
+  const lastNameIndex = DATA.name.length - 1;
+  const bridgeTransition = 'transform 0.42s cubic-bezier(0.22, 1.55, 0.36, 1)';
   const onAppClick = (i) => {
     onApp(i);
   };
@@ -1125,11 +1144,20 @@ function MainGrid({ onArticle, onApp, onAllApps, onAllArticles, theme, onTheme }
       <div style={{ marginBottom: '32px' }}>
         <div className="site-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '14px', marginBottom: '4px' }}>
           <div className="site-header-brand" style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-            <p style={{
-              fontWeight: 800, fontSize: '21px',
+            <p
+              onMouseLeave={() => {
+                setHoverNameIndex(null);
+                if (bridgeSide === 'name') setBridgeSide(null);
+              }}
+              style={{
+              fontWeight: 900, fontSize: '24px',
               fontFamily: "'Plus Jakarta Sans', sans-serif",
               perspective: '300px',
               display: 'inline-flex', letterSpacing: '-0.01em',
+              transformStyle: 'preserve-3d',
+              transform: bridgeSide === 'dock' ? 'translateX(-3px)' : 'translateX(0)',
+              transition: bridgeTransition,
+              cursor: 'default',
             }}>{[...DATA.name].map((char, i) => {
               const transforms = [
                 'rotateY(-10deg) rotateX(4deg)',   // B
@@ -1141,14 +1169,52 @@ function MainGrid({ onArticle, onApp, onAllApps, onAllArticles, theme, onTheme }
                 'rotateY(9deg) rotateX(-4deg)',    // H
                 'rotateY(-7deg) rotateX(3deg)',    // o
               ];
+              const baseTransform = transforms[i] || 'none';
+              const isHovered = hoverNameIndex === i;
+              const distance = hoverNameIndex == null ? 0 : i - hoverNameIndex;
+              const absDistance = Math.abs(distance);
+              const isNeighbor = hoverNameIndex != null && !isHovered && char !== ' ';
+              const bubbleStrength = isNeighbor ? Math.max(0, 1 - Math.min(Math.abs(distance), 3) / 3) : 0;
+              const bubbleX = bubbleStrength ? Math.sign(distance || 1) * (3.1 * bubbleStrength) : 0;
+              const bubbleY = bubbleStrength ? -(1.4 * bubbleStrength) : 0;
+              const hoverTransform = `${baseTransform} translateX(${hoverNamePose.x.toFixed(2)}px) rotateY(${hoverNamePose.ry.toFixed(2)}deg) rotateX(${hoverNamePose.rx.toFixed(2)}deg) rotateZ(${hoverNamePose.rz.toFixed(2)}deg) translateZ(${hoverNamePose.z.toFixed(2)}px) translateY(${hoverNamePose.y.toFixed(2)}px) scale(${hoverNamePose.s.toFixed(3)})`;
+              const neighborTransform = `${baseTransform} translateX(${bubbleX.toFixed(2)}px) translateY(${bubbleY.toFixed(2)}px)`;
+              const grayRamp = isDarkMode
+                ? ['#9f9f9f', '#b2b2b2', '#c5c5c5', '#d8d8d8']
+                : ['#2f2f2f', '#4a4a4a', '#666666', '#828282'];
+              const tonedGray = grayRamp[Math.min(absDistance, grayRamp.length - 1)];
               return (
-                <span key={i} style={{
+                <span key={i}
+                  onMouseEnter={() => {
+                    setBridgeSide(i === lastNameIndex ? 'name' : null);
+                    randomizeNamePose();
+                    setHoverNameIndex(i);
+                  }}
+                  style={{
                   display: 'inline-block',
-                  transform: transforms[i] || 'none',
+                  minWidth: char === ' ' ? '0.36em' : '0.62em',
+                  textAlign: 'center',
+                  fontWeight: isHovered ? 950 : 900,
+                  transformOrigin: '50% 50%',
+                  transform: isHovered ? hoverTransform : (isNeighbor ? neighborTransform : baseTransform),
+                  color: char === ' '
+                    ? 'inherit'
+                    : (hoverNameIndex == null ? 'inherit' : (isHovered ? 'var(--fg)' : tonedGray)),
+                  textShadow: isHovered ? '0 0 0.35px currentColor, 0 0 0.35px currentColor' : 'none',
+                  transition: 'transform 0.42s cubic-bezier(0.22, 1.55, 0.36, 1), color 0.2s ease, text-shadow 0.2s ease, font-weight 0.2s ease',
                 }}>{char === ' ' ? ' ' : char}</span>
               );
             })}</p>
-            <div className="site-icons" style={{ display: 'flex', alignItems: 'center', perspective: '600px' }}>
+            <div
+              className="site-icons"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                perspective: '600px',
+                transform: bridgeSide === 'name' ? 'translateX(4px)' : 'translateX(0)',
+                transition: bridgeTransition,
+              }}
+            >
               {DATA.apps.map((a, i) => {
                 const tilts = [
                   { rx: -8,  ry: -22, rz: -6 },
@@ -1170,8 +1236,14 @@ function MainGrid({ onArticle, onApp, onAllApps, onAllArticles, theme, onTheme }
                     : `rotateX(${t.rx}deg) rotateY(${t.ry}deg) rotateZ(${t.rz}deg)`;
                 return (
                 <button key={i}
-                  onMouseEnter={() => setHoverIcon(i)}
-                  onMouseLeave={() => setHoverIcon(null)}
+                  onMouseEnter={() => {
+                    setBridgeSide(i === 0 ? 'dock' : null);
+                    setHoverIcon(i);
+                  }}
+                  onMouseLeave={() => {
+                    setHoverIcon(null);
+                    if (i === 0) setBridgeSide(null);
+                  }}
                   onClick={() => onAppClick(i)}
                   aria-label={a.name}
                   style={{
@@ -1213,7 +1285,7 @@ function MainGrid({ onArticle, onApp, onAllApps, onAllArticles, theme, onTheme }
       {/* Col 1: Identity / contact */}
       {/* Col 1: Apps */}
       <div style={{ paddingRight: '40px', marginBottom: '32px' }}>
-        <p style={{ fontWeight: 600, marginBottom: '10px' }}>Apps</p>
+        <p style={{ fontWeight: 700, marginBottom: '10px' }}>Apps</p>
         {DATA.apps.slice(0, 10).map((a, i) => (
           <a key={i} id={'app-' + i} href="#"
             onClick={e => { e.preventDefault(); onApp(i); }}
@@ -1237,7 +1309,7 @@ function MainGrid({ onArticle, onApp, onAllApps, onAllArticles, theme, onTheme }
 
       {/* Col 2: Writing */}
       <div style={{ paddingRight: '40px', marginBottom: '32px' }}>
-        <p style={{ fontWeight: 600, marginBottom: '10px' }}>Writing</p>
+        <p style={{ fontWeight: 700, marginBottom: '10px' }}>Writing</p>
         {(() => {
           const capped = DATA.articles.slice(0, 10);
           const groups = [];
@@ -1272,7 +1344,7 @@ function MainGrid({ onArticle, onApp, onAllApps, onAllArticles, theme, onTheme }
 
       {/* Col 3: About */}
       <div style={{ paddingRight: '40px', marginBottom: '32px' }}>
-        <p style={{ fontWeight: 600, marginBottom: '10px' }}>About</p>
+        <p style={{ fontWeight: 700, marginBottom: '10px' }}>About</p>
         <p style={{ color: 'var(--mid)', maxWidth: '220px' }}>
           iOS &amp; macOS developer in Vancouver. 🍁
         </p>
@@ -1280,7 +1352,7 @@ function MainGrid({ onArticle, onApp, onAllApps, onAllArticles, theme, onTheme }
 
       {/* Col 4: Contact */}
       <div style={{ marginBottom: '32px' }}>
-        <p style={{ fontWeight: 600, marginBottom: '10px' }}>Contact</p>
+        <p style={{ fontWeight: 700, marginBottom: '10px' }}>Contact</p>
         <p style={{ color: 'var(--mid)', marginBottom: '12px' }}>{DATA.location}</p>
         {DATA.links.map((l, i) => (
           <a key={i} href={l.url} className="nav-link" style={{ marginBottom: '2px' }}>
@@ -1368,7 +1440,7 @@ function TweaksPanel({ theme, onTheme, font, onFont }) {
       background: 'var(--bg)', border: '1px solid var(--mid)',
       padding: 20, width: 220, fontSize: 13,
     }}>
-      <p style={{ fontWeight: 600, marginBottom: 12 }}>Tweaks</p>
+      <p style={{ fontWeight: 700, marginBottom: 12 }}>Tweaks</p>
 
       <p style={{ color: 'var(--mid)', marginBottom: 6 }}>Theme</p>
       <div style={{ display: 'flex', gap: 4, marginBottom: 16 }}>
