@@ -795,6 +795,9 @@ function AllArticles({ navigate, theme, onTheme }) {
 function HomePage({ navigate, theme, onTheme }) {
   const [hoverIcon, setHoverIcon] = useState(null);
   const [hoverNameIndex, setHoverNameIndex] = useState(null);
+  const [introHoverIcon, setIntroHoverIcon] = useState(null);
+  const [introHoverNameIndex, setIntroHoverNameIndex] = useState(null);
+  const [isIntroHoverActive, setIsIntroHoverActive] = useState(true);
   const [bridgeSide, setBridgeSide] = useState(null);
   const [hoverNamePose, setHoverNamePose] = useState({ x: -0.5, ry: 18, rx: -9, rz: 0, z: 10, y: -3, s: 1.4 });
   const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
@@ -813,6 +816,47 @@ function HomePage({ navigate, theme, onTheme }) {
   };
   const lastNameIndex = DATA.name.length - 1;
   const bridgeTransition = "transform 0.42s cubic-bezier(0.22, 1.55, 0.36, 1)";
+  const activeHoverNameIndex = hoverNameIndex != null ? hoverNameIndex : (isIntroHoverActive ? introHoverNameIndex : null);
+  const activeHoverIcon = hoverIcon != null ? hoverIcon : (isIntroHoverActive ? introHoverIcon : null);
+
+  useEffect(() => {
+    const allNameIndices = [...DATA.name]
+      .map((char, i) => (char === " " ? null : i))
+      .filter(i => i != null);
+    const nameIndices = allNameIndices.length
+      ? [allNameIndices[Math.floor(Math.random() * allNameIndices.length)]]
+      : [];
+    const introStartDelay = 1000;
+    const nameStepDelay = 1400;
+    const settleDelay = 560;
+    const timers = [];
+    let step = 0;
+
+    const tick = () => {
+      if (step < nameIndices.length) {
+        setIntroHoverNameIndex(nameIndices[step]);
+        setIntroHoverIcon(null);
+      } else {
+        setIntroHoverNameIndex(null);
+        setIntroHoverIcon(null);
+        setIsIntroHoverActive(false);
+        return;
+      }
+      step += 1;
+      timers.push(setTimeout(tick, nameStepDelay));
+    };
+
+    timers.push(setTimeout(tick, introStartDelay));
+    timers.push(setTimeout(() => {
+      setIntroHoverNameIndex(null);
+      setIntroHoverIcon(null);
+      setIsIntroHoverActive(false);
+    }, introStartDelay + nameStepDelay * nameIndices.length + settleDelay));
+
+    return () => {
+      timers.forEach(clearTimeout);
+    };
+  }, []);
 
   return (
     <div style={{ padding: "40px var(--gap)", animation: "fadeUp 0.2s ease" }}>
@@ -849,15 +893,30 @@ function HomePage({ navigate, theme, onTheme }) {
                   "rotateY(-7deg) rotateX(3deg)",
                 ];
                 const baseTransform = transforms[i] || "none";
-                const isHovered = hoverNameIndex === i;
-                const distance = hoverNameIndex == null ? 0 : i - hoverNameIndex;
+                const isIntroNameHover = isIntroHoverActive && hoverNameIndex == null && activeHoverNameIndex === i;
+                const activePose = isIntroNameHover
+                  ? {
+                    x: hoverNamePose.x * 0.26,
+                    ry: hoverNamePose.ry * 0.3,
+                    rx: hoverNamePose.rx * 0.3,
+                    rz: hoverNamePose.rz * 0.3,
+                    z: hoverNamePose.z * 0.28,
+                    y: hoverNamePose.y * 0.28,
+                    s: 1 + (hoverNamePose.s - 1) * 0.42,
+                  }
+                  : hoverNamePose;
+                const isHovered = activeHoverNameIndex === i;
+                const distance = activeHoverNameIndex == null ? 0 : i - activeHoverNameIndex;
                 const absDistance = Math.abs(distance);
-                const isNeighbor = hoverNameIndex != null && !isHovered && char !== " ";
+                const isNeighbor = activeHoverNameIndex != null && !isHovered && char !== " ";
                 const bubbleStrength = isNeighbor ? Math.max(0, 1 - Math.min(Math.abs(distance), 3) / 3) : 0;
                 const bubbleX = bubbleStrength ? Math.sign(distance || 1) * (3.1 * bubbleStrength) : 0;
                 const bubbleY = bubbleStrength ? -(1.4 * bubbleStrength) : 0;
-                const hoverTransform = `${baseTransform} translateX(${hoverNamePose.x.toFixed(2)}px) rotateY(${hoverNamePose.ry.toFixed(2)}deg) rotateX(${hoverNamePose.rx.toFixed(2)}deg) rotateZ(${hoverNamePose.rz.toFixed(2)}deg) translateZ(${hoverNamePose.z.toFixed(2)}px) translateY(${hoverNamePose.y.toFixed(2)}px) scale(${hoverNamePose.s.toFixed(3)})`;
+                const hoverTransform = `${baseTransform} translateX(${activePose.x.toFixed(2)}px) rotateY(${activePose.ry.toFixed(2)}deg) rotateX(${activePose.rx.toFixed(2)}deg) rotateZ(${activePose.rz.toFixed(2)}deg) translateZ(${activePose.z.toFixed(2)}px) translateY(${activePose.y.toFixed(2)}px) scale(${activePose.s.toFixed(3)})`;
                 const neighborTransform = `${baseTransform} translateX(${bubbleX.toFixed(2)}px) translateY(${bubbleY.toFixed(2)}px)`;
+                const letterTransition = isIntroNameHover
+                  ? "transform 1.6s cubic-bezier(0.37, 0, 0.63, 1), color 0.58s ease-in-out, text-shadow 0.58s ease-in-out, font-weight 0.58s ease-in-out"
+                  : "transform 0.42s cubic-bezier(0.22, 1.55, 0.36, 1), color 0.2s ease, text-shadow 0.2s ease, font-weight 0.2s ease";
                 const grayRamp = isDarkMode
                   ? ["#9f9f9f", "#b2b2b2", "#c5c5c5", "#d8d8d8"]
                   : ["#2f2f2f", "#4a4a4a", "#666666", "#828282"];
@@ -879,9 +938,9 @@ function HomePage({ navigate, theme, onTheme }) {
                       transform: isHovered ? hoverTransform : (isNeighbor ? neighborTransform : baseTransform),
                       color: char === " "
                         ? "inherit"
-                        : (hoverNameIndex == null ? "inherit" : (isHovered ? "var(--fg)" : tonedGray)),
+                        : (activeHoverNameIndex == null ? "inherit" : (isHovered ? "var(--fg)" : tonedGray)),
                       textShadow: isHovered ? "0 0 0.35px currentColor, 0 0 0.35px currentColor" : "none",
-                      transition: "transform 0.42s cubic-bezier(0.22, 1.55, 0.36, 1), color 0.2s ease, text-shadow 0.2s ease, font-weight 0.2s ease",
+                      transition: letterTransition,
                     }}
                   >
                     {char === " " ? "\u00A0" : char}
@@ -912,13 +971,16 @@ function HomePage({ navigate, theme, onTheme }) {
                   { rx: 5, ry: -28, rz: -2 },
                 ];
                 const tilt = tilts[i % tilts.length];
-                const isHover = hoverIcon === i;
+                const isIntroIconHover = isIntroHoverActive && hoverIcon == null && activeHoverIcon === i;
+                const isHover = activeHoverIcon === i;
                 const last = DATA.apps.length - 1;
                 const baseTransform = i === 1
                   ? "rotateX(16deg) rotateY(-30deg) rotateZ(14deg) scale(1.12) translateY(-1px)"
                   : i === 0
                     ? "none"
                     : `rotateX(${tilt.rx}deg) rotateY(${tilt.ry}deg) rotateZ(${tilt.rz}deg)`;
+                const hoverTransform = "rotateX(0deg) rotateY(0deg) rotateZ(0deg) scale(1.55) translateY(-4px)";
+                const iconTransition = "transform 0.18s cubic-bezier(0.34, 1.4, 0.64, 1), margin 0.18s ease, box-shadow 0.18s ease";
                 return (
                   <RouteLink
                     key={app.slug}
@@ -941,16 +1003,18 @@ function HomePage({ navigate, theme, onTheme }) {
                       borderRadius: 7,
                       marginLeft: i === 0 ? 0 : (isHover ? 2 : -7),
                       marginRight: isHover && i < last ? 9 : 0,
-                      transform: isHover ? "rotateX(0deg) rotateY(0deg) rotateZ(0deg) scale(1.55) translateY(-4px)" : baseTransform,
+                      transform: isHover ? hoverTransform : baseTransform,
                       transformStyle: "preserve-3d",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
                       cursor: "pointer",
                       flexShrink: 0,
-                      boxShadow: isHover ? "0 8px 18px rgba(0,0,0,0.22), 0 2px 4px rgba(0,0,0,0.14)" : "0 4px 8px rgba(0,0,0,0.18), 0 1px 2px rgba(0,0,0,0.12)",
+                      boxShadow: isHover
+                        ? "0 8px 18px rgba(0,0,0,0.22), 0 2px 4px rgba(0,0,0,0.14)"
+                        : "0 4px 8px rgba(0,0,0,0.18), 0 1px 2px rgba(0,0,0,0.12)",
                       zIndex: isHover ? 20 : DATA.apps.length - i,
-                      transition: "transform 0.18s cubic-bezier(0.34, 1.4, 0.64, 1), margin 0.18s ease, box-shadow 0.18s ease",
+                      transition: iconTransition,
                       overflow: "hidden",
                     }}
                   >
