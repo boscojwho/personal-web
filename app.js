@@ -793,11 +793,15 @@ function AllArticles({ navigate, theme, onTheme }) {
 }
 
 function HomePage({ navigate, theme, onTheme }) {
+  const LAUNCH_JIGGLE_DURATION_MS = 2000;
   const [hoverIcon, setHoverIcon] = useState(null);
   const [hoverNameIndex, setHoverNameIndex] = useState(null);
   const [introHoverIcon, setIntroHoverIcon] = useState(null);
   const [introHoverNameIndex, setIntroHoverNameIndex] = useState(null);
   const [isIntroHoverActive, setIsIntroHoverActive] = useState(true);
+  const [launchHoverIcon, setLaunchHoverIcon] = useState(null);
+  const [jiggleIconIndex, setJiggleIconIndex] = useState(null);
+  const [jiggleTick, setJiggleTick] = useState(0);
   const [bridgeSide, setBridgeSide] = useState(null);
   const [hoverNamePose, setHoverNamePose] = useState({ x: -0.5, ry: 18, rx: -9, rz: 0, z: 10, y: -3, s: 1.4 });
   const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
@@ -817,7 +821,9 @@ function HomePage({ navigate, theme, onTheme }) {
   const lastNameIndex = DATA.name.length - 1;
   const bridgeTransition = "transform 0.42s cubic-bezier(0.22, 1.55, 0.36, 1)";
   const activeHoverNameIndex = hoverNameIndex != null ? hoverNameIndex : (isIntroHoverActive ? introHoverNameIndex : null);
-  const activeHoverIcon = hoverIcon != null ? hoverIcon : (isIntroHoverActive ? introHoverIcon : null);
+  const activeHoverIcon = hoverIcon != null
+    ? hoverIcon
+    : (launchHoverIcon != null ? launchHoverIcon : (isIntroHoverActive ? introHoverIcon : null));
 
   useEffect(() => {
     const allNameIndices = [...DATA.name]
@@ -827,7 +833,7 @@ function HomePage({ navigate, theme, onTheme }) {
       ? [allNameIndices[Math.floor(Math.random() * allNameIndices.length)]]
       : [];
     const introStartDelay = 1000;
-    const nameStepDelay = 1400;
+    const nameStepDelay = LAUNCH_JIGGLE_DURATION_MS;
     const settleDelay = 560;
     const timers = [];
     let step = 0;
@@ -856,7 +862,36 @@ function HomePage({ navigate, theme, onTheme }) {
     return () => {
       timers.forEach(clearTimeout);
     };
-  }, []);
+  }, [LAUNCH_JIGGLE_DURATION_MS]);
+
+  useEffect(() => {
+    if (!DATA.apps.length) return undefined;
+    const launchDelay = 900;
+    const jiggleDuration = LAUNCH_JIGGLE_DURATION_MS;
+    const frameMs = 85;
+    let intervalId = null;
+    let stopTimeout = null;
+    const startTimeout = setTimeout(() => {
+      const randomIndex = Math.floor(Math.random() * DATA.apps.length);
+      setJiggleIconIndex(randomIndex);
+      setLaunchHoverIcon(randomIndex);
+      setJiggleTick(0);
+      intervalId = setInterval(() => {
+        setJiggleTick(t => t + 1);
+      }, frameMs);
+      stopTimeout = setTimeout(() => {
+        if (intervalId != null) clearInterval(intervalId);
+        setJiggleIconIndex(null);
+        setLaunchHoverIcon(null);
+      }, jiggleDuration);
+    }, launchDelay);
+
+    return () => {
+      clearTimeout(startTimeout);
+      if (stopTimeout != null) clearTimeout(stopTimeout);
+      if (intervalId != null) clearInterval(intervalId);
+    };
+  }, [LAUNCH_JIGGLE_DURATION_MS]);
 
   return (
     <div style={{ padding: "40px var(--gap)", animation: "fadeUp 0.2s ease" }}>
@@ -973,6 +1008,9 @@ function HomePage({ navigate, theme, onTheme }) {
                 const tilt = tilts[i % tilts.length];
                 const isIntroIconHover = isIntroHoverActive && hoverIcon == null && activeHoverIcon === i;
                 const isHover = activeHoverIcon === i;
+                const isJiggleTarget = jiggleIconIndex === i;
+                const isSimulatedHover = hoverIcon == null && launchHoverIcon === i;
+                const isJiggling = isJiggleTarget;
                 const last = DATA.apps.length - 1;
                 const baseTransform = i === 1
                   ? "rotateX(16deg) rotateY(-30deg) rotateZ(14deg) scale(1.12) translateY(-1px)"
@@ -981,6 +1019,12 @@ function HomePage({ navigate, theme, onTheme }) {
                     : `rotateX(${tilt.rx}deg) rotateY(${tilt.ry}deg) rotateZ(${tilt.rz}deg)`;
                 const hoverTransform = "rotateX(0deg) rotateY(0deg) rotateZ(0deg) scale(1.55) translateY(-4px)";
                 const iconTransition = "transform 0.18s cubic-bezier(0.34, 1.4, 0.64, 1), margin 0.18s ease, box-shadow 0.18s ease";
+                const jiggleAngle = (Math.sin(jiggleTick * 1.35) * 3.8) + (Math.sin(jiggleTick * 0.72) * 1.4);
+                const jiggleLift = Math.max(0, Math.sin(jiggleTick * 1.35)) * 1.8;
+                const restingTransform = isJiggling
+                  ? `${baseTransform} rotateZ(${jiggleAngle.toFixed(2)}deg) translateY(${-jiggleLift.toFixed(2)}px)`
+                  : baseTransform;
+                const hoverJiggleTransform = `${hoverTransform} rotateZ(${(jiggleAngle * 0.75).toFixed(2)}deg) translateY(${-Math.max(0, jiggleLift * 0.7).toFixed(2)}px)`;
                 return (
                   <RouteLink
                     key={app.slug}
@@ -1003,7 +1047,9 @@ function HomePage({ navigate, theme, onTheme }) {
                       borderRadius: 7,
                       marginLeft: i === 0 ? 0 : (isHover ? 2 : -7),
                       marginRight: isHover && i < last ? 9 : 0,
-                      transform: isHover ? hoverTransform : baseTransform,
+                      transform: isHover
+                        ? ((isJiggling && isSimulatedHover) ? hoverJiggleTransform : hoverTransform)
+                        : restingTransform,
                       transformStyle: "preserve-3d",
                       display: "flex",
                       alignItems: "center",
@@ -1036,7 +1082,7 @@ function HomePage({ navigate, theme, onTheme }) {
               key={app.slug}
               to={ROUTES.app(app.slug)}
               navigate={navigate}
-              className={"app-row" + (hoverIcon === i ? " is-hover" : "")}
+              className={"app-row" + (activeHoverIcon === i ? " is-hover" : "")}
               style={{ display: "block", textDecoration: "none", color: "inherit", marginTop: app.groupStart ? "20px" : undefined }}
               onMouseEnter={() => setHoverIcon(i)}
               onMouseLeave={() => setHoverIcon(null)}
