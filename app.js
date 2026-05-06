@@ -815,6 +815,7 @@ function AllArticles({ navigate, theme, onTheme }) {
 function HomePage({ navigate, theme, onTheme }) {
   const [hoverIcon, setHoverIcon] = useState(null);
   const [hoverNameIndex, setHoverNameIndex] = useState(null);
+  const [bridgeSide, setBridgeSide] = useState(null);
   const [hoverNamePose, setHoverNamePose] = useState({ x: -0.5, ry: 18, rx: -9, rz: 0, z: 10, y: -3, s: 1.4 });
   const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
   const isDarkMode = theme === "dark" || (theme === "system" && prefersDark);
@@ -830,6 +831,8 @@ function HomePage({ navigate, theme, onTheme }) {
       s: 1.4 + (Math.random() * 0.08 - 0.04),
     });
   };
+  const lastNameIndex = DATA.name.length - 1;
+  const bridgeTransition = "transform 0.42s cubic-bezier(0.22, 1.55, 0.36, 1)";
 
   return (
     <div style={{ padding: "40px var(--gap)", animation: "fadeUp 0.2s ease" }}>
@@ -837,7 +840,10 @@ function HomePage({ navigate, theme, onTheme }) {
         <div className="site-header" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "14px", marginBottom: "4px" }}>
           <div className="site-header-brand" style={{ display: "flex", alignItems: "center", gap: "14px" }}>
             <p
-              onMouseLeave={() => setHoverNameIndex(null)}
+              onMouseLeave={() => {
+                setHoverNameIndex(null);
+                if (bridgeSide === "name") setBridgeSide(null);
+              }}
               style={{
               fontWeight: 900,
               fontSize: "24px",
@@ -846,6 +852,8 @@ function HomePage({ navigate, theme, onTheme }) {
               display: "inline-flex",
               letterSpacing: "-0.01em",
               transformStyle: "preserve-3d",
+              transform: bridgeSide === "dock" ? "translateX(-3px)" : "translateX(0)",
+              transition: bridgeTransition,
               cursor: "default",
             }}
             >
@@ -878,6 +886,7 @@ function HomePage({ navigate, theme, onTheme }) {
                   <span
                     key={i}
                     onMouseEnter={() => {
+                      setBridgeSide(i === lastNameIndex ? "name" : null);
                       randomizeNamePose();
                       setHoverNameIndex(i);
                     }}
@@ -901,7 +910,16 @@ function HomePage({ navigate, theme, onTheme }) {
               })}
             </p>
 
-            <div className="site-icons" style={{ display: "flex", alignItems: "center", perspective: "600px" }}>
+            <div
+              className="site-icons"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                perspective: "600px",
+                transform: bridgeSide === "name" ? "translateX(4px)" : "translateX(0)",
+                transition: bridgeTransition,
+              }}
+            >
               {DATA.apps.map((app, i) => {
                 const tilts = [
                   { rx: -8, ry: -22, rz: -6 },
@@ -927,8 +945,14 @@ function HomePage({ navigate, theme, onTheme }) {
                     to={ROUTES.app(app.slug)}
                     navigate={navigate}
                     aria-label={app.name}
-                    onMouseEnter={() => setHoverIcon(i)}
-                    onMouseLeave={() => setHoverIcon(null)}
+                    onMouseEnter={() => {
+                      setBridgeSide(i === 0 ? "dock" : null);
+                      setHoverIcon(i);
+                    }}
+                    onMouseLeave={() => {
+                      setHoverIcon(null);
+                      if (i === 0) setBridgeSide(null);
+                    }}
                     style={{
                       width: 32,
                       height: 32,
