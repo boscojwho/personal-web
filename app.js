@@ -49,8 +49,10 @@ function articleSummary(body) {
 }
 
 const ROUTE_ROOTS = new Set(["apps", "writing"]);
+const IS_FILE_PROTOCOL = window.location.protocol === "file:";
 
 function detectSiteBasePath(pathname) {
+  if (IS_FILE_PROTOCOL) return "/";
   const segs = pathname.split("/").filter(Boolean);
   if (!segs.length) return "/";
   if (ROUTE_ROOTS.has(segs[0])) return "/";
@@ -88,6 +90,10 @@ function resolveRouteFromLocation() {
   const fallbackRoute = params.get("route");
   const currentHash = window.location.hash || "";
 
+  if (IS_FILE_PROTOCOL) {
+    return parseInternalRoute(fallbackRoute || "/", currentHash);
+  }
+
   if (fallbackRoute) {
     const url = new URL(fallbackRoute, window.location.origin);
     const internalPath = actualToInternalPath(url.pathname);
@@ -108,7 +114,7 @@ function parseInternalRoute(internalPath, hash = "") {
 
   const segs = clean.split("/").filter(Boolean);
   if (segs[0] === "apps") {
-    if (segs.length === 1) return { kind: "apps", path: "/apps", hash };
+    if (segs.length === 1) return { kind: "home", path: "/", hash };
     if (segs.length === 2) return { kind: "app", path: clean, slug: segs[1], hash };
   }
   if (segs[0] === "writing") {
@@ -120,13 +126,17 @@ function parseInternalRoute(internalPath, hash = "") {
 
 const ROUTES = {
   home: "/",
-  apps: "/apps",
   writing: "/writing",
   app: slug => `/apps/${slug}`,
   article: slug => `/writing/${slug}`,
 };
 
 function routeHref(internalPath) {
+  if (IS_FILE_PROTOCOL) {
+    const clean = normalizeInternalPath(internalPath);
+    const search = clean === "/" ? "" : `?route=${encodeURIComponent(clean)}`;
+    return `${window.location.pathname}${search}`;
+  }
   return internalToActualPath(internalPath);
 }
 
@@ -156,11 +166,7 @@ function updatePageMetadata(route, app, article) {
   let description = "iOS and macOS developer in Vancouver.";
   let canonical = routeHref(route.path);
 
-  if (route.kind === "apps") {
-    title = `Apps · ${baseTitle}`;
-    description = "Selected apps and projects by Bosco Ho.";
-    canonical = routeHref("/apps");
-  } else if (route.kind === "app" && app) {
+  if (route.kind === "app" && app) {
     title = `${app.name} · Apps · ${baseTitle}`;
     description = app.desc || `${app.year} ${app.tags}`.trim();
     canonical = routeHref(route.path);
@@ -244,7 +250,10 @@ const DATA = {
       label: "R",
       desc: "",
       body: [],
-      links: [{ label: "rungoapp.com", url: "https://www.rungoapp.com/" }],
+      links: [
+        { label: "rungoapp.com", url: "https://www.rungoapp.com/" },
+        { label: "App Store", url: "https://apps.apple.com/ca/app/rungo-the-best-routes-to-run/id712628644" },
+      ],
     },
     {
       name: "HK Characters",
@@ -256,7 +265,7 @@ const DATA = {
       label: "H",
       desc: "",
       body: [],
-      links: [],
+      links: [{ label: "App Store", url: "https://apps.apple.com/ca/app/hk-characters/id6502965916" }],
     },
     {
       name: "Fencathon 2",
@@ -323,7 +332,10 @@ const DATA = {
       label: "M",
       desc: "",
       body: [],
-      links: [{ label: "GitHub", url: "https://github.com/mlemgroup/mlem" }],
+      links: [
+        { label: "GitHub", url: "https://github.com/mlemgroup/mlem" },
+        { label: "App Store", url: "https://apps.apple.com/ca/app/mlem-for-lemmy/id6450543782" },
+      ],
     },
   ],
   articles: [
@@ -527,8 +539,8 @@ function AppDetail({ app, navigate, theme, onTheme }) {
   return (
     <div style={{ animation: "fadeUp 0.2s ease", padding: "40px var(--gap)" }}>
       <div className="detail-topbar" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 14, marginBottom: "32px" }}>
-        <RouteLink to={ROUTES.apps} navigate={navigate} style={{ color: "var(--mid)", textDecoration: "underline" }}>
-          ← All apps
+        <RouteLink to={ROUTES.home} navigate={navigate} style={{ color: "var(--mid)", textDecoration: "underline" }}>
+          ← Home
         </RouteLink>
         <CompactThemeToggle theme={theme} onTheme={onTheme} />
       </div>
@@ -576,7 +588,7 @@ function AppDetail({ app, navigate, theme, onTheme }) {
                         transition: "transform 0.20s cubic-bezier(0.34, 1.4, 0.64, 1), margin 0.20s ease, box-shadow 0.20s ease",
                       }}
                     >
-                      {app.icon && variants.length === 1 ? (
+                      {app.icon ? (
                         <img src={app.icon} width="72" height="72" alt={app.name} style={{ display: "block", borderRadius: 13, pointerEvents: "none" }} />
                       ) : (
                         variant.label
@@ -733,38 +745,6 @@ function ArticleDetail({ article, navigate, theme, onTheme, routeHash }) {
   );
 }
 
-function AllApps({ navigate, theme, onTheme }) {
-  return (
-    <div style={{ animation: "fadeUp 0.2s ease", padding: "40px var(--gap)" }}>
-      <div className="detail-topbar" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 14, marginBottom: "32px" }}>
-        <RouteLink to={ROUTES.home} navigate={navigate} style={{ color: "var(--mid)", textDecoration: "underline" }}>
-          ← Home
-        </RouteLink>
-        <CompactThemeToggle theme={theme} onTheme={onTheme} />
-      </div>
-
-      <div style={{ maxWidth: "620px" }}>
-        <p style={{ fontWeight: 600, marginBottom: "4px" }}>All apps</p>
-        <p style={{ color: "var(--mid)", marginBottom: "28px" }}>{DATA.apps.length} total</p>
-        {DATA.apps.map(app => (
-          <RouteLink
-            key={app.slug}
-            to={ROUTES.app(app.slug)}
-            navigate={navigate}
-            className="app-row"
-            style={{ display: "block", textDecoration: "none", color: "inherit", marginBottom: "10px", marginTop: app.groupStart ? "20px" : undefined }}
-          >
-            <span style={{ textDecoration: "underline" }}>{app.name}</span>
-            {app.year && <span style={{ color: "var(--mid)" }}> — {app.year}</span>}
-            {app.tags && <span style={{ color: "var(--mid)" }}> · {app.tags}</span>}
-            {app.desc && <span style={{ color: "var(--mid)" }}> · {app.desc}</span>}
-          </RouteLink>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 function AllArticles({ navigate, theme, onTheme }) {
   const groups = [];
   DATA.articles.forEach(article => {
@@ -881,7 +861,6 @@ function HomePage({ navigate, theme, onTheme }) {
                       marginRight: isHover && i < last ? 9 : 0,
                       transform: isHover ? "rotateX(0deg) rotateY(0deg) rotateZ(0deg) scale(1.55) translateY(-4px)" : baseTransform,
                       transformStyle: "preserve-3d",
-                      border: "1.5px solid rgba(255,255,255,0.9)",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
@@ -921,11 +900,6 @@ function HomePage({ navigate, theme, onTheme }) {
               {app.tags && <span style={{ color: "var(--mid)" }}> · {app.tags}</span>}
             </RouteLink>
           ))}
-          {DATA.apps.length > 10 && (
-            <RouteLink to={ROUTES.apps} navigate={navigate} className="nav-link" style={{ marginTop: "10px" }}>
-              <span className="nav-link-title">View all {DATA.apps.length} apps →</span>
-            </RouteLink>
-          )}
         </div>
 
         <div style={{ paddingRight: "40px", marginBottom: "32px" }}>
@@ -1000,9 +974,6 @@ function NotFoundPage({ navigate, theme, onTheme }) {
       <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
         <RouteLink to={ROUTES.home} navigate={navigate} className="nav-link">
           <span className="nav-link-title">Home</span>
-        </RouteLink>
-        <RouteLink to={ROUTES.apps} navigate={navigate} className="nav-link">
-          <span className="nav-link-title">Apps</span>
         </RouteLink>
         <RouteLink to={ROUTES.writing} navigate={navigate} className="nav-link">
           <span className="nav-link-title">Writing</span>
@@ -1215,8 +1186,6 @@ function App() {
   let page = null;
   if (route.kind === "home") {
     page = <HomePage navigate={navigate} theme={theme} onTheme={onTheme} onFont={onFont} />;
-  } else if (route.kind === "apps") {
-    page = <AllApps navigate={navigate} theme={theme} onTheme={onTheme} />;
   } else if (route.kind === "app") {
     const app = APP_BY_SLUG.get(route.slug);
     page = app ? <AppDetail app={app} navigate={navigate} theme={theme} onTheme={onTheme} /> : <NotFoundPage navigate={navigate} theme={theme} onTheme={onTheme} />;
