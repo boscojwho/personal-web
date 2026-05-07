@@ -1335,7 +1335,7 @@ function HomePage({ navigate, theme, onTheme }) {
       <div className="main-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 0 }}>
         <div style={{ paddingRight: "40px", marginBottom: "32px" }}>
           <p style={{ fontWeight: 700, marginBottom: "10px" }}>Apps</p>
-          {DATA.apps.slice(0, 10).map((app, i) => (
+          {DATA.apps.map((app, i) => (
             <React.Fragment key={app.slug}>
               {app.groupStart && app.groupLabel && (
                 <p style={{ color: "var(--mid)", marginTop: "20px", marginBottom: "10px", textTransform: "none" }}>{app.groupLabel}</p>
