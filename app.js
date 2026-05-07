@@ -1006,6 +1006,7 @@ function HomePage({ navigate, theme, onTheme }) {
                 display: "flex",
                 alignItems: "center",
                 perspective: "600px",
+                overflow: "visible",
                 transform: bridgeSide === "name" ? "translateX(4px)" : "translateX(0)",
                 transition: bridgeTransition,
               }}
@@ -1027,14 +1028,12 @@ function HomePage({ navigate, theme, onTheme }) {
                 const isJiggleTarget = jiggleIconIndex === i;
                 const isSimulatedHover = hoverIcon == null && launchHoverIcon === i;
                 const isJiggling = isJiggleTarget;
-                const last = DATA.apps.length - 1;
                 const baseTransform = i === 1
                   ? "rotateX(16deg) rotateY(-30deg) rotateZ(14deg) scale(1.12) translateY(-1px)"
                   : i === 0
                     ? "none"
                     : `rotateX(${tilt.rx}deg) rotateY(${tilt.ry}deg) rotateZ(${tilt.rz}deg)`;
                 const hoverTransform = "rotateX(0deg) rotateY(0deg) rotateZ(0deg) scale(1.55) translateY(-4px)";
-                const iconTransition = "transform 0.18s cubic-bezier(0.34, 1.4, 0.64, 1), margin 0.18s ease, box-shadow 0.18s ease";
                 const jiggleAngle = (Math.sin(jiggleTick * 1.35) * 3.8) + (Math.sin(jiggleTick * 0.72) * 1.4);
                 const jiggleLift = Math.max(0, Math.sin(jiggleTick * 1.35)) * 1.8;
                 const restingTransform = isJiggling
@@ -1061,8 +1060,8 @@ function HomePage({ navigate, theme, onTheme }) {
                       padding: 0,
                       background: "none",
                       borderRadius: 7,
-                      marginLeft: i === 0 ? 0 : (isHover ? 2 : -7),
-                      marginRight: isHover && i < last ? 9 : 0,
+                      marginLeft: i === 0 ? 0 : -7,
+                      marginRight: 0,
                       transform: isHover
                         ? ((isJiggling && isSimulatedHover) ? hoverJiggleTransform : hoverTransform)
                         : restingTransform,
@@ -1072,12 +1071,13 @@ function HomePage({ navigate, theme, onTheme }) {
                       justifyContent: "center",
                       cursor: "pointer",
                       flexShrink: 0,
+                      position: "relative",
                       boxShadow: isHover
                         ? "0 8px 18px rgba(0,0,0,0.22), 0 2px 4px rgba(0,0,0,0.14)"
                         : "0 4px 8px rgba(0,0,0,0.18), 0 1px 2px rgba(0,0,0,0.12)",
                       zIndex: isHover ? 20 : DATA.apps.length - i,
-                      transition: iconTransition,
-                      overflow: "hidden",
+                      transition: "transform 0.18s cubic-bezier(0.34, 1.4, 0.64, 1), box-shadow 0.18s ease",
+                      overflow: "visible",
                     }}
                   >
                     {app.icon ? (
