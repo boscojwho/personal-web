@@ -21,6 +21,17 @@ SPA_ENTRYPOINTS = {
 
 
 class PreviewHandler(SimpleHTTPRequestHandler):
+    def _root_file_for_request(self) -> str | None:
+        request_path = self.path.split("?", 1)[0].split("#", 1)[0]
+        if request_path in SPA_ENTRYPOINTS:
+            return None
+
+        basename = Path(request_path).name
+        candidate = f"/{basename}"
+        if candidate in SPA_ENTRYPOINTS:
+            return candidate
+        return None
+
     def _should_serve_spa_shell(self) -> bool:
         request_path = self.path.split("?", 1)[0].split("#", 1)[0]
         if request_path in SPA_ENTRYPOINTS or request_path.startswith("/assets/"):
@@ -30,11 +41,21 @@ class PreviewHandler(SimpleHTTPRequestHandler):
         return not candidate.exists()
 
     def do_GET(self) -> None:
+        root_file = self._root_file_for_request()
+        if root_file is not None:
+            self.path = root_file
+            super().do_GET()
+            return
         if self._should_serve_spa_shell():
             self.path = "/index.html"
         super().do_GET()
 
     def do_HEAD(self) -> None:
+        root_file = self._root_file_for_request()
+        if root_file is not None:
+            self.path = root_file
+            super().do_HEAD()
+            return
         if self._should_serve_spa_shell():
             self.path = "/index.html"
         super().do_HEAD()

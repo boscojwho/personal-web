@@ -354,6 +354,16 @@ const DATA = {
       label: "H",
       desc: "",
       body: [],
+      screenshots: [
+        { src: "assets/apps/hk-characters-01.jpg", alt: "HK Characters iPhone screenshot 1", device: "iPhone" },
+        { src: "assets/apps/hk-characters-02.jpg", alt: "HK Characters iPhone screenshot 2", device: "iPhone" },
+        { src: "assets/apps/hk-characters-03.jpg", alt: "HK Characters iPhone screenshot 3", device: "iPhone" },
+        { src: "assets/apps/hk-characters-04.jpg", alt: "HK Characters iPhone screenshot 4", device: "iPhone" },
+        { src: "assets/apps/hk-characters-05.jpg", alt: "HK Characters iPhone screenshot 5", device: "iPhone" },
+        { src: "assets/apps/hk-characters-ipad-01.jpg", alt: "HK Characters iPad screenshot 1", device: "iPad" },
+        { src: "assets/apps/hk-characters-ipad-02.jpg", alt: "HK Characters iPad screenshot 2", device: "iPad" },
+        { src: "assets/apps/hk-characters-ipad-03.jpg", alt: "HK Characters iPad screenshot 3", device: "iPad" },
+      ],
       links: [{ label: "App Store", url: "https://apps.apple.com/ca/app/hk-characters/id6502965916" }],
     },
     {
@@ -679,10 +689,23 @@ const APP_ALIAS_TO_SLUG = new Map(
 function AppDetail({ app, navigate, theme, onTheme }) {
   const [hoverV, setHoverV] = useState(null);
   const [iconFailed, setIconFailed] = useState(false);
+  const [expandedShotIndex, setExpandedShotIndex] = useState(null);
 
   useEffect(() => {
     setIconFailed(false);
+    setExpandedShotIndex(null);
   }, [app.slug]);
+
+  useEffect(() => {
+    if (expandedShotIndex === null) return undefined;
+
+    const onKeyDown = event => {
+      if (event.key === "Escape") setExpandedShotIndex(null);
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [expandedShotIndex]);
 
   return (
     <div style={{ animation: "fadeUp 0.2s ease", padding: "40px var(--gap)" }}>
@@ -838,23 +861,109 @@ function AppDetail({ app, navigate, theme, onTheme }) {
 
         {app.screenshots && app.screenshots.length > 0 && (
           <div style={{ marginTop: "32px" }}>
-            <p style={{ fontWeight: 700, marginBottom: "10px" }}>Screenshots</p>
-            {app.screenshots.map((shot, i) => (
+            <p style={{ fontWeight: 700, marginBottom: "6px" }}>Screenshots</p>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))",
+                gap: "12px",
+                maxWidth: "720px",
+                marginTop: "14px",
+              }}
+            >
+              {app.screenshots.map((shot, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => setExpandedShotIndex(i)}
+                  style={{
+                    appearance: "none",
+                    display: "block",
+                    width: "100%",
+                    padding: 0,
+                    border: "none",
+                    background: "transparent",
+                    textAlign: "left",
+                    cursor: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='36' viewBox='0 0 36 36'%3E%3Ccircle cx='15' cy='15' r='10' fill='white' fill-opacity='0.92' stroke='black' stroke-width='2.4'/%3E%3Cpath d='M22.5 22.5 31 31' stroke='black' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M15 10.5v9M10.5 15h9' stroke='black' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E") 15 15, zoom-in`,
+                  }}
+                  aria-label={`Open ${shot.device || "app"} screenshot ${i + 1}`}
+                >
+                  <img
+                    src={resolveAssetUrl(shot.src)}
+                    alt={shot.alt || `${app.name} screenshot ${i + 1}`}
+                    style={{
+                      display: "block",
+                      width: "100%",
+                      borderRadius: "14px",
+                      border: "1px solid var(--mid)",
+                      boxShadow: "0 10px 24px rgba(0,0,0,0.12)",
+                      background: "var(--bg)",
+                    }}
+                  />
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {expandedShotIndex !== null && app.screenshots?.[expandedShotIndex] && (
+          <button
+            type="button"
+            onClick={() => setExpandedShotIndex(null)}
+            aria-label="Close expanded screenshot"
+            style={{
+              position: "fixed",
+              inset: 0,
+              zIndex: 200,
+              border: "none",
+              background: "rgba(0,0,0,0.78)",
+              padding: "24px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: "pointer",
+            }}
+          >
+            <div
+              onClick={event => event.stopPropagation()}
+              style={{
+                width: "100%",
+                maxWidth: "1100px",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: "12px",
+                cursor: "default",
+              }}
+            >
+              <div style={{ width: "100%", display: "flex", justifyContent: "flex-end" }}>
+                <span
+                  style={{
+                    color: "#fff",
+                    border: "1px solid rgba(255,255,255,0.35)",
+                    borderRadius: "999px",
+                    padding: "6px 12px",
+                    fontSize: "0.9em",
+                    backdropFilter: "blur(8px)",
+                  }}
+                >
+                  Close
+                </span>
+              </div>
               <img
-                key={i}
-                src={resolveAssetUrl(shot.src)}
-                alt={shot.alt || `${app.name} screenshot ${i + 1}`}
+                src={resolveAssetUrl(app.screenshots[expandedShotIndex].src)}
+                alt={app.screenshots[expandedShotIndex].alt || `${app.name} screenshot ${expandedShotIndex + 1}`}
                 style={{
                   display: "block",
-                  width: "100%",
-                  maxWidth: "560px",
-                  borderRadius: "10px",
-                  border: "1px solid var(--mid)",
-                  marginBottom: i < app.screenshots.length - 1 ? "12px" : 0,
+                  maxWidth: "100%",
+                  maxHeight: "82vh",
+                  borderRadius: "18px",
+                  boxShadow: "0 24px 60px rgba(0,0,0,0.35)",
+                  background: "#fff",
                 }}
               />
-            ))}
-          </div>
+            </div>
+          </button>
         )}
 
         {app.links && app.links.length > 0 && (
