@@ -25,6 +25,8 @@ Before merging a PR, an agent must:
 3. Merge by replaying commits (rebase+ff or rebase-and-merge).
 4. Verify branch commits are now reachable from `main`.
 
+When reporting completion of a merge or release task, an agent must explicitly enumerate the status of each required item above and each required post-merge item below. Do not treat "PR merged" as equivalent to "task complete" in this repository.
+
 ## Build Metadata (About Hover)
 
 The site reads commit metadata from `build-info.json` (not from client-side GitHub API calls).
@@ -42,6 +44,20 @@ When shipping to production, use this exact sequence:
 6. Push that `Version Bump` commit to `origin/main` immediately after the PR merge.
 
 Do not include `build-info.json` in feature branch commits unless explicitly requested for non-production testing.
+
+## Merge / Release Close-Out Checklist
+
+Before closing out any merge or production-ship task, explicitly report:
+
+1. Whether the feature branch was up to date with `main` before merge.
+2. Whether CI/tests passed, or if none exist, state that clearly.
+3. Which merge strategy was used.
+4. Whether the merged feature commits are reachable from `main`.
+5. Whether `./scripts/post-merge-version-bump.sh` was run on `main`.
+6. The exact `Version Bump` commit SHA on `main`.
+7. Whether only `build-info.json` changed in the `Version Bump` commit.
+
+Do not omit any checklist item in the final handoff for merge/release work.
 
 ## Local Route Testing
 

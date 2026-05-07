@@ -10,6 +10,8 @@ For pull requests into `main`, preserve commit history by replaying commits:
 - Allowed equivalent: GitHub **Rebase and merge**.
 - Avoid: squash merges for normal feature branches.
 
+For merge or production-ship tasks, do not stop at "PR merged". Follow the close-out checklist in [AGENTS.md](./AGENTS.md), and use `./scripts/post-merge-version-bump.sh` for the required metadata commit on `main`.
+
 ## Local Preview
 
 For local browser testing of app and writing routes, use `python3 scripts/serve-local-preview.py`.
