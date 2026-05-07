@@ -352,8 +352,13 @@ const DATA = {
       icon: "assets/icons/hkscs_icon.png",
       bg: "#C0392B",
       label: "H",
-      desc: "",
-      body: [],
+      desc: "A reference app for exploring Hong Kong Supplementary Character Set characters, their glyph variants, readings, and metadata across multiple East Asian languages.",
+      body: [
+        { kind: "p", text: "HK Characters explores the Hong Kong Supplementary Character Set (2016) as a browsable reference app for people interested in character forms, readings, and historical additions to the standard." },
+        { kind: "p", text: "The app highlights glyph variants so you can compare how a single character is written across different traditions and typefaces, including forms that are more common in specific regions." },
+        { kind: "p", text: "Characters are grouped into curated collections such as Commonly Used, Tang-era pronunciations, and Vietnamese-related sets, and can also be browsed by the year they were added to HKSCS." },
+        { kind: "p", text: "Each entry brings together search, pronunciation, and metadata tools. You can look up characters by definition, Jyutping, or Unicode codepoint, compare readings across Cantonese, Korean, Japanese, Taiwanese, and Mandarin, and inspect associated Unihan metadata when available." },
+      ],
       screenshots: [
         { src: "assets/apps/hk-characters-01.jpg", alt: "HK Characters iPhone screenshot 1", device: "iPhone" },
         { src: "assets/apps/hk-characters-02.jpg", alt: "HK Characters iPhone screenshot 2", device: "iPhone" },
@@ -690,6 +695,8 @@ function AppDetail({ app, navigate, theme, onTheme }) {
   const [hoverV, setHoverV] = useState(null);
   const [iconFailed, setIconFailed] = useState(false);
   const [expandedShotIndex, setExpandedShotIndex] = useState(null);
+  const heroShot = app.screenshots?.find(shot => shot.device === "iPad") || app.screenshots?.[0] || null;
+  const galleryShots = heroShot ? app.screenshots.filter(shot => shot !== heroShot) : app.screenshots;
 
   useEffect(() => {
     setIconFailed(false);
@@ -716,8 +723,8 @@ function AppDetail({ app, navigate, theme, onTheme }) {
         <CompactThemeToggle theme={theme} onTheme={onTheme} />
       </div>
 
-      <div style={{ maxWidth: "620px" }}>
-        <div style={{ display: "flex", alignItems: "flex-start", gap: "24px", marginBottom: "32px" }}>
+        <div style={{ maxWidth: "620px" }}>
+          <div style={{ display: "flex", alignItems: "flex-start", gap: "24px", marginBottom: "32px" }}>
           {(() => {
             const variants = app.variants && app.variants.length > 0 ? app.variants : [{ bg: app.bg, label: app.label }];
             const tilts = [
@@ -800,9 +807,40 @@ function AppDetail({ app, navigate, theme, onTheme }) {
               </p>
             ) : null}
           </div>
-        </div>
+          </div>
 
-        <p style={{ marginBottom: "28px", fontSize: "1.05em" }}>{app.desc}</p>
+          {heroShot && (
+            <button
+              type="button"
+              onClick={() => setExpandedShotIndex(app.screenshots.indexOf(heroShot))}
+              aria-label={`Open hero screenshot for ${app.name}`}
+              style={{
+                appearance: "none",
+                display: "block",
+                width: "100%",
+                padding: 0,
+                margin: "0 0 24px",
+                border: "none",
+                background: "transparent",
+                cursor: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='36' viewBox='0 0 36 36'%3E%3Ccircle cx='15' cy='15' r='10' fill='white' fill-opacity='0.92' stroke='black' stroke-width='2.4'/%3E%3Cpath d='M22.5 22.5 31 31' stroke='black' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M15 10.5v9M10.5 15h9' stroke='black' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E") 15 15, zoom-in`,
+              }}
+            >
+              <img
+                src={resolveAssetUrl(heroShot.src)}
+                alt={heroShot.alt || `${app.name} hero screenshot`}
+                style={{
+                  display: "block",
+                  width: "100%",
+                  borderRadius: "22px",
+                  border: "1px solid color-mix(in srgb, var(--mid) 40%, transparent)",
+                  boxShadow: "0 18px 40px rgba(0,0,0,0.14)",
+                  background: "var(--bg)",
+                }}
+              />
+            </button>
+          )}
+
+          <p style={{ marginBottom: "28px", fontSize: "1.05em" }}>{app.desc}</p>
 
         <div className="ab">
           {app.body.map((blk, i) => (
@@ -871,11 +909,11 @@ function AppDetail({ app, navigate, theme, onTheme }) {
                 marginTop: "14px",
               }}
             >
-              {app.screenshots.map((shot, i) => (
+              {galleryShots.map((shot, i) => (
                 <button
                   key={i}
                   type="button"
-                  onClick={() => setExpandedShotIndex(i)}
+                  onClick={() => setExpandedShotIndex(app.screenshots.indexOf(shot))}
                   style={{
                     appearance: "none",
                     display: "block",
