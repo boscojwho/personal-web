@@ -134,7 +134,7 @@ const ROUTES = {
   app: slug => `/apps/${slug}`,
   article: slug => `/writing/${slug}`,
 };
-const HOME_INTRO_SEEN_SESSION_KEY = "home_intro_seen_v1";
+let hasPlayedHomeIntroForPage = false;
 
 function routeHref(internalPath) {
   if (IS_FILE_PROTOCOL) {
@@ -812,14 +812,9 @@ function AllArticles({ navigate, theme, onTheme }) {
 function HomePage({ navigate, theme, onTheme }) {
   const LAUNCH_JIGGLE_DURATION_MS = 2000;
   const shouldRunSessionIntro = useMemo(() => {
-    try {
-      if (!window.sessionStorage) return true;
-      if (window.sessionStorage.getItem(HOME_INTRO_SEEN_SESSION_KEY) === "1") return false;
-      window.sessionStorage.setItem(HOME_INTRO_SEEN_SESSION_KEY, "1");
-      return true;
-    } catch {
-      return true;
-    }
+    if (hasPlayedHomeIntroForPage) return false;
+    hasPlayedHomeIntroForPage = true;
+    return true;
   }, []);
   const [hoverIcon, setHoverIcon] = useState(null);
   const [hoverNameIndex, setHoverNameIndex] = useState(null);
