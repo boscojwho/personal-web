@@ -395,6 +395,20 @@ const DATA = {
       body: [
         "Built to beta, but did not ship after AskFRED (askfred.net) changed ownership and /v1 API was discontinued.",
       ],
+      screenshots: [
+        { src: "assets/apps/fencathon-3-ipad-01.png", alt: "Fencathon 3 iPad fencer profile view", device: "iPad" },
+        { src: "assets/apps/fencathon-3-ipad-02.png", alt: "Fencathon 3 iPad tournament overview", device: "iPad" },
+        { src: "assets/apps/fencathon-3-ipad-03.png", alt: "Fencathon 3 iPad event entrants list", device: "iPad" },
+        { src: "assets/apps/fencathon-3-ipad-04.png", alt: "Fencathon 3 iPad entrant profile", device: "iPad" },
+        { src: "assets/apps/fencathon-3-ipad-05.png", alt: "Fencathon 3 iPad fencer results list", device: "iPad" },
+        { src: "assets/apps/fencathon-3-ipad-06.png", alt: "Fencathon 3 iPad past results map", device: "iPad" },
+        { src: "assets/apps/fencathon-3-ipad-07.png", alt: "Fencathon 3 iPad upcoming tournaments radius map", device: "iPad" },
+        { src: "assets/apps/fencathon-3-iphone-01.png", alt: "Fencathon 3 iPhone upcoming tournaments map", device: "iPhone" },
+        { src: "assets/apps/fencathon-3-iphone-02.png", alt: "Fencathon 3 iPhone tournament detail sheet", device: "iPhone" },
+        { src: "assets/apps/fencathon-3-iphone-03.png", alt: "Fencathon 3 iPhone event registration list", device: "iPhone" },
+        { src: "assets/apps/fencathon-3-iphone-04.png", alt: "Fencathon 3 iPhone past event overview", device: "iPhone" },
+        { src: "assets/apps/fencathon-3-iphone-05.png", alt: "Fencathon 3 iPhone event results screen", device: "iPhone" },
+      ],
       links: [],
     },
     {
