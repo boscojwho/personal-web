@@ -398,6 +398,7 @@ const DATA = {
       name: "Jot",
       year: "2014",
       tags: "iOS",
+      screenshotsPosition: "bottom",
       legacySlugs: ["jot-refined-text-editor"],
       icon: "assets/icons/jot_icon.png",
       bg: "#2C3E50",
@@ -704,7 +705,10 @@ function AppDetail({ app, navigate, theme, onTheme }) {
   const [iconFailed, setIconFailed] = useState(false);
   const [expandedShotIndex, setExpandedShotIndex] = useState(null);
   const [loadedMedia, setLoadedMedia] = useState(() => new Set());
-  const heroShot = app.screenshots?.find(shot => shot.device === "iPad") || app.screenshots?.[0] || null;
+  const showScreenshotsAtBottom = app.screenshotsPosition === "bottom";
+  const heroShot = showScreenshotsAtBottom
+    ? null
+    : (app.screenshots?.find(shot => shot.device === "iPad") || app.screenshots?.[0] || null);
   const galleryShots = heroShot ? app.screenshots.filter(shot => shot !== heroShot) : app.screenshots;
 
   useEffect(() => {
@@ -1010,7 +1014,7 @@ function AppDetail({ app, navigate, theme, onTheme }) {
                 marginTop: "14px",
               }}
             >
-              {galleryShots.map((shot, i) => (
+              {(showScreenshotsAtBottom ? app.screenshots : galleryShots).map((shot, i) => (
                 <button
                   key={i}
                   type="button"

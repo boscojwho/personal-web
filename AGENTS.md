@@ -63,4 +63,7 @@ Do not omit any checklist item in the final handoff for merge/release work.
 
 For local browser testing of this site, use `python3 scripts/serve-local-preview.py`.
 
+Always open the local preview in Codex's in-app browser after starting the preview server.
+Do not treat command-line startup alone as sufficient verification when a task requires local preview/testing.
+
 Do not use `python3 -m http.server` when testing direct app or writing routes such as `/apps/jot` or `/writing/...`, because static file serving will return a 404 instead of the SPA shell.
