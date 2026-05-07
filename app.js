@@ -1378,6 +1378,8 @@ function HomePage({ navigate, theme, onTheme }) {
   const [hardwareFrameRect, setHardwareFrameRect] = useState(null);
   const [isHardwareExpanded, setIsHardwareExpanded] = useState(false);
   const [isHardwareTransitioning, setIsHardwareTransitioning] = useState(false);
+  const [isHardwareTeaserVisible, setIsHardwareTeaserVisible] = useState(() => !shouldRunSessionIntro);
+  const [isCompactViewport, setIsCompactViewport] = useState(() => window.innerWidth <= 700);
   const hasBuildInfo = buildInfo.hasData;
   const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
   const isDarkMode = theme === "dark" || (theme === "system" && prefersDark);
@@ -1387,6 +1389,7 @@ function HomePage({ navigate, theme, onTheme }) {
   const HARDWARE_ZOOM_MS = 260;
   const HARDWARE_ASPECT_RATIO = 568 / 320;
   const hardwareZoomTransition = `${HARDWARE_ZOOM_MS}ms cubic-bezier(0.2, 0.9, 0.22, 1.12)`;
+  const hardwareTeaserRevealTransition = "1s cubic-bezier(0.22, 1, 0.36, 1)";
 
   const randomizeNamePose = () => {
     setHoverNamePose({
@@ -1523,6 +1526,22 @@ function HomePage({ navigate, theme, onTheme }) {
   }, [LAUNCH_JIGGLE_DURATION_MS, shouldRunSessionIntro]);
 
   useEffect(() => {
+    if (!shouldRunSessionIntro) {
+      setIsHardwareTeaserVisible(true);
+      return undefined;
+    }
+
+    const introStartDelay = 1000;
+    const nameStepDelay = LAUNCH_JIGGLE_DURATION_MS;
+    const settleDelay = 560;
+    const revealTimeout = setTimeout(() => {
+      setIsHardwareTeaserVisible(true);
+    }, introStartDelay + nameStepDelay + settleDelay);
+
+    return () => clearTimeout(revealTimeout);
+  }, [LAUNCH_JIGGLE_DURATION_MS, shouldRunSessionIntro]);
+
+  useEffect(() => {
     const controller = new AbortController();
     fetch(routeHref("/build-info.json"), { signal: controller.signal, cache: "no-store" })
       .then(resp => (resp.ok ? resp.json() : null))
@@ -1609,6 +1628,12 @@ function HomePage({ navigate, theme, onTheme }) {
       window.removeEventListener("resize", handleViewportChange);
       window.removeEventListener("scroll", handleViewportChange);
     };
+  }, []);
+
+  useEffect(() => {
+    const handleResize = () => setIsCompactViewport(window.innerWidth <= 700);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   useEffect(() => () => {
@@ -1860,8 +1885,28 @@ function HomePage({ navigate, theme, onTheme }) {
               </RouteLink>
             </React.Fragment>
           ))}
-          <figure className="hardware-teaser" style={{ margin: "28px 0 0" }}>
-            <figcaption style={{ marginBottom: "10px", color: "var(--mid)" }}>Hardware</figcaption>
+          <figure
+            className="hardware-teaser"
+            style={{
+              margin: (isHardwareTeaserVisible || !isCompactViewport) ? "28px 0 0" : "0",
+              maxHeight: (isHardwareTeaserVisible || !isCompactViewport) ? "420px" : "0",
+              overflow: (isCompactViewport && !isHardwareTeaserVisible) ? "hidden" : "visible",
+              transition: shouldRunSessionIntro && isCompactViewport
+                ? `max-height ${hardwareTeaserRevealTransition}, margin ${hardwareTeaserRevealTransition}`
+                : "none",
+              pointerEvents: isHardwareTeaserVisible ? "auto" : "none",
+            }}
+          >
+            <figcaption
+              style={{
+                marginBottom: "10px",
+                color: "var(--mid)",
+                opacity: isHardwareTeaserVisible ? 1 : 0,
+                transition: shouldRunSessionIntro ? `opacity ${hardwareTeaserRevealTransition}` : "none",
+              }}
+            >
+              Hardware
+            </figcaption>
             <button
               type="button"
               onClick={openHardwareZoom}
@@ -1875,6 +1920,8 @@ function HomePage({ navigate, theme, onTheme }) {
                 background: "transparent",
                 textAlign: "left",
                 cursor: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='36' viewBox='0 0 36 36'%3E%3Ccircle cx='15' cy='15' r='10' fill='white' fill-opacity='0.92' stroke='black' stroke-width='2.4'/%3E%3Cpath d='M22.5 22.5 31 31' stroke='black' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M15 10.5v9M10.5 15h9' stroke='black' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E") 15 15, zoom-in`,
+                transform: isHardwareTeaserVisible ? "translateX(0)" : "translateX(calc(-100vw - 40px))",
+                transition: shouldRunSessionIntro ? `transform ${hardwareTeaserRevealTransition}` : "none",
               }}
             >
               <div
@@ -1995,7 +2042,7 @@ function HomePage({ navigate, theme, onTheme }) {
         />
       )}
 
-      {hardwareAnimatedRect && (
+      {isHardwareTeaserVisible && hardwareAnimatedRect && (
         <div
           style={{
             position: "fixed",
