@@ -319,7 +319,13 @@ const DATA = {
         {
           kind: "img-row",
           images: [
-            { src: "assets/apps/dive-detail-2.jpeg", alt: "Dive genre map showing clustered music scenes" },
+            { src: "assets/apps/dive-cold-launch.gif", alt: "Dive cold launch animation" },
+            { src: "assets/apps/dive-dream-pop.gif", alt: "Dive Dream Pop interaction animation" },
+          ],
+        },
+        {
+          kind: "img-row",
+          images: [
             { src: "assets/apps/dive-detail-1.jpeg", alt: "Dive track detail screen for Dream Pop" },
             { src: "assets/apps/dive-detail-3.jpeg", alt: "Dive track queue screen for Abstract Beats" },
           ],
