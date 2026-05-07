@@ -316,8 +316,20 @@ const DATA = {
         {
           kind: "img-row",
           images: [
-            { src: "assets/apps/dive-cold-launch.gif", alt: "Dive cold launch animation" },
-            { src: "assets/apps/dive-dream-pop.gif", alt: "Dive Dream Pop interaction animation" },
+            {
+              src: "assets/apps/dive-cold-launch.mp4",
+              alt: "Dive cold launch animation",
+              placeholderSrc: "assets/apps/dive-detail-2.jpeg",
+              posterSrc: "assets/apps/dive-detail-2.jpeg",
+              loadingLabel: "Loading launch video",
+            },
+            {
+              src: "assets/apps/dive-dream-pop.mp4",
+              alt: "Dive Dream Pop interaction animation",
+              placeholderSrc: "assets/apps/dive-detail-1.jpeg",
+              posterSrc: "assets/apps/dive-detail-1.jpeg",
+              loadingLabel: "Loading interaction video",
+            },
           ],
         },
         {
@@ -695,12 +707,14 @@ function AppDetail({ app, navigate, theme, onTheme }) {
   const [hoverV, setHoverV] = useState(null);
   const [iconFailed, setIconFailed] = useState(false);
   const [expandedShotIndex, setExpandedShotIndex] = useState(null);
+  const [loadedMedia, setLoadedMedia] = useState(() => new Set());
   const heroShot = app.screenshots?.find(shot => shot.device === "iPad") || app.screenshots?.[0] || null;
   const galleryShots = heroShot ? app.screenshots.filter(shot => shot !== heroShot) : app.screenshots;
 
   useEffect(() => {
     setIconFailed(false);
     setExpandedShotIndex(null);
+    setLoadedMedia(new Set());
   }, [app.slug]);
 
   useEffect(() => {
@@ -871,25 +885,133 @@ function AppDetail({ app, navigate, theme, onTheme }) {
                   maxWidth: "560px",
                 }}
               >
-                {blk.images.map((image, imageIndex) => (
-                  <figure key={imageIndex} style={{ margin: 0 }}>
-                    <img
-                      src={resolveAssetUrl(image.src)}
-                      alt={image.alt || ""}
-                      style={{
-                        display: "block",
-                        width: "100%",
-                        borderRadius: "18px",
-                        boxShadow: "0 10px 24px rgba(0,0,0,0.18)",
-                      }}
-                    />
-                    {image.caption ? (
-                      <figcaption style={{ marginTop: "10px", fontSize: "0.95em", lineHeight: 1.45, color: "var(--mid)" }}>
-                        {image.caption}
-                      </figcaption>
-                    ) : null}
-                  </figure>
-                ))}
+                {blk.images.map((image, imageIndex) => {
+                  const isVideo = /\.(mp4|webm|mov)$/i.test(image.src);
+                  const isLoaded = loadedMedia.has(image.src);
+                  return (
+                    <figure key={imageIndex} style={{ margin: 0 }}>
+                      <div
+                        style={{
+                          position: "relative",
+                          overflow: "hidden",
+                          borderRadius: "18px",
+                          boxShadow: "0 10px 24px rgba(0,0,0,0.18)",
+                          background: "color-mix(in srgb, var(--fg) 4%, var(--bg))",
+                        }}
+                      >
+                        {image.placeholderSrc && !isLoaded ? (
+                          <>
+                            <img
+                              src={resolveAssetUrl(image.placeholderSrc)}
+                              alt=""
+                              aria-hidden="true"
+                              style={{
+                                display: "block",
+                                width: "100%",
+                                filter: "blur(10px)",
+                                transform: "scale(1.03)",
+                                opacity: 0.9,
+                              }}
+                            />
+                            <div
+                              style={{
+                                position: "absolute",
+                                inset: 0,
+                                display: "flex",
+                                alignItems: "flex-end",
+                                justifyContent: "flex-start",
+                                padding: "12px",
+                                background: "linear-gradient(to top, rgba(17,17,17,0.18), rgba(17,17,17,0.02) 44%, rgba(17,17,17,0))",
+                                pointerEvents: "none",
+                              }}
+                            >
+                              <span
+                                style={{
+                                  display: "inline-flex",
+                                  alignItems: "center",
+                                  gap: "8px",
+                                  padding: "6px 10px",
+                                  borderRadius: "999px",
+                                  background: "rgba(255,255,255,0.8)",
+                                  backdropFilter: "blur(8px)",
+                                  color: "#222",
+                                  fontSize: "0.78em",
+                                  fontWeight: 600,
+                                }}
+                              >
+                                <span
+                                  aria-hidden="true"
+                                  style={{
+                                    width: 7,
+                                    height: 7,
+                                    borderRadius: "50%",
+                                    background: "currentColor",
+                                    opacity: 0.55,
+                                  }}
+                                />
+                                {image.loadingLabel || "Loading preview"}
+                              </span>
+                            </div>
+                          </>
+                        ) : null}
+                        {isVideo ? (
+                          <video
+                            src={resolveAssetUrl(image.src)}
+                            poster={image.posterSrc ? resolveAssetUrl(image.posterSrc) : undefined}
+                            aria-label={image.alt || ""}
+                            autoPlay
+                            muted
+                            loop
+                            playsInline
+                            preload="metadata"
+                            onLoadedData={() => {
+                              setLoadedMedia(prev => {
+                                if (prev.has(image.src)) return prev;
+                                const next = new Set(prev);
+                                next.add(image.src);
+                                return next;
+                              });
+                            }}
+                            style={{
+                              display: "block",
+                              width: "100%",
+                              position: image.placeholderSrc ? "absolute" : "relative",
+                              inset: image.placeholderSrc ? 0 : "auto",
+                              opacity: isLoaded ? 1 : 0,
+                              transition: "opacity 0.24s ease",
+                            }}
+                          />
+                        ) : (
+                          <img
+                            src={resolveAssetUrl(image.src)}
+                            alt={image.alt || ""}
+                            onLoad={() => {
+                              setLoadedMedia(prev => {
+                                if (prev.has(image.src)) return prev;
+                                const next = new Set(prev);
+                                next.add(image.src);
+                                return next;
+                              });
+                            }}
+                            style={{
+                              display: "block",
+                              width: "100%",
+                              position: image.placeholderSrc ? "absolute" : "relative",
+                              inset: image.placeholderSrc ? 0 : "auto",
+                              opacity: image.placeholderSrc ? (isLoaded ? 1 : 0) : 1,
+                              transition: "opacity 0.24s ease",
+                            }}
+                          />
+                        )}
+                      </div>
+                      {image.caption ? (
+                        <figcaption style={{ marginTop: "10px", fontSize: "0.95em", lineHeight: 1.45, color: "var(--mid)" }}>
+                          {image.caption}
+                        </figcaption>
+                      ) : null}
+                    </figure>
+                  );
+                })}
               </div>
             ) : (
               <p key={i} style={{ marginBottom: "14px" }}>{blk.text}</p>
