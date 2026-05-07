@@ -178,6 +178,30 @@ function routeHref(internalPath) {
   return internalToActualPath(internalPath);
 }
 
+function resolveAssetUrl(path) {
+  if (!path) return path;
+  if (IS_FILE_PROTOCOL) return path;
+  if (
+    path.startsWith("/") ||
+    path.startsWith("//") ||
+    path.startsWith("#") ||
+    /^[a-z][a-z0-9+.-]*:/i.test(path)
+  ) {
+    return path;
+  }
+  if (path.startsWith("assets/")) {
+    return `${SITE_BASE_PATH}${path}`;
+  }
+  return path;
+}
+
+function rewriteLocalAssetUrlsInHtml(html) {
+  return html.replace(
+    /\b(src|href)=(['"])([^'"]+)\2/g,
+    (full, attr, quote, value) => `${attr}=${quote}${resolveAssetUrl(value)}${quote}`
+  );
+}
+
 function setMeta(name, content) {
   let el = document.querySelector(`meta[name="${name}"]`);
   if (!el) {
@@ -649,7 +673,7 @@ function AppDetail({ app, navigate, theme, onTheme }) {
                     >
                       {app.icon && !iconFailed ? (
                         <img
-                          src={app.icon}
+                          src={resolveAssetUrl(app.icon)}
                           width="72"
                           height="72"
                           alt={app.name}
@@ -718,7 +742,7 @@ function ArticleDetail({ article, navigate, theme, onTheme, routeHash }) {
       const escapedText = h.text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
       md = md.replace(new RegExp(`^${escapedLevel} ${escapedText}$`, "m"), `${h.level} <span id="${h.id}">${h.text}</span>`);
     });
-    return marked.parse(md);
+    return rewriteLocalAssetUrlsInHtml(marked.parse(md));
   }, [article, headings]);
 
   useEffect(() => {
@@ -1162,7 +1186,7 @@ function HomePage({ navigate, theme, onTheme }) {
                   >
                     {app.icon && !failedDockIcons.has(app.slug) ? (
                       <img
-                        src={app.icon}
+                        src={resolveAssetUrl(app.icon)}
                         width="32"
                         height="32"
                         alt={app.name}
