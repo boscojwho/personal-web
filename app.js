@@ -304,6 +304,30 @@ const DATA = {
       links: [],
     },
     {
+      name: "Dive",
+      year: "2020–2021",
+      tags: "iOS",
+      icon: "assets/icons/dive_icon.png",
+      bg: "#5CBCEB",
+      label: "D",
+      desc: "A music discovery concept for iPhone built around genre maps, listening paths, and short historical context for tracks and scenes.",
+      body: [
+        {
+          kind: "p",
+          text: "Dive explored music through visual genre clusters and guided listening queues, pairing tracks with concise artist and scene notes.",
+        },
+        {
+          kind: "img-row",
+          images: [
+            { src: "assets/apps/dive-detail-2.jpeg", alt: "Dive genre map showing clustered music scenes" },
+            { src: "assets/apps/dive-detail-1.jpeg", alt: "Dive track detail screen for Dream Pop" },
+            { src: "assets/apps/dive-detail-3.jpeg", alt: "Dive track queue screen for Abstract Beats" },
+          ],
+        },
+      ],
+      links: [],
+    },
+    {
       name: "RunGo",
       year: "2014–2016",
       tags: "iOS · Pebble · Apple Watch",
@@ -796,7 +820,7 @@ function AppDetail({ app, navigate, theme, onTheme }) {
             {app.screenshots.map((shot, i) => (
               <img
                 key={i}
-                src={shot.src}
+                src={resolveAssetUrl(shot.src)}
                 alt={shot.alt || `${app.name} screenshot ${i + 1}`}
                 style={{
                   display: "block",
