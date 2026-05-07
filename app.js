@@ -280,9 +280,9 @@ const DATA = {
       icon: "",
       bg: "#F7F3E8",
       label: "🤺",
-      desc: "Built to beta, but did not ship.",
+      desc: "Built to beta, but did not ship after AskFRED (askfred.net) changed ownership and /v1 API was discontinued.",
       body: [
-        "Built to beta, but did not ship because the API was removed in 2023 after askFRED (askfred.net) ownership changed.",
+        "Built to beta, but did not ship after AskFRED (askfred.net) changed ownership and /v1 API was discontinued.",
       ],
       links: [],
     },
