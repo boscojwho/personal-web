@@ -1377,11 +1377,13 @@ function HomePage({ navigate, theme, onTheme }) {
   const [buildInfo, setBuildInfo] = useState(BUILD_INFO_FALLBACK);
   const [hardwareFrameRect, setHardwareFrameRect] = useState(null);
   const [isHardwareExpanded, setIsHardwareExpanded] = useState(false);
+  const [isHardwareTransitioning, setIsHardwareTransitioning] = useState(false);
   const hasBuildInfo = buildInfo.hasData;
   const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
   const isDarkMode = theme === "dark" || (theme === "system" && prefersDark);
   const hardwareShellRef = useRef(null);
   const hardwareMeasureRafRef = useRef(null);
+  const hardwareTransitionTimeoutRef = useRef(null);
   const HARDWARE_ZOOM_MS = 260;
   const HARDWARE_ASPECT_RATIO = 568 / 320;
   const hardwareZoomTransition = `${HARDWARE_ZOOM_MS}ms cubic-bezier(0.2, 0.9, 0.22, 1.12)`;
@@ -1447,13 +1449,32 @@ function HomePage({ navigate, theme, onTheme }) {
     });
   };
 
+  const clearHardwareTransitionTimeout = () => {
+    if (hardwareTransitionTimeoutRef.current != null) {
+      clearTimeout(hardwareTransitionTimeoutRef.current);
+      hardwareTransitionTimeoutRef.current = null;
+    }
+  };
+
+  const finishHardwareTransitionLater = () => {
+    clearHardwareTransitionTimeout();
+    hardwareTransitionTimeoutRef.current = setTimeout(() => {
+      setIsHardwareTransitioning(false);
+      hardwareTransitionTimeoutRef.current = null;
+    }, HARDWARE_ZOOM_MS);
+  };
+
   const openHardwareZoom = () => {
     measureHardwareFrame();
+    setIsHardwareTransitioning(true);
     setIsHardwareExpanded(true);
+    finishHardwareTransitionLater();
   };
 
   const closeHardwareZoom = () => {
+    setIsHardwareTransitioning(true);
     setIsHardwareExpanded(false);
+    finishHardwareTransitionLater();
   };
 
   useEffect(() => {
@@ -1592,6 +1613,7 @@ function HomePage({ navigate, theme, onTheme }) {
 
   useEffect(() => () => {
     if (hardwareMeasureRafRef.current != null) cancelAnimationFrame(hardwareMeasureRafRef.current);
+    clearHardwareTransitionTimeout();
   }, []);
 
   return (
@@ -1955,7 +1977,7 @@ function HomePage({ navigate, theme, onTheme }) {
         </div>
       </div>
 
-      {isHardwareExpanded && (
+      {(isHardwareExpanded || isHardwareTransitioning) && (
         <button
           type="button"
           onClick={closeHardwareZoom}
@@ -1968,7 +1990,7 @@ function HomePage({ navigate, theme, onTheme }) {
             background: "rgba(0,0,0,0.82)",
             padding: 0,
             cursor: "pointer",
-            transition: `background ${hardwareZoomTransition}`,
+            transition: isHardwareTransitioning ? `background ${hardwareZoomTransition}` : "none",
           }}
         />
       )}
@@ -1989,14 +2011,16 @@ function HomePage({ navigate, theme, onTheme }) {
             background: "#000",
             zIndex: isHardwareExpanded ? 221 : 10,
             pointerEvents: "none",
-            transition: [
-              `left ${hardwareZoomTransition}`,
-              `top ${hardwareZoomTransition}`,
-              `width ${hardwareZoomTransition}`,
-              `height ${hardwareZoomTransition}`,
-              `border-radius ${hardwareZoomTransition}`,
-              `box-shadow ${hardwareZoomTransition}`,
-            ].join(", "),
+            transition: isHardwareTransitioning
+              ? [
+                  `left ${hardwareZoomTransition}`,
+                  `top ${hardwareZoomTransition}`,
+                  `width ${hardwareZoomTransition}`,
+                  `height ${hardwareZoomTransition}`,
+                  `border-radius ${hardwareZoomTransition}`,
+                  `box-shadow ${hardwareZoomTransition}`,
+                ].join(", ")
+              : "none",
           }}
         >
           <video
