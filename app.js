@@ -5,6 +5,39 @@ const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
   "font": "Geist"
 }/*EDITMODE-END*/;
 
+const BUILD_INFO_FALLBACK = {
+  commitHash: "unknown",
+  date: "unknown date",
+  time: "unknown time",
+  label: "unknown date unknown time · unknown",
+  hasData: false,
+};
+
+function formatBuildInfo(commitHash, commitIso) {
+  const commitDate = new Date(commitIso);
+  const hasValidCommitDate = !Number.isNaN(commitDate.getTime());
+  const date = hasValidCommitDate
+    ? commitDate.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" })
+    : "unknown date";
+  const time = hasValidCommitDate
+    ? commitDate.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" })
+    : "unknown time";
+  const shortHash = commitHash ? String(commitHash).slice(0, 7) : "unknown";
+  return {
+    commitHash: shortHash,
+    date,
+    time,
+    label: `${date} ${time} · ${shortHash}`,
+    hasData: hasValidCommitDate && shortHash !== "unknown",
+  };
+}
+
+function parseBuildInfoPayload(payload) {
+  if (!payload || typeof payload !== "object") return BUILD_INFO_FALLBACK;
+  if (!payload.commitHash || !payload.commitIso) return BUILD_INFO_FALLBACK;
+  return formatBuildInfo(payload.commitHash, payload.commitIso);
+}
+
 const FONT_OPTIONS = [
   { label: "DM Sans",        stack: "'DM Sans', Helvetica, Arial, sans-serif" },
   { label: "Inter",          stack: "'Inter', Helvetica, Arial, sans-serif" },
@@ -839,6 +872,9 @@ function HomePage({ navigate, theme, onTheme }) {
   const [bridgeSide, setBridgeSide] = useState(null);
   const [failedDockIcons, setFailedDockIcons] = useState(() => new Set());
   const [hoverNamePose, setHoverNamePose] = useState({ x: -0.5, ry: 18, rx: -9, rz: 0, z: 10, y: -3, s: 1.4 });
+  const [isAboutMetaVisible, setIsAboutMetaVisible] = useState(false);
+  const [buildInfo, setBuildInfo] = useState(BUILD_INFO_FALLBACK);
+  const hasBuildInfo = buildInfo.hasData;
   const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
   const isDarkMode = theme === "dark" || (theme === "system" && prefersDark);
 
@@ -904,6 +940,20 @@ function HomePage({ navigate, theme, onTheme }) {
       timers.forEach(clearTimeout);
     };
   }, [LAUNCH_JIGGLE_DURATION_MS, shouldRunSessionIntro]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    fetch(routeHref("/build-info.json"), { signal: controller.signal, cache: "no-store" })
+      .then(resp => (resp.ok ? resp.json() : null))
+      .then(data => {
+        setBuildInfo(parseBuildInfoPayload(data));
+      })
+      .catch(() => {
+        // Keep fallback values when build metadata file is missing.
+      });
+
+    return () => controller.abort();
+  }, []);
 
   useEffect(() => {
     if (!shouldRunSessionIntro) {
@@ -1216,7 +1266,39 @@ function HomePage({ navigate, theme, onTheme }) {
         </div>
 
         <div style={{ paddingRight: "40px", marginBottom: "32px" }}>
-          <p style={{ fontWeight: 700, marginBottom: "10px" }}>About</p>
+          <p style={{ fontWeight: 700, marginBottom: "10px" }}>
+            <span
+              style={{ position: "relative", display: "inline-block", cursor: hasBuildInfo ? "help" : "default" }}
+              onMouseEnter={() => {
+                if (hasBuildInfo) setIsAboutMetaVisible(true);
+              }}
+              onMouseLeave={() => setIsAboutMetaVisible(false)}
+            >
+              About
+              {hasBuildInfo && isAboutMetaVisible && (
+                <span
+                  style={{
+                    position: "absolute",
+                    left: 0,
+                    top: "calc(100% + 8px)",
+                    background: "var(--bg)",
+                    color: "var(--mid)",
+                    border: "1px solid var(--line)",
+                    borderRadius: "6px",
+                    padding: "7px 9px",
+                    whiteSpace: "nowrap",
+                    fontWeight: 400,
+                    fontSize: "12px",
+                    lineHeight: 1.3,
+                    zIndex: 20,
+                    boxShadow: "0 6px 18px rgba(0,0,0,0.12)",
+                  }}
+                >
+                  {buildInfo.label}
+                </span>
+              )}
+            </span>
+          </p>
           <p style={{ color: "var(--mid)", maxWidth: "220px" }}>
             iOS &amp; macOS developer in Vancouver. 🍁
           </p>
