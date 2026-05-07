@@ -355,6 +355,21 @@ const DATA = {
       desc: "A plain-text iPhone editor focused on one-handed writing, easier cursor movement, and less disruptive auto-correction.",
       body: [
         { kind: "img", src: "assets/apps/jot-control.gif", alt: "Jot Control interface over the iPhone keyboard" },
+        {
+          kind: "img-row",
+          images: [
+            {
+              src: "assets/apps/jot-auto-correct-1.gif",
+              alt: "Jot auto-correct refinement demo",
+              caption: "Jot knows when iOS autocorrects what you typed, and lets you easily revert to what you intended to type.",
+            },
+            {
+              src: "assets/apps/jot-text-selection-1.gif",
+              alt: "Jot text selection demo",
+              caption: "Easily select text by single tap (word), double tap (sentence), triple tap (paragraph) using Jot Control.",
+            },
+          ],
+        },
         { kind: "p", text: "Jot launched on the App Store on March 5, 2014 for iPhone and iPod touch." },
         { kind: "p", text: "The app focused on refining text entry with one-handed controls, faster text selection, and \"Jot Correct\" behavior that made auto-correction easier to accept or undo." },
         { kind: "p", text: "Jot required Dropbox to store documents in Apps > Jot - Refined Text Editor and worked with plain-text workflows." },
@@ -738,6 +753,37 @@ function AppDetail({ app, navigate, theme, onTheme }) {
                   }}
                 />
               </figure>
+            ) : blk.kind === "img-row" ? (
+              <div
+                key={i}
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+                  gap: "16px",
+                  margin: "0 0 18px",
+                  maxWidth: "560px",
+                }}
+              >
+                {blk.images.map((image, imageIndex) => (
+                  <figure key={imageIndex} style={{ margin: 0 }}>
+                    <img
+                      src={resolveAssetUrl(image.src)}
+                      alt={image.alt || ""}
+                      style={{
+                        display: "block",
+                        width: "100%",
+                        borderRadius: "18px",
+                        boxShadow: "0 10px 24px rgba(0,0,0,0.18)",
+                      }}
+                    />
+                    {image.caption ? (
+                      <figcaption style={{ marginTop: "10px", fontSize: "0.95em", lineHeight: 1.45, color: "var(--mid)" }}>
+                        {image.caption}
+                      </figcaption>
+                    ) : null}
+                  </figure>
+                ))}
+              </div>
             ) : (
               <p key={i} style={{ marginBottom: "14px" }}>{blk.text}</p>
             )
