@@ -134,6 +134,7 @@ const ROUTES = {
   app: slug => `/apps/${slug}`,
   article: slug => `/writing/${slug}`,
 };
+const HOME_INTRO_SEEN_SESSION_KEY = "home_intro_seen_v1";
 
 function routeHref(internalPath) {
   if (IS_FILE_PROTOCOL) {
@@ -810,11 +811,21 @@ function AllArticles({ navigate, theme, onTheme }) {
 
 function HomePage({ navigate, theme, onTheme }) {
   const LAUNCH_JIGGLE_DURATION_MS = 2000;
+  const shouldRunSessionIntro = useMemo(() => {
+    try {
+      if (!window.sessionStorage) return true;
+      if (window.sessionStorage.getItem(HOME_INTRO_SEEN_SESSION_KEY) === "1") return false;
+      window.sessionStorage.setItem(HOME_INTRO_SEEN_SESSION_KEY, "1");
+      return true;
+    } catch {
+      return true;
+    }
+  }, []);
   const [hoverIcon, setHoverIcon] = useState(null);
   const [hoverNameIndex, setHoverNameIndex] = useState(null);
   const [introHoverIcon, setIntroHoverIcon] = useState(null);
   const [introHoverNameIndex, setIntroHoverNameIndex] = useState(null);
-  const [isIntroHoverActive, setIsIntroHoverActive] = useState(true);
+  const [isIntroHoverActive, setIsIntroHoverActive] = useState(() => shouldRunSessionIntro);
   const [launchHoverIcon, setLaunchHoverIcon] = useState(null);
   const [jiggleIconIndex, setJiggleIconIndex] = useState(null);
   const [jiggleTick, setJiggleTick] = useState(0);
@@ -842,6 +853,12 @@ function HomePage({ navigate, theme, onTheme }) {
     : (launchHoverIcon != null ? launchHoverIcon : (isIntroHoverActive ? introHoverIcon : null));
 
   useEffect(() => {
+    if (!shouldRunSessionIntro) {
+      setIntroHoverNameIndex(null);
+      setIntroHoverIcon(null);
+      setIsIntroHoverActive(false);
+      return undefined;
+    }
     const allNameIndices = [...DATA.name]
       .map((char, i) => (char === " " ? null : i))
       .filter(i => i != null);
@@ -878,9 +895,14 @@ function HomePage({ navigate, theme, onTheme }) {
     return () => {
       timers.forEach(clearTimeout);
     };
-  }, [LAUNCH_JIGGLE_DURATION_MS]);
+  }, [LAUNCH_JIGGLE_DURATION_MS, shouldRunSessionIntro]);
 
   useEffect(() => {
+    if (!shouldRunSessionIntro) {
+      setJiggleIconIndex(null);
+      setLaunchHoverIcon(null);
+      return undefined;
+    }
     if (!DATA.apps.length) return undefined;
     const launchDelay = 900;
     const jiggleDuration = LAUNCH_JIGGLE_DURATION_MS;
@@ -907,7 +929,7 @@ function HomePage({ navigate, theme, onTheme }) {
       if (stopTimeout != null) clearTimeout(stopTimeout);
       if (intervalId != null) clearInterval(intervalId);
     };
-  }, [LAUNCH_JIGGLE_DURATION_MS]);
+  }, [LAUNCH_JIGGLE_DURATION_MS, shouldRunSessionIntro]);
 
   return (
     <div style={{ padding: "40px var(--gap)", animation: "fadeUp 0.2s ease" }}>
