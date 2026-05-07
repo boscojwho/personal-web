@@ -1,4 +1,4 @@
-const { useEffect, useMemo, useRef, useState } = React;
+const { useEffect, useLayoutEffect, useMemo, useRef, useState } = React;
 
 const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
   "theme": "system",
@@ -1379,13 +1379,21 @@ function HomePage({ navigate, theme, onTheme }) {
   const [isHardwareExpanded, setIsHardwareExpanded] = useState(false);
   const [isHardwareTransitioning, setIsHardwareTransitioning] = useState(false);
   const [isHardwareTeaserVisible, setIsHardwareTeaserVisible] = useState(() => !shouldRunSessionIntro);
+  const [isHardwareTeaserSettled, setIsHardwareTeaserSettled] = useState(() => !shouldRunSessionIntro);
+  const [isHardwareTeaserSlidingIn, setIsHardwareTeaserSlidingIn] = useState(false);
   const [isCompactViewport, setIsCompactViewport] = useState(() => window.innerWidth <= 700);
+  const [isHardwareVideoReady, setIsHardwareVideoReady] = useState(false);
   const hasBuildInfo = buildInfo.hasData;
   const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
   const isDarkMode = theme === "dark" || (theme === "system" && prefersDark);
+  const hardwareFigureRef = useRef(null);
   const hardwareShellRef = useRef(null);
+  const hardwareFloatingVideoRef = useRef(null);
   const hardwareMeasureRafRef = useRef(null);
+  const hardwareMeasureLoopRafRef = useRef(null);
   const hardwareTransitionTimeoutRef = useRef(null);
+  const hardwareTeaserSlideRafRef = useRef(null);
+  const hardwareTeaserSettleRafRef = useRef(null);
   const HARDWARE_ZOOM_MS = 260;
   const HARDWARE_ASPECT_RATIO = 568 / 320;
   const hardwareZoomTransition = `${HARDWARE_ZOOM_MS}ms cubic-bezier(0.2, 0.9, 0.22, 1.12)`;
@@ -1408,6 +1416,7 @@ function HomePage({ navigate, theme, onTheme }) {
   const activeHoverIcon = hoverIcon != null
     ? hoverIcon
     : (launchHoverIcon != null ? launchHoverIcon : (isIntroHoverActive ? introHoverIcon : null));
+  const isHardwareTeaserEntering = isHardwareTeaserVisible && !isHardwareTeaserSettled && !isHardwareExpanded;
   const hardwareTargetRect = (() => {
     const maxWidth = Math.min(window.innerWidth - 40, 1080);
     const maxHeight = Math.min(window.innerHeight - 40, 1080);
@@ -1528,6 +1537,7 @@ function HomePage({ navigate, theme, onTheme }) {
   useEffect(() => {
     if (!shouldRunSessionIntro) {
       setIsHardwareTeaserVisible(true);
+      setIsHardwareTeaserSettled(true);
       return undefined;
     }
 
@@ -1540,6 +1550,68 @@ function HomePage({ navigate, theme, onTheme }) {
 
     return () => clearTimeout(revealTimeout);
   }, [LAUNCH_JIGGLE_DURATION_MS, shouldRunSessionIntro]);
+
+  useEffect(() => {
+    if (!isHardwareTeaserVisible) {
+      setIsHardwareTeaserSettled(!shouldRunSessionIntro);
+      setIsHardwareTeaserSlidingIn(false);
+      return undefined;
+    }
+    if (!shouldRunSessionIntro) {
+      setIsHardwareTeaserSettled(true);
+      setIsHardwareTeaserSlidingIn(false);
+      return undefined;
+    }
+
+    setIsHardwareTeaserSettled(false);
+    setIsHardwareTeaserSlidingIn(false);
+    hardwareTeaserSlideRafRef.current = requestAnimationFrame(() => {
+      hardwareTeaserSlideRafRef.current = requestAnimationFrame(() => {
+        setIsHardwareTeaserSlidingIn(true);
+        hardwareTeaserSlideRafRef.current = null;
+      });
+    });
+
+    return () => {
+      if (hardwareTeaserSlideRafRef.current != null) {
+        cancelAnimationFrame(hardwareTeaserSlideRafRef.current);
+        hardwareTeaserSlideRafRef.current = null;
+      }
+    };
+  }, [isHardwareTeaserVisible, shouldRunSessionIntro]);
+
+  useEffect(() => {
+    if (typeof ResizeObserver === "undefined") return undefined;
+    const observer = new ResizeObserver(() => {
+      scheduleHardwareMeasure();
+    });
+    if (hardwareFigureRef.current) observer.observe(hardwareFigureRef.current);
+    if (hardwareShellRef.current) observer.observe(hardwareShellRef.current);
+    return () => observer.disconnect();
+  }, [isHardwareTeaserVisible]);
+
+  useEffect(() => {
+    if (!isHardwareTeaserVisible || isHardwareExpanded) return undefined;
+
+    const endAt = performance.now() + (shouldRunSessionIntro ? 1800 : 300);
+    const tick = () => {
+      measureHardwareFrame();
+      if (performance.now() < endAt) {
+        hardwareMeasureLoopRafRef.current = requestAnimationFrame(tick);
+      } else {
+        hardwareMeasureLoopRafRef.current = null;
+      }
+    };
+
+    hardwareMeasureLoopRafRef.current = requestAnimationFrame(tick);
+
+    return () => {
+      if (hardwareMeasureLoopRafRef.current != null) {
+        cancelAnimationFrame(hardwareMeasureLoopRafRef.current);
+        hardwareMeasureLoopRafRef.current = null;
+      }
+    };
+  }, [isHardwareTeaserVisible, isHardwareExpanded, shouldRunSessionIntro]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -1616,9 +1688,15 @@ function HomePage({ navigate, theme, onTheme }) {
     };
   }, [isHardwareExpanded]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     scheduleHardwareMeasure();
-  });
+  }, [
+    isHardwareTeaserVisible,
+    isHardwareTeaserSettled,
+    isHardwareTeaserSlidingIn,
+    isHardwareExpanded,
+    isCompactViewport,
+  ]);
 
   useEffect(() => {
     const handleViewportChange = () => scheduleHardwareMeasure();
@@ -1638,7 +1716,10 @@ function HomePage({ navigate, theme, onTheme }) {
 
   useEffect(() => () => {
     if (hardwareMeasureRafRef.current != null) cancelAnimationFrame(hardwareMeasureRafRef.current);
+    if (hardwareMeasureLoopRafRef.current != null) cancelAnimationFrame(hardwareMeasureLoopRafRef.current);
     clearHardwareTransitionTimeout();
+    if (hardwareTeaserSlideRafRef.current != null) cancelAnimationFrame(hardwareTeaserSlideRafRef.current);
+    if (hardwareTeaserSettleRafRef.current != null) cancelAnimationFrame(hardwareTeaserSettleRafRef.current);
   }, []);
 
   return (
@@ -1886,6 +1967,7 @@ function HomePage({ navigate, theme, onTheme }) {
             </React.Fragment>
           ))}
           <figure
+            ref={hardwareFigureRef}
             className="hardware-teaser"
             style={{
               margin: (isHardwareTeaserVisible || !isCompactViewport) ? "28px 0 0" : "0",
@@ -1920,21 +2002,34 @@ function HomePage({ navigate, theme, onTheme }) {
                 background: "transparent",
                 textAlign: "left",
                 cursor: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='36' viewBox='0 0 36 36'%3E%3Ccircle cx='15' cy='15' r='10' fill='white' fill-opacity='0.92' stroke='black' stroke-width='2.4'/%3E%3Cpath d='M22.5 22.5 31 31' stroke='black' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M15 10.5v9M10.5 15h9' stroke='black' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E") 15 15, zoom-in`,
-                transform: isHardwareTeaserVisible ? "translateX(0)" : "translateX(calc(-100vw - 40px))",
-                transition: shouldRunSessionIntro ? `transform ${hardwareTeaserRevealTransition}` : "none",
               }}
             >
               <div
                 ref={hardwareShellRef}
+                onTransitionEnd={event => {
+                  if (event.propertyName !== "transform") return;
+                  if (!isHardwareTeaserEntering || !isHardwareTeaserSlidingIn) return;
+                  setIsHardwareTeaserSlidingIn(false);
+                  if (hardwareTeaserSettleRafRef.current != null) cancelAnimationFrame(hardwareTeaserSettleRafRef.current);
+                  hardwareTeaserSettleRafRef.current = requestAnimationFrame(() => {
+                    measureHardwareFrame();
+                    hardwareTeaserSettleRafRef.current = requestAnimationFrame(() => {
+                      measureHardwareFrame();
+                      setIsHardwareTeaserSettled(true);
+                      hardwareTeaserSettleRafRef.current = null;
+                    });
+                  });
+                }}
                 style={{
                   marginLeft: "-10px",
                   position: "relative",
                   overflow: "hidden",
                   aspectRatio: `${HARDWARE_ASPECT_RATIO}`,
                   borderRadius: "18px",
-                  boxShadow: "0 10px 24px rgba(0,0,0,0.18)",
-                  background: "color-mix(in srgb, var(--fg) 4%, var(--bg))",
-                  border: "1px solid color-mix(in srgb, var(--mid) 16%, transparent)",
+                  boxShadow: "none",
+                  background: "transparent",
+                  border: "1px solid transparent",
+                  visibility: isHardwareTeaserEntering ? "hidden" : "visible",
                 }}
               />
             </button>
@@ -2052,25 +2147,36 @@ function HomePage({ navigate, theme, onTheme }) {
             height: `${hardwareAnimatedRect.height}px`,
             overflow: "hidden",
             borderRadius: isHardwareExpanded ? "20px" : "18px",
-            boxShadow: isHardwareExpanded
+            boxShadow: isHardwareVideoReady ? (isHardwareExpanded
               ? "0 24px 80px rgba(0,0,0,0.42)"
-              : "0 10px 24px rgba(0,0,0,0.18)",
-            background: "#000",
+              : "0 10px 24px rgba(0,0,0,0.18)") : "none",
+            background: "transparent",
             zIndex: isHardwareExpanded ? 221 : 10,
             pointerEvents: "none",
-            transition: isHardwareTransitioning
-              ? [
-                  `left ${hardwareZoomTransition}`,
-                  `top ${hardwareZoomTransition}`,
-                  `width ${hardwareZoomTransition}`,
-                  `height ${hardwareZoomTransition}`,
-                  `border-radius ${hardwareZoomTransition}`,
-                  `box-shadow ${hardwareZoomTransition}`,
-                ].join(", ")
-              : "none",
+            opacity: isHardwareVideoReady ? 1 : 0,
+            transform: isHardwareTeaserEntering
+              ? (isHardwareTeaserSlidingIn ? "translateX(0)" : "translateX(calc(-100vw - 40px))")
+              : "translateX(0)",
+            transition: [
+              isHardwareTransitioning
+                ? [
+                    `left ${hardwareZoomTransition}`,
+                    `top ${hardwareZoomTransition}`,
+                    `width ${hardwareZoomTransition}`,
+                    `height ${hardwareZoomTransition}`,
+                    `border-radius ${hardwareZoomTransition}`,
+                    `box-shadow ${hardwareZoomTransition}`,
+                  ].join(", ")
+                : null,
+              shouldRunSessionIntro && isHardwareTeaserEntering && isHardwareTeaserSlidingIn
+                ? `transform ${hardwareTeaserRevealTransition}`
+                : null,
+              "opacity 0.18s ease",
+            ].filter(Boolean).join(", "),
           }}
         >
           <video
+            ref={hardwareFloatingVideoRef}
             src={resolveAssetUrl("assets/apps/actuators-demo-1.mov")}
             aria-label="PA Actuator demo video"
             autoPlay
@@ -2078,12 +2184,13 @@ function HomePage({ navigate, theme, onTheme }) {
             loop
             playsInline
             preload="metadata"
+            onLoadedData={() => setIsHardwareVideoReady(true)}
             style={{
               display: "block",
               width: "100%",
               height: "100%",
               objectFit: "cover",
-              background: "#000",
+              background: "transparent",
             }}
           />
         </div>
