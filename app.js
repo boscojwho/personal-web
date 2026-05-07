@@ -349,7 +349,7 @@ const DATA = {
       year: "2014",
       tags: "iOS",
       legacySlugs: ["jot-refined-text-editor"],
-      icon: "assets/icons/jot_placeholder_logo.png",
+      icon: "assets/icons/jot_icon.png",
       bg: "#2C3E50",
       label: "J",
       desc: "A plain-text iPhone editor focused on one-handed writing, easier cursor movement, and less disruptive auto-correction.",
