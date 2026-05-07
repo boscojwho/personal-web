@@ -1225,6 +1225,7 @@ function MainGrid({ onArticle, onApp, onAllApps, onAllArticles, theme, onTheme }
                 display: 'flex',
                 alignItems: 'center',
                 perspective: '600px',
+                overflow: 'visible',
                 transform: bridgeSide === 'name' ? 'translateX(4px)' : 'translateX(0)',
                 transition: bridgeTransition,
               }}
@@ -1242,7 +1243,6 @@ function MainGrid({ onArticle, onApp, onAllApps, onAllArticles, theme, onTheme }
                 ];
                 const t = tilts[i % tilts.length];
                 const isHover = hoverIcon === i;
-                const last = DATA.apps.length - 1;
                 const baseTransform = i === 1
                   ? 'rotateX(16deg) rotateY(-30deg) rotateZ(14deg) scale(1.12) translateY(-1px)'
                   : i === 0
@@ -1265,20 +1265,21 @@ function MainGrid({ onArticle, onApp, onAllApps, onAllArticles, theme, onTheme }
                   padding: 0,
                   background: 'none',
                   borderRadius: 7,
-                  marginLeft: i === 0 ? 0 : (isHover ? 2 : -7),
-                  marginRight: isHover && i < last ? 9 : 0,
+                  marginLeft: i === 0 ? 0 : -7,
+                  marginRight: 0,
                   transform: isHover
                     ? `rotateX(0deg) rotateY(0deg) rotateZ(0deg) scale(1.55) translateY(-4px)`
                     : baseTransform,
                   transformStyle: 'preserve-3d',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   cursor: 'pointer', flexShrink: 0,
+                  position: 'relative',
                   boxShadow: isHover
                     ? '0 8px 18px rgba(0,0,0,0.22), 0 2px 4px rgba(0,0,0,0.14)'
                     : '0 4px 8px rgba(0,0,0,0.18), 0 1px 2px rgba(0,0,0,0.12)',
                   zIndex: isHover ? 20 : DATA.apps.length - i,
-                  transition: 'transform 0.18s cubic-bezier(0.34, 1.4, 0.64, 1), margin 0.18s ease, box-shadow 0.18s ease',
-                  overflow: 'hidden',
+                  transition: 'transform 0.18s cubic-bezier(0.34, 1.4, 0.64, 1), box-shadow 0.18s ease',
+                  overflow: 'visible',
                 }}>
                   {a.icon
                     ? <img src={a.icon} width={32} height={32} alt={a.name}
