@@ -301,7 +301,10 @@ const DATA = {
       label: "C",
       desc: "",
       body: [],
-      links: [],
+      links: [
+        { label: "App Store", url: "https://apps.apple.com/ca/app/castro-podcast-player-app/id1080840241" },
+        { label: "castro.fm", url: "https://castro.fm/" },
+      ],
     },
     {
       name: "Dive",
@@ -705,6 +708,9 @@ function AppDetail({ app, navigate, theme, onTheme }) {
   const [iconFailed, setIconFailed] = useState(false);
   const [expandedShotIndex, setExpandedShotIndex] = useState(null);
   const [loadedMedia, setLoadedMedia] = useState(() => new Set());
+  const appStoreLink = app.links?.find(link => link.label === "App Store") || null;
+  const websiteLink = app.links?.find(link => link.label !== "App Store" && /[a-z0-9-]+\.[a-z]{2,}/i.test(link.label)) || null;
+  const otherLinks = app.links?.filter(link => link !== appStoreLink && link !== websiteLink) || [];
   const showScreenshotsAtBottom = app.screenshotsPosition === "bottom";
   const heroShot = showScreenshotsAtBottom
     ? null
@@ -801,13 +807,68 @@ function AppDetail({ app, navigate, theme, onTheme }) {
           <div style={{ paddingTop: "8px" }}>
             <p style={{ fontWeight: 700, fontSize: "1.1em", marginBottom: "4px" }}>{app.name}</p>
             <p style={{ color: "var(--mid)", marginBottom: "2px" }}>{app.year}  ·  {app.tags}</p>
+            {(appStoreLink || websiteLink) ? (
+              <div
+                style={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  alignItems: "center",
+                  gap: "10px",
+                  marginTop: "12px",
+                }}
+              >
+                {appStoreLink ? (
+                  <a
+                    href={appStoreLink.url}
+                    aria-label={`Download ${app.name} on the App Store`}
+                    style={{
+                      display: "inline-block",
+                      lineHeight: 0,
+                    }}
+                  >
+                    <img
+                      src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83"
+                      alt="Download on the App Store"
+                      style={{
+                        display: "block",
+                        height: "40px",
+                        width: "auto",
+                      }}
+                    />
+                  </a>
+                ) : null}
+                {websiteLink ? (
+                  <a
+                    href={websiteLink.url}
+                    aria-label={`Visit ${websiteLink.label}`}
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      minHeight: "40px",
+                      padding: "0 14px",
+                      borderRadius: "999px",
+                      border: "1px solid color-mix(in srgb, var(--mid) 24%, transparent)",
+                      background: "color-mix(in srgb, var(--fg) 3%, var(--bg))",
+                      color: "var(--fg)",
+                      fontSize: "0.95em",
+                      fontWeight: 600,
+                      textDecoration: "none",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {websiteLink.label}
+                  </a>
+                ) : null}
+              </div>
+            ) : null}
             {app.statusTag ? (
               <p
                 style={{
                   display: "inline-flex",
                   alignItems: "center",
                   padding: "3px 8px",
-                  marginTop: "8px",
+                  marginTop: (appStoreLink || websiteLink) ? "12px" : "8px",
                   borderRadius: "999px",
                   background: "color-mix(in srgb, var(--fg) 4%, var(--bg))",
                   border: "1px solid color-mix(in srgb, var(--mid) 18%, transparent)",
@@ -1109,10 +1170,10 @@ function AppDetail({ app, navigate, theme, onTheme }) {
           </button>
         )}
 
-        {app.links && app.links.length > 0 && (
+        {otherLinks.length > 0 && (
           <div style={{ marginTop: "32px", paddingTop: "20px", borderTop: "1px solid var(--mid)" }}>
             <p style={{ fontWeight: 700, marginBottom: "8px" }}>Links</p>
-            {app.links.map((link, i) => (
+            {otherLinks.map((link, i) => (
               <a key={i} href={link.url} className="nav-link" style={{ display: "inline-block", marginRight: "8px" }}>
                 <span className="nav-link-title">{link.label}</span>
               </a>
