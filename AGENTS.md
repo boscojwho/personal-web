@@ -30,12 +30,14 @@ Before merging a PR, an agent must:
 The site reads commit metadata from `build-info.json` (not from client-side GitHub API calls).
 
 Metadata updates must be a **separate post-merge commit** and must not be bundled into feature PR commits.
+After any approved PR is merged into `main`, this metadata update is required.
 
 When shipping to production, use this exact sequence:
 
 1. Merge feature work into `main` using the merge strategy above.
 2. Wait for that merge commit set to land on remote `main`.
 3. On `main`, run `./scripts/update-build-info-from-main.sh` to capture the latest `origin/main` hash and commit timestamp.
-4. Commit and push only the metadata change (`build-info.json`) as a separate metadata commit.
+4. Commit and push only the metadata change (`build-info.json`) as a separate metadata commit on `main`.
+5. The commit message for this metadata commit must be exactly: `Version Bump`.
 
 Do not include `build-info.json` in feature branch commits unless explicitly requested for non-production testing.
