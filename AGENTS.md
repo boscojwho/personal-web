@@ -37,7 +37,8 @@ When shipping to production, use this exact sequence:
 1. Merge feature work into `main` using the merge strategy above.
 2. Wait for that merge commit set to land on remote `main`.
 3. On `main`, run `./scripts/update-build-info-from-main.sh` to capture the latest `origin/main` hash and commit timestamp.
-4. Commit and push only the metadata change (`build-info.json`) as a separate metadata commit on `main`.
+4. Create a separate commit directly on `main` that includes only the metadata change (`build-info.json`).
 5. The commit message for this metadata commit must be exactly: `Version Bump`.
+6. Push that `Version Bump` commit to `origin/main` immediately after the PR merge.
 
 Do not include `build-info.json` in feature branch commits unless explicitly requested for non-production testing.
