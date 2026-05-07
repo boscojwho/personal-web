@@ -345,6 +345,25 @@ const DATA = {
       links: [],
     },
     {
+      name: "Jot",
+      year: "2014",
+      tags: "iOS",
+      legacySlugs: ["jot-refined-text-editor"],
+      icon: "assets/icons/jot_icon.png",
+      bg: "#2C3E50",
+      label: "J",
+      desc: "A plain-text iPhone editor focused on one-handed writing, easier cursor movement, and less disruptive auto-correction.",
+      body: [
+        { kind: "p", text: "Jot launched on the App Store on March 5, 2014 for iPhone and iPod touch." },
+        { kind: "p", text: "The app focused on refining text entry with one-handed controls, faster text selection, and \"Jot Correct\" behavior that made auto-correction easier to accept or undo." },
+        { kind: "p", text: "Jot required Dropbox to store documents in Apps > Jot - Refined Text Editor and worked with plain-text workflows." },
+      ],
+      screenshots: [
+        { src: "https://www.cultofmac.com/wp-content/uploads/2014/03/13238825805_698454a6bf_b.jpg", alt: "Jot keyboard with ThinkPad-like nubbin" },
+      ],
+      links: [],
+    },
+    {
       name: "Fencathon 2",
       year: "2016",
       tags: "iOS",
@@ -610,6 +629,9 @@ DATA.articles = DATA.articles.map(item => ({ ...item, slug: slugify(item.title) 
 
 const APP_BY_SLUG = new Map(DATA.apps.map(item => [item.slug, item]));
 const ARTICLE_BY_SLUG = new Map(DATA.articles.map(item => [item.slug, item]));
+const APP_ALIAS_TO_SLUG = new Map(
+  DATA.apps.flatMap(item => (item.legacySlugs || []).map(alias => [alias, item.slug]))
+);
 
 function AppDetail({ app, navigate, theme, onTheme }) {
   const [hoverV, setHoverV] = useState(null);
@@ -706,6 +728,27 @@ function AppDetail({ app, navigate, theme, onTheme }) {
             )
           ))}
         </div>
+
+        {app.screenshots && app.screenshots.length > 0 && (
+          <div style={{ marginTop: "32px" }}>
+            <p style={{ fontWeight: 700, marginBottom: "10px" }}>Screenshots</p>
+            {app.screenshots.map((shot, i) => (
+              <img
+                key={i}
+                src={shot.src}
+                alt={shot.alt || `${app.name} screenshot ${i + 1}`}
+                style={{
+                  display: "block",
+                  width: "100%",
+                  maxWidth: "560px",
+                  borderRadius: "10px",
+                  border: "1px solid var(--mid)",
+                  marginBottom: i < app.screenshots.length - 1 ? "12px" : 0,
+                }}
+              />
+            ))}
+          </div>
+        )}
 
         {app.links && app.links.length > 0 && (
           <div style={{ marginTop: "32px", paddingTop: "20px", borderTop: "1px solid var(--mid)" }}>
@@ -1529,6 +1572,14 @@ function App() {
     window.addEventListener("popstate", handler);
     return () => window.removeEventListener("popstate", handler);
   }, []);
+
+  useEffect(() => {
+    if (route.kind !== "app") return;
+    if (APP_BY_SLUG.has(route.slug)) return;
+    const canonicalSlug = APP_ALIAS_TO_SLUG.get(route.slug);
+    if (!canonicalSlug) return;
+    navigate(ROUTES.app(canonicalSlug), { replace: true });
+  }, [route]);
 
   useEffect(() => {
     const app = route.kind === "app" ? APP_BY_SLUG.get(route.slug) : null;
