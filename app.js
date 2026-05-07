@@ -1409,8 +1409,8 @@ function HomePage({ navigate, theme, onTheme }) {
     ? hoverIcon
     : (launchHoverIcon != null ? launchHoverIcon : (isIntroHoverActive ? introHoverIcon : null));
   const hardwareTargetRect = (() => {
-    const maxWidth = window.innerWidth - 40;
-    const maxHeight = window.innerHeight - 40;
+    const maxWidth = Math.min(window.innerWidth - 40, 1080);
+    const maxHeight = Math.min(window.innerHeight - 40, 1080);
     const width = Math.min(maxWidth, maxHeight * HARDWARE_ASPECT_RATIO);
     const height = width / HARDWARE_ASPECT_RATIO;
     return {
