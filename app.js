@@ -307,15 +307,12 @@ const DATA = {
       name: "Dive",
       year: "2020–2021",
       tags: "iOS",
+      statusTag: "Alpha prototype · Not Shipped",
       icon: "assets/icons/dive_icon.png",
       bg: "#5CBCEB",
       label: "D",
-      desc: "A music discovery concept for iPhone built around genre maps, listening paths, and short historical context for tracks and scenes.",
+      desc: "A music discovery concept for iPhone built around genre maps, listening paths, and short historical context for tracks and scenes, with genre playlists curated by professional curators in the music industry.",
       body: [
-        {
-          kind: "p",
-          text: "Dive explored music through visual genre clusters and guided listening queues, pairing tracks with concise artist and scene notes.",
-        },
         {
           kind: "img-row",
           images: [
@@ -760,6 +757,25 @@ function AppDetail({ app, navigate, theme, onTheme }) {
           <div style={{ paddingTop: "8px" }}>
             <p style={{ fontWeight: 700, fontSize: "1.1em", marginBottom: "4px" }}>{app.name}</p>
             <p style={{ color: "var(--mid)", marginBottom: "2px" }}>{app.year}  ·  {app.tags}</p>
+            {app.statusTag ? (
+              <p
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  padding: "3px 8px",
+                  marginTop: "8px",
+                  borderRadius: "999px",
+                  background: "color-mix(in srgb, var(--fg) 4%, var(--bg))",
+                  border: "1px solid color-mix(in srgb, var(--mid) 18%, transparent)",
+                  color: "var(--mid)",
+                  fontSize: "0.76em",
+                  fontWeight: 500,
+                  letterSpacing: "0.01em",
+                }}
+              >
+                {app.statusTag}
+              </p>
+            ) : null}
           </div>
         </div>
 
