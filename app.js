@@ -354,6 +354,7 @@ const DATA = {
       label: "J",
       desc: "A plain-text iPhone editor focused on one-handed writing, easier cursor movement, and less disruptive auto-correction.",
       body: [
+        { kind: "img", src: "assets/apps/jot-control.gif", alt: "Jot Control interface over the iPhone keyboard" },
         { kind: "p", text: "Jot launched on the App Store on March 5, 2014 for iPhone and iPod touch." },
         { kind: "p", text: "The app focused on refining text entry with one-handed controls, faster text selection, and \"Jot Correct\" behavior that made auto-correction easier to accept or undo." },
         { kind: "p", text: "Jot required Dropbox to store documents in Apps > Jot - Refined Text Editor and worked with plain-text workflows." },
@@ -723,6 +724,20 @@ function AppDetail({ app, navigate, theme, onTheme }) {
           {app.body.map((blk, i) => (
             blk.kind === "h" ? (
               <h2 key={i} style={{ fontWeight: 700, fontSize: "1em", marginTop: "24px", marginBottom: "8px" }}>{blk.text}</h2>
+            ) : blk.kind === "img" ? (
+              <figure key={i} style={{ margin: "0 0 18px" }}>
+                <img
+                  src={resolveAssetUrl(blk.src)}
+                  alt={blk.alt || ""}
+                  style={{
+                    display: "block",
+                    width: "100%",
+                    maxWidth: "360px",
+                    borderRadius: "18px",
+                    boxShadow: "0 10px 24px rgba(0,0,0,0.18)",
+                  }}
+                />
+              </figure>
             ) : (
               <p key={i} style={{ marginBottom: "14px" }}>{blk.text}</p>
             )
@@ -1627,7 +1642,7 @@ function App() {
   if (route.kind === "home") {
     page = <HomePage navigate={navigate} theme={theme} onTheme={onTheme} onFont={onFont} />;
   } else if (route.kind === "app") {
-    const app = APP_BY_SLUG.get(route.slug);
+    const app = APP_BY_SLUG.get(APP_ALIAS_TO_SLUG.get(route.slug) || route.slug);
     page = app ? <AppDetail app={app} navigate={navigate} theme={theme} onTheme={onTheme} /> : <NotFoundPage navigate={navigate} theme={theme} onTheme={onTheme} />;
   } else if (route.kind === "writing") {
     page = <AllArticles navigate={navigate} theme={theme} onTheme={onTheme} />;

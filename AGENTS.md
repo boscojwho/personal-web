@@ -42,3 +42,9 @@ When shipping to production, use this exact sequence:
 6. Push that `Version Bump` commit to `origin/main` immediately after the PR merge.
 
 Do not include `build-info.json` in feature branch commits unless explicitly requested for non-production testing.
+
+## Local Route Testing
+
+For local browser testing of this site, use `python3 scripts/serve-local-preview.py`.
+
+Do not use `python3 -m http.server` when testing direct app or writing routes such as `/apps/jot` or `/writing/...`, because static file serving will return a 404 instead of the SPA shell.
