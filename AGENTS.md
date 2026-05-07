@@ -24,3 +24,14 @@ Before merging a PR, an agent must:
 2. Confirm CI/tests pass.
 3. Merge by replaying commits (rebase+ff or rebase-and-merge).
 4. Verify branch commits are now reachable from `main`.
+
+## Build Metadata (About Hover)
+
+The site reads commit metadata from `build-info.json` (not from client-side GitHub API calls).
+
+When shipping to production, use this sequence:
+
+1. Merge feature work into `main` using the merge strategy above.
+2. Wait for that merge commit set to land on remote `main`.
+3. Run `./scripts/update-build-info-from-main.sh` on `main` to capture the latest `origin/main` hash and commit timestamp.
+4. Commit and push the `build-info.json` update as a separate metadata commit.
