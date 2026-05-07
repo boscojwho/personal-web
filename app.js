@@ -1388,6 +1388,7 @@ function HomePage({ navigate, theme, onTheme }) {
   const isDarkMode = theme === "dark" || (theme === "system" && prefersDark);
   const hardwareFigureRef = useRef(null);
   const hardwareShellRef = useRef(null);
+  const hardwareInlineVideoRef = useRef(null);
   const hardwareFloatingVideoRef = useRef(null);
   const hardwareMeasureRafRef = useRef(null);
   const hardwareMeasureLoopRafRef = useRef(null);
@@ -1396,6 +1397,8 @@ function HomePage({ navigate, theme, onTheme }) {
   const hardwareTeaserSettleRafRef = useRef(null);
   const HARDWARE_ZOOM_MS = 260;
   const HARDWARE_ASPECT_RATIO = 568 / 320;
+  const HARDWARE_VIDEO_MP4_SRC = resolveAssetUrl("assets/apps/actuators-demo-1.mp4");
+  const HARDWARE_VIDEO_MOV_SRC = resolveAssetUrl("assets/apps/actuators-demo-1.mov");
   const hardwareZoomTransition = `${HARDWARE_ZOOM_MS}ms cubic-bezier(0.2, 0.9, 0.22, 1.12)`;
   const hardwareTeaserRevealTransition = "1s cubic-bezier(0.22, 1, 0.36, 1)";
 
@@ -1417,6 +1420,7 @@ function HomePage({ navigate, theme, onTheme }) {
     ? hoverIcon
     : (launchHoverIcon != null ? launchHoverIcon : (isIntroHoverActive ? introHoverIcon : null));
   const isHardwareTeaserEntering = isHardwareTeaserVisible && !isHardwareTeaserSettled && !isHardwareExpanded;
+  const isHardwareOverlayActive = isHardwareExpanded || isHardwareTransitioning;
   const hardwareTargetRect = (() => {
     const maxWidth = Math.min(window.innerWidth - 40, 1080);
     const maxHeight = Math.min(window.innerHeight - 40, 1080);
@@ -1430,6 +1434,25 @@ function HomePage({ navigate, theme, onTheme }) {
     };
   })();
   const hardwareAnimatedRect = isHardwareExpanded ? hardwareTargetRect : hardwareFrameRect;
+  const shouldShowHardwareFloatingVideo = isHardwareTeaserVisible && hardwareAnimatedRect && (isHardwareOverlayActive || isHardwareTeaserEntering);
+
+  const markHardwareVideoReady = () => {
+    setIsHardwareVideoReady(true);
+  };
+
+  const attemptHardwareVideoPlayback = video => {
+    if (!video) return;
+    video.muted = true;
+    video.defaultMuted = true;
+    video.playsInline = true;
+    video.setAttribute("muted", "");
+    video.setAttribute("playsinline", "");
+    video.setAttribute("webkit-playsinline", "true");
+    const playPromise = video.play();
+    if (playPromise && typeof playPromise.catch === "function") {
+      playPromise.catch(() => {});
+    }
+  };
 
   const measureHardwareFrame = () => {
     if (!hardwareShellRef.current) return;
@@ -1713,6 +1736,22 @@ function HomePage({ navigate, theme, onTheme }) {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  useEffect(() => {
+    if (!isHardwareTeaserVisible) return undefined;
+
+    const syncPlayback = () => {
+      if (isHardwareOverlayActive || isHardwareTeaserEntering) {
+        attemptHardwareVideoPlayback(hardwareFloatingVideoRef.current);
+        return;
+      }
+      attemptHardwareVideoPlayback(hardwareInlineVideoRef.current);
+    };
+
+    syncPlayback();
+    const retryTimeout = setTimeout(syncPlayback, 160);
+    return () => clearTimeout(retryTimeout);
+  }, [isHardwareTeaserVisible, isHardwareOverlayActive, isHardwareTeaserEntering]);
 
   useEffect(() => () => {
     if (hardwareMeasureRafRef.current != null) cancelAnimationFrame(hardwareMeasureRafRef.current);
@@ -2031,7 +2070,36 @@ function HomePage({ navigate, theme, onTheme }) {
                   border: "1px solid transparent",
                   visibility: isHardwareTeaserEntering ? "hidden" : "visible",
                 }}
-              />
+              >
+                <video
+                  ref={hardwareInlineVideoRef}
+                  aria-label="PA Actuator demo video"
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  disablePictureInPicture
+                  preload="auto"
+                  onCanPlay={markHardwareVideoReady}
+                  onLoadedData={markHardwareVideoReady}
+                  onLoadedMetadata={event => {
+                    markHardwareVideoReady();
+                    attemptHardwareVideoPlayback(event.currentTarget);
+                  }}
+                  style={{
+                    display: "block",
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                    background: "transparent",
+                    opacity: shouldShowHardwareFloatingVideo ? 0 : 1,
+                    transition: "opacity 0.18s ease",
+                  }}
+                >
+                  <source src={HARDWARE_VIDEO_MP4_SRC} type="video/mp4" />
+                  <source src={HARDWARE_VIDEO_MOV_SRC} type="video/quicktime" />
+                </video>
+              </div>
             </button>
           </figure>
         </div>
@@ -2137,7 +2205,7 @@ function HomePage({ navigate, theme, onTheme }) {
         />
       )}
 
-      {isHardwareTeaserVisible && hardwareAnimatedRect && (
+      {shouldShowHardwareFloatingVideo && (
         <div
           style={{
             position: "fixed",
@@ -2151,7 +2219,7 @@ function HomePage({ navigate, theme, onTheme }) {
               ? "0 24px 80px rgba(0,0,0,0.42)"
               : "0 10px 24px rgba(0,0,0,0.18)") : "none",
             background: "transparent",
-            zIndex: isHardwareExpanded ? 221 : 10,
+            zIndex: isHardwareOverlayActive ? 221 : 10,
             pointerEvents: "none",
             opacity: isHardwareVideoReady ? 1 : 0,
             transform: isHardwareTeaserEntering
@@ -2177,14 +2245,19 @@ function HomePage({ navigate, theme, onTheme }) {
         >
           <video
             ref={hardwareFloatingVideoRef}
-            src={resolveAssetUrl("assets/apps/actuators-demo-1.mov")}
             aria-label="PA Actuator demo video"
             autoPlay
             muted
             loop
             playsInline
-            preload="metadata"
-            onLoadedData={() => setIsHardwareVideoReady(true)}
+            disablePictureInPicture
+            preload="auto"
+            onCanPlay={markHardwareVideoReady}
+            onLoadedData={markHardwareVideoReady}
+            onLoadedMetadata={event => {
+              markHardwareVideoReady();
+              attemptHardwareVideoPlayback(event.currentTarget);
+            }}
             style={{
               display: "block",
               width: "100%",
@@ -2192,7 +2265,10 @@ function HomePage({ navigate, theme, onTheme }) {
               objectFit: "cover",
               background: "transparent",
             }}
-          />
+          >
+            <source src={HARDWARE_VIDEO_MP4_SRC} type="video/mp4" />
+            <source src={HARDWARE_VIDEO_MOV_SRC} type="video/quicktime" />
+          </video>
         </div>
       )}
     </div>
