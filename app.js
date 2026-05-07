@@ -556,6 +556,11 @@ const ARTICLE_BY_SLUG = new Map(DATA.articles.map(item => [item.slug, item]));
 
 function AppDetail({ app, navigate, theme, onTheme }) {
   const [hoverV, setHoverV] = useState(null);
+  const [iconFailed, setIconFailed] = useState(false);
+
+  useEffect(() => {
+    setIconFailed(false);
+  }, [app.slug]);
 
   return (
     <div style={{ animation: "fadeUp 0.2s ease", padding: "40px var(--gap)" }}>
@@ -609,8 +614,15 @@ function AppDetail({ app, navigate, theme, onTheme }) {
                         transition: "transform 0.20s cubic-bezier(0.34, 1.4, 0.64, 1), margin 0.20s ease, box-shadow 0.20s ease",
                       }}
                     >
-                      {app.icon ? (
-                        <img src={app.icon} width="72" height="72" alt={app.name} style={{ display: "block", borderRadius: 13, pointerEvents: "none" }} />
+                      {app.icon && !iconFailed ? (
+                        <img
+                          src={app.icon}
+                          width="72"
+                          height="72"
+                          alt={app.name}
+                          onError={() => setIconFailed(true)}
+                          style={{ display: "block", borderRadius: 13, pointerEvents: "none" }}
+                        />
                       ) : (
                         variant.label
                       )}
@@ -825,6 +837,7 @@ function HomePage({ navigate, theme, onTheme }) {
   const [jiggleIconIndex, setJiggleIconIndex] = useState(null);
   const [jiggleTick, setJiggleTick] = useState(0);
   const [bridgeSide, setBridgeSide] = useState(null);
+  const [failedDockIcons, setFailedDockIcons] = useState(() => new Set());
   const [hoverNamePose, setHoverNamePose] = useState({ x: -0.5, ry: 18, rx: -9, rz: 0, z: 10, y: -3, s: 1.4 });
   const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
   const isDarkMode = theme === "dark" || (theme === "system" && prefersDark);
@@ -1097,8 +1110,22 @@ function HomePage({ navigate, theme, onTheme }) {
                       overflow: "visible",
                     }}
                   >
-                    {app.icon ? (
-                      <img src={app.icon} width="32" height="32" alt={app.name} style={{ display: "block", borderRadius: 4, pointerEvents: "none" }} />
+                    {app.icon && !failedDockIcons.has(app.slug) ? (
+                      <img
+                        src={app.icon}
+                        width="32"
+                        height="32"
+                        alt={app.name}
+                        onError={() => {
+                          setFailedDockIcons(prev => {
+                            if (prev.has(app.slug)) return prev;
+                            const next = new Set(prev);
+                            next.add(app.slug);
+                            return next;
+                          });
+                        }}
+                        style={{ display: "block", borderRadius: 4, pointerEvents: "none" }}
+                      />
                     ) : (
                       <div
                         style={{
