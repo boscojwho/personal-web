@@ -225,7 +225,7 @@ function setCanonical(path) {
 function updatePageMetadata(route, app, article) {
   const baseTitle = "Bosco Ho";
   let title = baseTitle;
-  let description = "iOS and macOS developer in Vancouver.";
+  let description = "iOS, iPadOS, macOS, watchOS developer in Vancouver.";
   let canonical = routeHref(route.path);
 
   if (route.kind === "app" && app) {
@@ -285,7 +285,7 @@ function RouteLink({ to, navigate, className, style, onClick, target, download, 
 
 const DATA = {
   name: "Bosco Ho",
-  location: "Vancouver, BC",
+  location: "",
   links: [
     { label: "GitHub", url: "https://github.com/boscojwho" },
     { label: "Mastodon", url: "https://mastodon.social/@sideshow_boz" },
@@ -2181,13 +2181,13 @@ function HomePage({ navigate, theme, onTheme }) {
             </span>
           </p>
           <p style={{ color: "var(--mid)", maxWidth: "220px" }}>
-            iOS &amp; macOS developer in Vancouver. 🍁
+            iOS, iPadOS, macOS, watchOS developer in Vancouver, Canada. 🍁
           </p>
         </div>
 
         <div style={{ marginBottom: "32px" }}>
           <p style={{ fontWeight: 700, marginBottom: "10px" }}>Contact</p>
-          <p style={{ color: "var(--mid)", marginBottom: "12px" }}>{DATA.location}</p>
+          {DATA.location && <p style={{ color: "var(--mid)", marginBottom: "12px" }}>{DATA.location}</p>}
           {DATA.links.map(link => (
             <a key={link.label} href={link.url} className="nav-link nav-link-fit" style={{ marginBottom: "2px" }}>
               <span className="nav-link-title">{link.label}</span>
