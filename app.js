@@ -911,7 +911,7 @@ function AppDetail({ app, navigate, theme, onTheme }) {
                 margin: "0 0 24px",
                 border: "none",
                 background: "transparent",
-                cursor: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='36' viewBox='0 0 36 36'%3E%3Ccircle cx='15' cy='15' r='10' fill='white' fill-opacity='0.92' stroke='black' stroke-width='2.4'/%3E%3Cpath d='M22.5 22.5 31 31' stroke='black' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M15 10.5v9M10.5 15h9' stroke='black' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E") 15 15, zoom-in`,
+                cursor: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'%3E%3Ccircle cx='11.5' cy='11.5' r='7.5' fill='white' fill-opacity='0.92' stroke='black' stroke-width='2'/%3E%3Cpath d='M17.2 17.2 24 24' stroke='black' stroke-width='2.4' stroke-linecap='round'/%3E%3Cpath d='M11.5 8.5v6M8.5 11.5h6' stroke='black' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") 12 12, zoom-in`,
               }}
             >
               <img
@@ -1102,7 +1102,7 @@ function AppDetail({ app, navigate, theme, onTheme }) {
                     border: "none",
                     background: "transparent",
                     textAlign: "left",
-                    cursor: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='36' viewBox='0 0 36 36'%3E%3Ccircle cx='15' cy='15' r='10' fill='white' fill-opacity='0.92' stroke='black' stroke-width='2.4'/%3E%3Cpath d='M22.5 22.5 31 31' stroke='black' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M15 10.5v9M10.5 15h9' stroke='black' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E") 15 15, zoom-in`,
+                    cursor: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'%3E%3Ccircle cx='11.5' cy='11.5' r='7.5' fill='white' fill-opacity='0.92' stroke='black' stroke-width='2'/%3E%3Cpath d='M17.2 17.2 24 24' stroke='black' stroke-width='2.4' stroke-linecap='round'/%3E%3Cpath d='M11.5 8.5v6M8.5 11.5h6' stroke='black' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") 12 12, zoom-in`,
                   }}
                   aria-label={`Open ${shot.device || "app"} screenshot ${i + 1}`}
                 >
@@ -2071,7 +2071,7 @@ function HomePage({ navigate, theme, onTheme }) {
                 border: "none",
                 background: "transparent",
                 textAlign: "left",
-                cursor: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='36' viewBox='0 0 36 36'%3E%3Ccircle cx='15' cy='15' r='10' fill='white' fill-opacity='0.92' stroke='black' stroke-width='2.4'/%3E%3Cpath d='M22.5 22.5 31 31' stroke='black' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M15 10.5v9M10.5 15h9' stroke='black' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E") 15 15, zoom-in`,
+                cursor: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'%3E%3Ccircle cx='11.5' cy='11.5' r='7.5' fill='white' fill-opacity='0.92' stroke='black' stroke-width='2'/%3E%3Cpath d='M17.2 17.2 24 24' stroke='black' stroke-width='2.4' stroke-linecap='round'/%3E%3Cpath d='M11.5 8.5v6M8.5 11.5h6' stroke='black' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") 12 12, zoom-in`,
               }}
             >
               <div
