@@ -467,6 +467,10 @@ const DATA = {
       label: "F",
       desc: "",
       body: [],
+      screenshots: [
+        { src: "assets/apps/fencathon-1-ipad-01.jpeg", alt: "Fencathon 1 iPad tournaments map and nearby events list", device: "iPad" },
+        { src: "assets/apps/fencathon-1-ipad-02.jpeg", alt: "Fencathon 1 iPad tournament details and reminder prompt", device: "iPad" },
+      ],
       links: [],
     },
     {
@@ -726,10 +730,11 @@ function AppDetail({ app, navigate, theme, onTheme }) {
   const websiteLink = app.links?.find(link => link.label !== "App Store" && /[a-z0-9-]+\.[a-z]{2,}/i.test(link.label)) || null;
   const otherLinks = app.links?.filter(link => link !== appStoreLink && link !== websiteLink) || [];
   const showScreenshotsAtBottom = app.screenshotsPosition === "bottom";
-  const heroShot = showScreenshotsAtBottom
-    ? null
-    : (app.screenshots?.find(shot => shot.device === "iPad") || app.screenshots?.[0] || null);
-  const galleryShots = heroShot ? app.screenshots.filter(shot => shot !== heroShot) : app.screenshots;
+  const useHeroShot = !showScreenshotsAtBottom && (app.screenshots?.length || 0) > 3;
+  const heroShot = useHeroShot
+    ? (app.screenshots?.find(shot => shot.device === "iPad") || app.screenshots?.[0] || null)
+    : null;
+  const galleryShots = useHeroShot && heroShot ? app.screenshots.filter(shot => shot !== heroShot) : app.screenshots;
 
   useEffect(() => {
     setIconFailed(false);
@@ -1079,14 +1084,12 @@ function AppDetail({ app, navigate, theme, onTheme }) {
 
         {app.screenshots && app.screenshots.length > 0 && (
           <div style={{ marginTop: "32px" }}>
-            <p style={{ fontWeight: 700, marginBottom: "6px" }}>Screenshots</p>
             <div
               style={{
                 display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))",
+                gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
                 gap: "12px",
-                maxWidth: "720px",
-                marginTop: "14px",
+                width: "100%",
               }}
             >
               {(showScreenshotsAtBottom ? app.screenshots : galleryShots).map((shot, i) => (
