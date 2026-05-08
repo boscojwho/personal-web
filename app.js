@@ -456,6 +456,11 @@ const DATA = {
       label: "F",
       desc: "",
       body: [],
+      screenshotsPosition: "bottom",
+      screenshots: [
+        { src: "assets/apps/fencathon-2-iphone-01.jpeg", alt: "Fencathon 2 iPhone upcoming tournaments list", device: "iPhone" },
+        { src: "assets/apps/fencathon-2-iphone-02.jpeg", alt: "Fencathon 2 iPhone upcoming tournaments map", device: "iPhone" },
+      ],
       links: [],
     },
     {
@@ -921,8 +926,7 @@ function AppDetail({ app, navigate, theme, onTheme }) {
                   display: "block",
                   width: "100%",
                   borderRadius: "22px",
-                  border: "1px solid color-mix(in srgb, var(--mid) 40%, transparent)",
-                  boxShadow: "0 18px 40px rgba(0,0,0,0.14)",
+                  boxShadow: "0 14px 34px rgba(15, 23, 42, 0.12)",
                   background: "var(--bg)",
                 }}
               />
@@ -1079,7 +1083,6 @@ function AppDetail({ app, navigate, theme, onTheme }) {
 
         {app.screenshots && app.screenshots.length > 0 && (
           <div style={{ marginTop: "32px" }}>
-            <p style={{ fontWeight: 700, marginBottom: "6px" }}>Screenshots</p>
             <div
               style={{
                 display: "grid",
@@ -1113,8 +1116,7 @@ function AppDetail({ app, navigate, theme, onTheme }) {
                       display: "block",
                       width: "100%",
                       borderRadius: "14px",
-                      border: "1px solid var(--mid)",
-                      boxShadow: "0 10px 24px rgba(0,0,0,0.12)",
+                      boxShadow: "0 8px 22px rgba(15, 23, 42, 0.10)",
                       background: "var(--bg)",
                     }}
                   />
