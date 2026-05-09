@@ -2505,6 +2505,8 @@ function HomePage({ navigate, theme, onTheme }) {
                 border: "none",
                 background: "transparent",
                 textAlign: "left",
+                opacity: isHardwareTeaserVisible ? 1 : 0,
+                visibility: isHardwareTeaserVisible ? "visible" : "hidden",
                 cursor: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'%3E%3Ccircle cx='11.5' cy='11.5' r='7.5' fill='white' fill-opacity='0.92' stroke='black' stroke-width='2'/%3E%3Cpath d='M17.2 17.2 24 24' stroke='black' stroke-width='2.4' stroke-linecap='round'/%3E%3Cpath d='M11.5 8.5v6M8.5 11.5h6' stroke='black' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") 12 12, zoom-in`,
               }}
             >
