@@ -299,8 +299,69 @@ const DATA = {
       icon: "assets/icons/castro_icon.png",
       bg: "#5856D6",
       label: "C",
-      desc: "",
-      body: [],
+      desc: "Worked on core playback-adjacent product features across Apple Watch, CarPlay, discovery, search, and subscription growth surfaces.",
+      body: [
+        {
+          kind: "card",
+          title: "Apple Watch",
+          items: [
+            "Implemented episode and queue sync from iPhone to the Watch app.",
+            "Built scheduled and on-demand audio compression + transfer flows, including automatic transfers while Apple Watch is charging.",
+          ],
+        },
+        {
+          kind: "card",
+          title: "Clip Sharing",
+          items: [
+            "Implemented short podcast clip export as video with Castro player controls rendered in portrait, landscape, and square formats.",
+            "Implemented preview and final render pipelines using `AVFoundation`, `CoreMedia`, and `CoreAnimation`.",
+          ],
+        },
+        {
+          kind: "card",
+          title: "Top Picks",
+          items: [
+            "Implemented personalized episode recommendations based on user listening habits.",
+            "Designed on-device background ranking data structures and algorithms for efficient episode scoring.",
+          ],
+        },
+        {
+          kind: "card",
+          title: "Local Search",
+          items: [
+            "Implemented on-device podcast and episode indexing/search with `CoreSpotlight`, integrated with the existing `SQLite` data layer.",
+          ],
+        },
+        {
+          kind: "card",
+          title: "CarPlay",
+          items: [
+            "Improved CarPlay reliability by refactoring data logic into dedicated controllers mediating between CarPlay framework APIs and Castro's data layer.",
+            "Implemented a tabbed CarPlay interface aligned with the iOS app's information architecture.",
+          ],
+        },
+        {
+          kind: "card",
+          title: "Discovery",
+          items: [
+            "Implemented a redesigned Discovery tab to showcase new podcasts and episodes on a semi-weekly cadence.",
+          ],
+        },
+        {
+          kind: "card",
+          title: "Castro Plus Up-sell Redesign",
+          items: [
+            "Implemented a redesigned up-sell page with UICollectionView, including a criss-cross visual transition between slides.",
+          ],
+        },
+        {
+          kind: "card",
+          title: "Objective-C to Swift Migration",
+          items: [
+            "Increased Swift adoption by more than 5% per month through targeted rewrites and new Swift feature work.",
+          ],
+        },
+      ],
       links: [
         { label: "App Store", url: "https://apps.apple.com/ca/app/castro-podcast-player-app/id1080840241" },
         { label: "castro.fm", url: "https://castro.fm/" },
@@ -727,7 +788,29 @@ const APP_ALIAS_TO_SLUG = new Map(
 );
 
 function AppDetail({ app, navigate, theme, onTheme }) {
+  const renderInlineCode = text => {
+    if (typeof text !== "string" || !text.includes("`")) return text;
+    const parts = text.split(/(`[^`]+`)/g).filter(Boolean);
+    return parts.map((part, idx) => (
+      part.startsWith("`") && part.endsWith("`") && part.length > 2 ? (
+        <code
+          key={idx}
+          style={{
+            fontFamily: "ui-monospace, SFMono-Regular, SF Mono, Menlo, Monaco, Consolas, monospace",
+            fontSize: "0.93em",
+            padding: "0.08em 0.35em",
+            borderRadius: "6px",
+            background: "color-mix(in srgb, var(--fg) 9%, var(--bg))",
+          }}
+        >
+          {part.slice(1, -1)}
+        </code>
+      ) : <React.Fragment key={idx}>{part}</React.Fragment>
+    ));
+  };
+
   const [hoverV, setHoverV] = useState(null);
+  const [hoverCardIndex, setHoverCardIndex] = useState(null);
   const [iconFailed, setIconFailed] = useState(false);
   const [expandedShotIndex, setExpandedShotIndex] = useState(null);
   const [loadedMedia, setLoadedMedia] = useState(() => new Set());
@@ -743,6 +826,7 @@ function AppDetail({ app, navigate, theme, onTheme }) {
 
   useEffect(() => {
     setIconFailed(false);
+    setHoverCardIndex(null);
     setExpandedShotIndex(null);
     setLoadedMedia(new Set());
   }, [app.slug]);
@@ -938,11 +1022,40 @@ function AppDetail({ app, navigate, theme, onTheme }) {
             </button>
           )}
 
-          <p style={{ marginBottom: "28px", fontSize: "1.05em" }}>{app.desc}</p>
+          <p style={{ marginBottom: "18px", fontSize: "1.05em" }}>{app.desc}</p>
 
         <div className="ab">
           {app.body.map((blk, i) => (
-            blk.kind === "h" ? (
+            blk.kind === "card" ? (
+              <section
+                key={i}
+                onMouseEnter={() => setHoverCardIndex(i)}
+                onMouseLeave={() => setHoverCardIndex(null)}
+                style={{
+                  marginBottom: "10px",
+                  padding: "12px 14px",
+                  borderRadius: "14px",
+                  background: hoverCardIndex === i
+                    ? "color-mix(in srgb, var(--fg) 3.5%, var(--bg))"
+                    : "color-mix(in srgb, var(--fg) 1.25%, var(--bg))",
+                  boxShadow: hoverCardIndex === i
+                    ? "0 2px 6px rgba(15, 23, 42, 0.08), 0 10px 22px rgba(15, 23, 42, 0.08)"
+                    : "0 1px 2px rgba(15, 23, 42, 0.04), 0 6px 14px rgba(15, 23, 42, 0.05)",
+                  opacity: hoverCardIndex !== null && hoverCardIndex !== i ? 0.66 : 1,
+                  transform: hoverCardIndex === i ? "translateY(-1px)" : "translateY(0)",
+                  transition: "background 0.16s ease, box-shadow 0.16s ease, opacity 0.16s ease, transform 0.16s ease",
+                }}
+              >
+                <h2 style={{ fontWeight: 700, fontSize: "0.98em", margin: 0, marginBottom: "8px" }}>{blk.title}</h2>
+                <ul style={{ margin: 0, paddingLeft: "18px" }}>
+                  {blk.items.map((item, itemIndex) => (
+                    <li key={itemIndex} style={{ marginBottom: itemIndex === blk.items.length - 1 ? 0 : "6px" }}>
+                      {renderInlineCode(item)}
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            ) : blk.kind === "h" ? (
               <h2 key={i} style={{ fontWeight: 700, fontSize: "1em", marginTop: "24px", marginBottom: "8px" }}>{blk.text}</h2>
             ) : blk.kind === "img" ? (
               <figure key={i} style={{ margin: "0 0 18px" }}>
@@ -1081,7 +1194,7 @@ function AppDetail({ app, navigate, theme, onTheme }) {
                 })}
               </div>
             ) : (
-              <p key={i} style={{ marginBottom: "14px" }}>{blk.text}</p>
+              <p key={i} style={{ marginBottom: "14px" }}>{renderInlineCode(blk.text)}</p>
             )
           ))}
         </div>
