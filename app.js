@@ -843,15 +843,11 @@ function AppDetail({ app, navigate, theme, onTheme }) {
   }, [expandedShotIndex]);
 
   return (
-    <div style={{ animation: "fadeUp 0.2s ease", padding: "40px var(--gap)" }}>
-      <div className="detail-topbar" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 14, marginBottom: "32px" }}>
-        <RouteLink to={ROUTES.home} navigate={navigate} style={{ color: "var(--mid)", textDecoration: "underline", textDecorationColor: "var(--ul)" }}>
+    <div style={{ animation: "fadeUp 0.2s ease", padding: "8px var(--gap) 40px" }}>
+      <div style={{ maxWidth: "620px" }}>
+        <RouteLink to={ROUTES.home} navigate={navigate} style={{ color: "var(--mid)", textDecoration: "underline", textDecorationColor: "var(--ul)", display: "inline-block", marginBottom: "24px" }}>
           ← Home
         </RouteLink>
-        <CompactThemeToggle theme={theme} onTheme={onTheme} />
-      </div>
-
-        <div style={{ maxWidth: "620px" }}>
           <div style={{ display: "flex", alignItems: "flex-start", gap: "24px", marginBottom: "32px" }}>
           {(() => {
             const variants = app.variants && app.variants.length > 0 ? app.variants : [{ bg: app.bg, label: app.label }];
@@ -1363,14 +1359,10 @@ function ArticleDetail({ article, navigate, theme, onTheme, routeHash }) {
   }, [article, routeHash]);
 
   return (
-    <div style={{ animation: "fadeUp 0.2s ease", padding: "40px var(--gap)" }}>
-      <div className="detail-topbar" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 14, marginBottom: "32px" }}>
-        <RouteLink to={ROUTES.writing} navigate={navigate} style={{ color: "var(--mid)", textDecoration: "underline", textDecorationColor: "var(--ul)" }}>
-          ← All writing
-        </RouteLink>
-        <CompactThemeToggle theme={theme} onTheme={onTheme} />
-      </div>
-
+    <div style={{ animation: "fadeUp 0.2s ease", padding: "8px var(--gap) 40px" }}>
+      <RouteLink to={ROUTES.writing} navigate={navigate} style={{ color: "var(--mid)", textDecoration: "underline", textDecorationColor: "var(--ul)", display: "inline-block", marginBottom: "24px" }}>
+        ← All writing
+      </RouteLink>
       <div className="article-grid" style={{ display: "grid", gridTemplateColumns: headings.length ? "minmax(0,1fr) 180px" : "1fr", gap: "60px", maxWidth: "760px", alignItems: "start" }}>
         <div>
           <p style={{ fontWeight: 700, marginBottom: "4px" }}>{article.title}</p>
@@ -1442,14 +1434,7 @@ function AllArticles({ navigate, theme, onTheme }) {
   });
 
   return (
-    <div style={{ animation: "fadeUp 0.2s ease", padding: "40px var(--gap)" }}>
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 14, marginBottom: "32px" }}>
-        <RouteLink to={ROUTES.home} navigate={navigate} style={{ color: "var(--mid)", textDecoration: "underline", textDecorationColor: "var(--ul)" }}>
-          ← Home
-        </RouteLink>
-        <CompactThemeToggle theme={theme} onTheme={onTheme} />
-      </div>
-
+    <div style={{ animation: "fadeUp 0.2s ease", padding: "8px var(--gap) 40px" }}>
       <div style={{ maxWidth: "620px" }}>
         <p style={{ fontWeight: 700, marginBottom: "4px" }}>All writing</p>
         <p style={{ color: "var(--mid)", marginBottom: "28px" }}>{DATA.articles.length} total</p>
@@ -1474,7 +1459,7 @@ function AllArticles({ navigate, theme, onTheme }) {
   );
 }
 
-function HomePage({ navigate, theme, onTheme }) {
+function SiteHeader({ navigate, theme, onTheme }) {
   const LAUNCH_JIGGLE_DURATION_MS = 2000;
   const shouldRunSessionIntro = useMemo(() => {
     if (hasPlayedHomeIntroForPage) return false;
@@ -1912,220 +1897,545 @@ function HomePage({ navigate, theme, onTheme }) {
   }, []);
 
   return (
-    <div style={{ padding: "40px var(--gap)", animation: "fadeUp 0.2s ease" }}>
-      <div style={{ marginBottom: "32px" }}>
-        <div className="site-header" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "14px", marginBottom: "4px" }}>
-          <div className="site-header-brand" style={{ display: "flex", alignItems: "center", gap: "14px" }}>
-            <p
-              onMouseLeave={() => {
-                setHoverNameIndex(null);
-                if (bridgeSide === "name") setBridgeSide(null);
-              }}
-              style={{
-              fontWeight: 900,
-              fontSize: "24px",
-              fontFamily: "'Plus Jakarta Sans', sans-serif",
-              perspective: "300px",
-              display: "inline-flex",
-              letterSpacing: "-0.01em",
-              transformStyle: "preserve-3d",
-              transform: bridgeSide === "dock" ? "translateX(-3px)" : "translateX(0)",
-              transition: bridgeTransition,
-              cursor: "default",
-            }}
-            >
-              {[...DATA.name].map((char, i) => {
-                const transforms = [
-                  "rotateY(-10deg) rotateX(4deg)",
-                  "rotateY(7deg) rotateX(-5deg)",
-                  "rotateY(-6deg) rotateX(6deg)",
-                  "rotateY(11deg) rotateX(-3deg)",
-                  "rotateY(-8deg) rotateX(5deg)",
-                  "",
-                  "rotateY(9deg) rotateX(-4deg)",
-                  "rotateY(-7deg) rotateX(3deg)",
-                ];
-                const baseTransform = transforms[i] || "none";
-                const isIntroNameHover = isIntroHoverActive && hoverNameIndex == null && activeHoverNameIndex === i;
-                const activePose = isIntroNameHover
-                  ? {
-                    x: hoverNamePose.x * 0.26,
-                    ry: hoverNamePose.ry * 0.3,
-                    rx: hoverNamePose.rx * 0.3,
-                    rz: hoverNamePose.rz * 0.3,
-                    z: hoverNamePose.z * 0.28,
-                    y: hoverNamePose.y * 0.28,
-                    s: 1 + (hoverNamePose.s - 1) * 0.42,
-                  }
-                  : hoverNamePose;
-                const isHovered = activeHoverNameIndex === i;
-                const distance = activeHoverNameIndex == null ? 0 : i - activeHoverNameIndex;
-                const absDistance = Math.abs(distance);
-                const isNeighbor = activeHoverNameIndex != null && !isHovered && char !== " ";
-                const bubbleStrength = isNeighbor ? Math.max(0, 1 - Math.min(Math.abs(distance), 3) / 3) : 0;
-                const bubbleX = bubbleStrength ? Math.sign(distance || 1) * (3.1 * bubbleStrength) : 0;
-                const bubbleY = bubbleStrength ? -(1.4 * bubbleStrength) : 0;
-                const hoverTransform = `${baseTransform} translateX(${activePose.x.toFixed(2)}px) rotateY(${activePose.ry.toFixed(2)}deg) rotateX(${activePose.rx.toFixed(2)}deg) rotateZ(${activePose.rz.toFixed(2)}deg) translateZ(${activePose.z.toFixed(2)}px) translateY(${activePose.y.toFixed(2)}px) scale(${activePose.s.toFixed(3)})`;
-                const neighborTransform = `${baseTransform} translateX(${bubbleX.toFixed(2)}px) translateY(${bubbleY.toFixed(2)}px)`;
-                const letterTransition = isIntroNameHover
-                  ? "transform 1.6s cubic-bezier(0.37, 0, 0.63, 1), color 0.58s ease-in-out, text-shadow 0.58s ease-in-out, font-weight 0.58s ease-in-out"
-                  : "transform 0.42s cubic-bezier(0.22, 1.55, 0.36, 1), color 0.2s ease, text-shadow 0.2s ease, font-weight 0.2s ease";
-                const grayRamp = isDarkMode
-                  ? ["#9f9f9f", "#b2b2b2", "#c5c5c5", "#d8d8d8"]
-                  : ["#2f2f2f", "#4a4a4a", "#666666", "#828282"];
-                const tonedGray = grayRamp[Math.min(absDistance, grayRamp.length - 1)];
-                return (
-                  <span
-                    key={i}
-                    onMouseEnter={() => {
-                      setBridgeSide(i === lastNameIndex ? "name" : null);
-                      randomizeNamePose();
-                      setHoverNameIndex(i);
-                    }}
-                    style={{
-                      display: "inline-block",
-                      minWidth: char === " " ? "0.36em" : "0.62em",
-                      textAlign: "center",
-                      fontWeight: isHovered ? 950 : 900,
-                      transformOrigin: "50% 50%",
-                      transform: isHovered ? hoverTransform : (isNeighbor ? neighborTransform : baseTransform),
-                      color: char === " "
-                        ? "inherit"
-                        : (activeHoverNameIndex == null ? "inherit" : (isHovered ? "var(--fg)" : tonedGray)),
-                      textShadow: isHovered ? "0 0 0.35px currentColor, 0 0 0.35px currentColor" : "none",
-                      transition: letterTransition,
-                    }}
-                  >
-                    {char === " " ? "\u00A0" : char}
-                  </span>
-                );
-              })}
-            </p>
+    <div className="site-header" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "14px", marginBottom: "4px" }}>
+      <div className="site-header-brand" style={{ display: "flex", alignItems: "center", gap: "14px" }}>
+        <p
+          onMouseLeave={() => {
+            setHoverNameIndex(null);
+            if (bridgeSide === "name") setBridgeSide(null);
+          }}
+          style={{
+            fontWeight: 900,
+            fontSize: "24px",
+            fontFamily: "'Plus Jakarta Sans', sans-serif",
+            perspective: "300px",
+            display: "inline-flex",
+            letterSpacing: "-0.01em",
+            transformStyle: "preserve-3d",
+            transform: bridgeSide === "dock" ? "translateX(-3px)" : "translateX(0)",
+            transition: bridgeTransition,
+            cursor: "default",
+          }}
+        >
+          {[...DATA.name].map((char, i) => {
+            const transforms = [
+              "rotateY(-10deg) rotateX(4deg)",
+              "rotateY(7deg) rotateX(-5deg)",
+              "rotateY(-6deg) rotateX(6deg)",
+              "rotateY(11deg) rotateX(-3deg)",
+              "rotateY(-8deg) rotateX(5deg)",
+              "",
+              "rotateY(9deg) rotateX(-4deg)",
+              "rotateY(-7deg) rotateX(3deg)",
+            ];
+            const baseTransform = transforms[i] || "none";
+            const isIntroNameHover = isIntroHoverActive && hoverNameIndex == null && activeHoverNameIndex === i;
+            const activePose = isIntroNameHover
+              ? {
+                x: hoverNamePose.x * 0.26,
+                ry: hoverNamePose.ry * 0.3,
+                rx: hoverNamePose.rx * 0.3,
+                rz: hoverNamePose.rz * 0.3,
+                z: hoverNamePose.z * 0.28,
+                y: hoverNamePose.y * 0.28,
+                s: 1 + (hoverNamePose.s - 1) * 0.42,
+              }
+              : hoverNamePose;
+            const isHovered = activeHoverNameIndex === i;
+            const distance = activeHoverNameIndex == null ? 0 : i - activeHoverNameIndex;
+            const absDistance = Math.abs(distance);
+            const isNeighbor = activeHoverNameIndex != null && !isHovered && char !== " ";
+            const bubbleStrength = isNeighbor ? Math.max(0, 1 - Math.min(Math.abs(distance), 3) / 3) : 0;
+            const bubbleX = bubbleStrength ? Math.sign(distance || 1) * (3.1 * bubbleStrength) : 0;
+            const bubbleY = bubbleStrength ? -(1.4 * bubbleStrength) : 0;
+            const hoverTransform = `${baseTransform} translateX(${activePose.x.toFixed(2)}px) rotateY(${activePose.ry.toFixed(2)}deg) rotateX(${activePose.rx.toFixed(2)}deg) rotateZ(${activePose.rz.toFixed(2)}deg) translateZ(${activePose.z.toFixed(2)}px) translateY(${activePose.y.toFixed(2)}px) scale(${activePose.s.toFixed(3)})`;
+            const neighborTransform = `${baseTransform} translateX(${bubbleX.toFixed(2)}px) translateY(${bubbleY.toFixed(2)}px)`;
+            const letterTransition = isIntroNameHover
+              ? "transform 1.6s cubic-bezier(0.37, 0, 0.63, 1), color 0.58s ease-in-out, text-shadow 0.58s ease-in-out, font-weight 0.58s ease-in-out"
+              : "transform 0.42s cubic-bezier(0.22, 1.55, 0.36, 1), color 0.2s ease, text-shadow 0.2s ease, font-weight 0.2s ease";
+            const grayRamp = isDarkMode
+              ? ["#9f9f9f", "#b2b2b2", "#c5c5c5", "#d8d8d8"]
+              : ["#2f2f2f", "#4a4a4a", "#666666", "#828282"];
+            const tonedGray = grayRamp[Math.min(absDistance, grayRamp.length - 1)];
+            return (
+              <span
+                key={i}
+                onMouseEnter={() => {
+                  setBridgeSide(i === lastNameIndex ? "name" : null);
+                  randomizeNamePose();
+                  setHoverNameIndex(i);
+                }}
+                style={{
+                  display: "inline-block",
+                  minWidth: char === " " ? "0.36em" : "0.62em",
+                  textAlign: "center",
+                  fontWeight: isHovered ? 950 : 900,
+                  transformOrigin: "50% 50%",
+                  transform: isHovered ? hoverTransform : (isNeighbor ? neighborTransform : baseTransform),
+                  color: char === " "
+                    ? "inherit"
+                    : (activeHoverNameIndex == null ? "inherit" : (isHovered ? "var(--fg)" : tonedGray)),
+                  textShadow: isHovered ? "0 0 0.35px currentColor, 0 0 0.35px currentColor" : "none",
+                  transition: letterTransition,
+                }}
+              >
+                {char === " " ? "\u00A0" : char}
+              </span>
+            );
+          })}
+        </p>
 
-            <div
-              className="site-icons"
-              style={{
-                display: "flex",
-                alignItems: "center",
-                perspective: "600px",
-                overflow: "visible",
-                transform: bridgeSide === "name" ? "translateX(4px)" : "translateX(0)",
-                transition: bridgeTransition,
-              }}
-            >
-              {DATA.apps.map((app, i) => {
-                const tilts = [
-                  { rx: -8, ry: -22, rz: -6 },
-                  { rx: 6, ry: -10, rz: 4 },
-                  { rx: -4, ry: 14, rz: -3 },
-                  { rx: 10, ry: 26, rz: 8 },
-                  { rx: -6, ry: -16, rz: 5 },
-                  { rx: 8, ry: 18, rz: -4 },
-                  { rx: -3, ry: 8, rz: 7 },
-                  { rx: 5, ry: -28, rz: -2 },
-                ];
-                const tilt = tilts[i % tilts.length];
-                const isIntroIconHover = isIntroHoverActive && hoverIcon == null && activeHoverIcon === i;
-                const isHover = activeHoverIcon === i;
-                const isJiggleTarget = jiggleIconIndex === i;
-                const isSimulatedHover = hoverIcon == null && launchHoverIcon === i;
-                const isJiggling = isJiggleTarget;
-                const baseTransform = i === 1
-                  ? "rotateX(16deg) rotateY(-30deg) rotateZ(14deg) scale(1.12) translateY(-1px)"
-                  : i === 0
-                    ? "none"
-                    : `rotateX(${tilt.rx}deg) rotateY(${tilt.ry}deg) rotateZ(${tilt.rz}deg)`;
-                const hoverTransform = "rotateX(0deg) rotateY(0deg) rotateZ(0deg) scale(1.55) translateY(-4px)";
-                const jiggleAngle = (Math.sin(jiggleTick * 1.35) * 3.8) + (Math.sin(jiggleTick * 0.72) * 1.4);
-                const jiggleLift = Math.max(0, Math.sin(jiggleTick * 1.35)) * 1.8;
-                const restingTransform = isJiggling
-                  ? `${baseTransform} rotateZ(${jiggleAngle.toFixed(2)}deg) translateY(${-jiggleLift.toFixed(2)}px)`
-                  : baseTransform;
-                const hoverJiggleTransform = `${hoverTransform} rotateZ(${(jiggleAngle * 0.75).toFixed(2)}deg) translateY(${-Math.max(0, jiggleLift * 0.7).toFixed(2)}px)`;
-                return (
-                  <RouteLink
-                    key={app.slug}
-                    to={ROUTES.app(app.slug)}
-                    navigate={navigate}
-                    aria-label={app.name}
-                    onMouseEnter={() => {
-                      setBridgeSide(i === 0 ? "dock" : null);
-                      setHoverIcon(i);
+        <div
+          className="site-icons"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            perspective: "600px",
+            overflow: "visible",
+            transform: bridgeSide === "name" ? "translateX(4px)" : "translateX(0)",
+            transition: bridgeTransition,
+          }}
+        >
+          {DATA.apps.map((app, i) => {
+            const tilts = [
+              { rx: -8, ry: -22, rz: -6 },
+              { rx: 6, ry: -10, rz: 4 },
+              { rx: -4, ry: 14, rz: -3 },
+              { rx: 10, ry: 26, rz: 8 },
+              { rx: -6, ry: -16, rz: 5 },
+              { rx: 8, ry: 18, rz: -4 },
+              { rx: -3, ry: 8, rz: 7 },
+              { rx: 5, ry: -28, rz: -2 },
+            ];
+            const tilt = tilts[i % tilts.length];
+            const isHover = activeHoverIcon === i;
+            const isJiggleTarget = jiggleIconIndex === i;
+            const isSimulatedHover = hoverIcon == null && launchHoverIcon === i;
+            const isJiggling = isJiggleTarget;
+            const baseTransform = i === 1
+              ? "rotateX(16deg) rotateY(-30deg) rotateZ(14deg) scale(1.12) translateY(-1px)"
+              : i === 0
+                ? "none"
+                : `rotateX(${tilt.rx}deg) rotateY(${tilt.ry}deg) rotateZ(${tilt.rz}deg)`;
+            const hoverTransform = "rotateX(0deg) rotateY(0deg) rotateZ(0deg) scale(1.55) translateY(-4px)";
+            const jiggleAngle = (Math.sin(jiggleTick * 1.35) * 3.8) + (Math.sin(jiggleTick * 0.72) * 1.4);
+            const jiggleLift = Math.max(0, Math.sin(jiggleTick * 1.35)) * 1.8;
+            const restingTransform = isJiggling
+              ? `${baseTransform} rotateZ(${jiggleAngle.toFixed(2)}deg) translateY(${-jiggleLift.toFixed(2)}px)`
+              : baseTransform;
+            const hoverJiggleTransform = `${hoverTransform} rotateZ(${(jiggleAngle * 0.75).toFixed(2)}deg) translateY(${-Math.max(0, jiggleLift * 0.7).toFixed(2)}px)`;
+            return (
+              <RouteLink
+                key={app.slug}
+                to={ROUTES.app(app.slug)}
+                navigate={navigate}
+                aria-label={app.name}
+                onMouseEnter={() => {
+                  setBridgeSide(i === 0 ? "dock" : null);
+                  setHoverIcon(i);
+                }}
+                onMouseLeave={() => {
+                  setHoverIcon(null);
+                  if (i === 0) setBridgeSide(null);
+                }}
+                style={{
+                  width: 32,
+                  height: 32,
+                  padding: 0,
+                  background: "none",
+                  borderRadius: 7,
+                  marginLeft: i === 0 ? 0 : -7,
+                  marginRight: 0,
+                  transform: isHover
+                    ? ((isJiggling && isSimulatedHover) ? hoverJiggleTransform : hoverTransform)
+                    : restingTransform,
+                  transformStyle: "preserve-3d",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  cursor: "pointer",
+                  flexShrink: 0,
+                  position: "relative",
+                  boxShadow: isHover
+                    ? "0 8px 18px rgba(0,0,0,0.22), 0 2px 4px rgba(0,0,0,0.14)"
+                    : "0 4px 8px rgba(0,0,0,0.18), 0 1px 2px rgba(0,0,0,0.12)",
+                  zIndex: isHover ? 20 : DATA.apps.length - i,
+                  transition: "transform 0.18s cubic-bezier(0.34, 1.4, 0.64, 1), box-shadow 0.18s ease",
+                  overflow: "visible",
+                }}
+              >
+                {app.icon && !failedDockIcons.has(app.slug) ? (
+                  <img
+                    src={resolveAssetUrl(app.icon)}
+                    width="32"
+                    height="32"
+                    alt={app.name}
+                    onError={() => {
+                      setFailedDockIcons(prev => {
+                        if (prev.has(app.slug)) return prev;
+                        const next = new Set(prev);
+                        next.add(app.slug);
+                        return next;
+                      });
                     }}
-                    onMouseLeave={() => {
-                      setHoverIcon(null);
-                      if (i === 0) setBridgeSide(null);
-                    }}
+                    style={{ display: "block", borderRadius: 4, pointerEvents: "none" }}
+                  />
+                ) : (
+                  <div
                     style={{
                       width: 32,
                       height: 32,
-                      padding: 0,
-                      background: "none",
-                      borderRadius: 7,
-                      marginLeft: i === 0 ? 0 : -7,
-                      marginRight: 0,
-                      transform: isHover
-                        ? ((isJiggling && isSimulatedHover) ? hoverJiggleTransform : hoverTransform)
-                        : restingTransform,
-                      transformStyle: "preserve-3d",
+                      borderRadius: 4,
+                      background: app.bg,
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                      cursor: "pointer",
-                      flexShrink: 0,
-                      position: "relative",
-                      boxShadow: isHover
-                        ? "0 8px 18px rgba(0,0,0,0.22), 0 2px 4px rgba(0,0,0,0.14)"
-                        : "0 4px 8px rgba(0,0,0,0.18), 0 1px 2px rgba(0,0,0,0.12)",
-                      zIndex: isHover ? 20 : DATA.apps.length - i,
-                      transition: "transform 0.18s cubic-bezier(0.34, 1.4, 0.64, 1), box-shadow 0.18s ease",
-                      overflow: "visible",
+                      fontSize: "18px",
+                      lineHeight: 1,
+                      pointerEvents: "none",
                     }}
+                    aria-hidden="true"
                   >
-                    {app.icon && !failedDockIcons.has(app.slug) ? (
-                      <img
-                        src={resolveAssetUrl(app.icon)}
-                        width="32"
-                        height="32"
-                        alt={app.name}
-                        onError={() => {
-                          setFailedDockIcons(prev => {
-                            if (prev.has(app.slug)) return prev;
-                            const next = new Set(prev);
-                            next.add(app.slug);
-                            return next;
-                          });
-                        }}
-                        style={{ display: "block", borderRadius: 4, pointerEvents: "none" }}
-                      />
-                    ) : (
-                      <div
-                        style={{
-                          width: 32,
-                          height: 32,
-                          borderRadius: 4,
-                          background: app.bg,
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          fontSize: "18px",
-                          lineHeight: 1,
-                          pointerEvents: "none",
-                        }}
-                        aria-hidden="true"
-                      >
-                        {app.label}
-                      </div>
-                    )}
-                  </RouteLink>
-                );
-              })}
-            </div>
-          </div>
-          <CompactThemeToggle theme={theme} onTheme={onTheme} />
+                    {app.label}
+                  </div>
+                )}
+              </RouteLink>
+            );
+          })}
         </div>
       </div>
+      <CompactThemeToggle theme={theme} onTheme={onTheme} />
+    </div>
+  );
+}
 
+function HomePage({ navigate, theme, onTheme }) {
+  const LAUNCH_JIGGLE_DURATION_MS = 2000;
+  const shouldRunSessionIntro = useMemo(() => hasPlayedHomeIntroForPage, []);
+  const [hoverIcon, setHoverIcon] = useState(null);
+  const [isAboutMetaVisible, setIsAboutMetaVisible] = useState(false);
+  const [buildInfo, setBuildInfo] = useState(BUILD_INFO_FALLBACK);
+  const [hardwareFrameRect, setHardwareFrameRect] = useState(null);
+  const [isHardwareExpanded, setIsHardwareExpanded] = useState(false);
+  const [isHardwareTransitioning, setIsHardwareTransitioning] = useState(false);
+  const [isHardwareTeaserVisible, setIsHardwareTeaserVisible] = useState(() => !shouldRunSessionIntro);
+  const [isHardwareTeaserSettled, setIsHardwareTeaserSettled] = useState(() => !shouldRunSessionIntro);
+  const [isHardwareTeaserSlidingIn, setIsHardwareTeaserSlidingIn] = useState(false);
+  const [isCompactViewport, setIsCompactViewport] = useState(() => window.innerWidth <= 700);
+  const [isHardwareVideoReady, setIsHardwareVideoReady] = useState(false);
+  const hasBuildInfo = buildInfo.hasData;
+  const hardwareFigureRef = useRef(null);
+  const hardwareShellRef = useRef(null);
+  const hardwareInlineVideoRef = useRef(null);
+  const hardwareFloatingVideoRef = useRef(null);
+  const hardwareMeasureRafRef = useRef(null);
+  const hardwareMeasureLoopRafRef = useRef(null);
+  const hardwareTransitionTimeoutRef = useRef(null);
+  const hardwareTeaserSlideRafRef = useRef(null);
+  const hardwareTeaserSettleTimeoutRef = useRef(null);
+  const HARDWARE_ZOOM_MS = 260;
+  const HARDWARE_TEASER_REVEAL_MS = 1000;
+  const HARDWARE_ASPECT_RATIO = 568 / 320;
+  const HARDWARE_VIDEO_MP4_SRC = resolveAssetUrl("assets/apps/actuators-demo-1.mp4");
+  const HARDWARE_VIDEO_MOV_SRC = resolveAssetUrl("assets/apps/actuators-demo-1.mov");
+  const hardwareZoomTransition = `${HARDWARE_ZOOM_MS}ms cubic-bezier(0.2, 0.9, 0.22, 1.12)`;
+  const hardwareTeaserRevealTransition = `${HARDWARE_TEASER_REVEAL_MS}ms cubic-bezier(0.22, 1, 0.36, 1)`;
+  const isHardwareTeaserEntering = isHardwareTeaserVisible && !isHardwareTeaserSettled && !isHardwareExpanded;
+  const isHardwareOverlayActive = isHardwareExpanded || isHardwareTransitioning;
+  const hardwareTargetRect = (() => {
+    const maxWidth = Math.min(window.innerWidth - 40, 1080);
+    const maxHeight = Math.min(window.innerHeight - 40, 1080);
+    const width = Math.min(maxWidth, maxHeight * HARDWARE_ASPECT_RATIO);
+    const height = width / HARDWARE_ASPECT_RATIO;
+    return {
+      left: (window.innerWidth - width) / 2,
+      top: (window.innerHeight - height) / 2,
+      width,
+      height,
+    };
+  })();
+  const hardwareAnimatedRect = isHardwareExpanded ? hardwareTargetRect : hardwareFrameRect;
+  const shouldShowHardwareFloatingVideo = isHardwareTeaserVisible && hardwareAnimatedRect && (isHardwareOverlayActive || isHardwareTeaserEntering);
+  const shouldPlayHardwareVideo = isHardwareOverlayActive || (isHardwareTeaserVisible && !isHardwareTeaserEntering);
+  const activeHoverIcon = hoverIcon;
+
+  const markHardwareVideoReady = () => {
+    setIsHardwareVideoReady(true);
+  };
+
+  const attemptHardwareVideoPlayback = video => {
+    if (!video) return;
+    video.muted = true;
+    video.defaultMuted = true;
+    video.playsInline = true;
+    video.setAttribute("muted", "");
+    video.setAttribute("playsinline", "");
+    video.setAttribute("webkit-playsinline", "true");
+    const playPromise = video.play();
+    if (playPromise && typeof playPromise.catch === "function") {
+      playPromise.catch(() => {});
+    }
+  };
+
+  const resetHardwareVideoPlayback = video => {
+    if (!video) return;
+    video.pause();
+    if (video.currentTime !== 0) {
+      try {
+        video.currentTime = 0;
+      } catch {
+        // Ignore browsers that temporarily reject currentTime writes.
+      }
+    }
+  };
+
+  const measureHardwareFrame = () => {
+    if (!hardwareShellRef.current) return;
+    const rect = hardwareShellRef.current.getBoundingClientRect();
+    setHardwareFrameRect(prev => {
+      if (
+        prev &&
+        Math.abs(prev.left - rect.left) < 0.5 &&
+        Math.abs(prev.top - rect.top) < 0.5 &&
+        Math.abs(prev.width - rect.width) < 0.5 &&
+        Math.abs(prev.height - rect.height) < 0.5
+      ) {
+        return prev;
+      }
+      return {
+        left: rect.left,
+        top: rect.top,
+        width: rect.width,
+        height: rect.height,
+      };
+    });
+  };
+
+  const scheduleHardwareMeasure = () => {
+    if (hardwareMeasureRafRef.current != null) return;
+    hardwareMeasureRafRef.current = requestAnimationFrame(() => {
+      hardwareMeasureRafRef.current = null;
+      measureHardwareFrame();
+    });
+  };
+
+  const clearHardwareTransitionTimeout = () => {
+    if (hardwareTransitionTimeoutRef.current != null) {
+      clearTimeout(hardwareTransitionTimeoutRef.current);
+      hardwareTransitionTimeoutRef.current = null;
+    }
+  };
+
+  const finishHardwareTransitionLater = () => {
+    clearHardwareTransitionTimeout();
+    hardwareTransitionTimeoutRef.current = setTimeout(() => {
+      setIsHardwareTransitioning(false);
+      hardwareTransitionTimeoutRef.current = null;
+    }, HARDWARE_ZOOM_MS);
+  };
+
+  const openHardwareZoom = () => {
+    measureHardwareFrame();
+    setIsHardwareTransitioning(true);
+    setIsHardwareExpanded(true);
+    finishHardwareTransitionLater();
+  };
+
+  const closeHardwareZoom = () => {
+    setIsHardwareTransitioning(true);
+    setIsHardwareExpanded(false);
+    finishHardwareTransitionLater();
+  };
+
+  useEffect(() => {
+    if (!shouldRunSessionIntro) {
+      setIsHardwareTeaserVisible(true);
+      setIsHardwareTeaserSettled(true);
+      return undefined;
+    }
+
+    const introStartDelay = 1000;
+    const nameStepDelay = LAUNCH_JIGGLE_DURATION_MS;
+    const settleDelay = 560;
+    const revealTimeout = setTimeout(() => {
+      setIsHardwareTeaserVisible(true);
+    }, introStartDelay + nameStepDelay + settleDelay);
+
+    return () => clearTimeout(revealTimeout);
+  }, [LAUNCH_JIGGLE_DURATION_MS, shouldRunSessionIntro]);
+
+  useEffect(() => {
+    if (!isHardwareTeaserVisible) {
+      setIsHardwareTeaserSettled(!shouldRunSessionIntro);
+      setIsHardwareTeaserSlidingIn(false);
+      return undefined;
+    }
+    if (!shouldRunSessionIntro) {
+      setIsHardwareTeaserSettled(true);
+      setIsHardwareTeaserSlidingIn(false);
+      return undefined;
+    }
+
+    setIsHardwareTeaserSettled(false);
+    setIsHardwareTeaserSlidingIn(false);
+    hardwareTeaserSlideRafRef.current = requestAnimationFrame(() => {
+      hardwareTeaserSlideRafRef.current = requestAnimationFrame(() => {
+        setIsHardwareTeaserSlidingIn(true);
+        hardwareTeaserSlideRafRef.current = null;
+      });
+    });
+    hardwareTeaserSettleTimeoutRef.current = setTimeout(() => {
+      measureHardwareFrame();
+      setIsHardwareTeaserSlidingIn(false);
+      setIsHardwareTeaserSettled(true);
+      hardwareTeaserSettleTimeoutRef.current = null;
+    }, HARDWARE_TEASER_REVEAL_MS + 80);
+
+    return () => {
+      if (hardwareTeaserSlideRafRef.current != null) {
+        cancelAnimationFrame(hardwareTeaserSlideRafRef.current);
+        hardwareTeaserSlideRafRef.current = null;
+      }
+      if (hardwareTeaserSettleTimeoutRef.current != null) {
+        clearTimeout(hardwareTeaserSettleTimeoutRef.current);
+        hardwareTeaserSettleTimeoutRef.current = null;
+      }
+    };
+  }, [HARDWARE_TEASER_REVEAL_MS, isHardwareTeaserVisible, shouldRunSessionIntro]);
+
+  useEffect(() => {
+    if (typeof ResizeObserver === "undefined") return undefined;
+    const observer = new ResizeObserver(() => {
+      scheduleHardwareMeasure();
+    });
+    if (hardwareFigureRef.current) observer.observe(hardwareFigureRef.current);
+    if (hardwareShellRef.current) observer.observe(hardwareShellRef.current);
+    return () => observer.disconnect();
+  }, [isHardwareTeaserVisible]);
+
+  useEffect(() => {
+    if (!isHardwareTeaserVisible || isHardwareExpanded) return undefined;
+
+    const endAt = performance.now() + (shouldRunSessionIntro ? 1800 : 300);
+    const tick = () => {
+      measureHardwareFrame();
+      if (performance.now() < endAt) {
+        hardwareMeasureLoopRafRef.current = requestAnimationFrame(tick);
+      } else {
+        hardwareMeasureLoopRafRef.current = null;
+      }
+    };
+
+    hardwareMeasureLoopRafRef.current = requestAnimationFrame(tick);
+
+    return () => {
+      if (hardwareMeasureLoopRafRef.current != null) {
+        cancelAnimationFrame(hardwareMeasureLoopRafRef.current);
+        hardwareMeasureLoopRafRef.current = null;
+      }
+    };
+  }, [isHardwareTeaserVisible, isHardwareExpanded, shouldRunSessionIntro]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    fetch(routeHref("/build-info.json"), { signal: controller.signal, cache: "no-store" })
+      .then(resp => (resp.ok ? resp.json() : null))
+      .then(data => {
+        setBuildInfo(parseBuildInfoPayload(data));
+      })
+      .catch(() => {
+        // Keep fallback values when build metadata file is missing.
+      });
+
+    return () => controller.abort();
+  }, []);
+
+  useEffect(() => {
+    const onKeyDown = event => {
+      if (event.key === "Escape") closeHardwareZoom();
+    };
+    if (!isHardwareExpanded) return undefined;
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [isHardwareExpanded]);
+
+  useEffect(() => {
+    if (!isHardwareExpanded) return undefined;
+
+    const previousHtmlOverflow = document.documentElement.style.overflow;
+    const previousBodyOverflow = document.body.style.overflow;
+    const previousTouchAction = document.body.style.touchAction;
+    document.documentElement.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
+    document.body.style.touchAction = "none";
+
+    return () => {
+      document.documentElement.style.overflow = previousHtmlOverflow;
+      document.body.style.overflow = previousBodyOverflow;
+      document.body.style.touchAction = previousTouchAction;
+    };
+  }, [isHardwareExpanded]);
+
+  useLayoutEffect(() => {
+    scheduleHardwareMeasure();
+  }, [
+    isHardwareTeaserVisible,
+    isHardwareTeaserSettled,
+    isHardwareTeaserSlidingIn,
+    isHardwareExpanded,
+    isCompactViewport,
+  ]);
+
+  useEffect(() => {
+    const handleViewportChange = () => scheduleHardwareMeasure();
+    window.addEventListener("resize", handleViewportChange);
+    window.addEventListener("scroll", handleViewportChange, { passive: true });
+    return () => {
+      window.removeEventListener("resize", handleViewportChange);
+      window.removeEventListener("scroll", handleViewportChange);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleResize = () => setIsCompactViewport(window.innerWidth <= 700);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    if (!isHardwareTeaserVisible) return undefined;
+
+    const syncPlayback = () => {
+      if (!shouldPlayHardwareVideo) {
+        resetHardwareVideoPlayback(hardwareInlineVideoRef.current);
+        resetHardwareVideoPlayback(hardwareFloatingVideoRef.current);
+        return;
+      }
+
+      if (isHardwareOverlayActive) {
+        attemptHardwareVideoPlayback(hardwareFloatingVideoRef.current);
+        return;
+      }
+
+      attemptHardwareVideoPlayback(hardwareInlineVideoRef.current);
+    };
+
+    syncPlayback();
+    const retryTimeout = setTimeout(syncPlayback, 160);
+    return () => clearTimeout(retryTimeout);
+  }, [isHardwareOverlayActive, isHardwareTeaserVisible, shouldPlayHardwareVideo]);
+
+  useEffect(() => () => {
+    if (hardwareMeasureRafRef.current != null) cancelAnimationFrame(hardwareMeasureRafRef.current);
+    if (hardwareMeasureLoopRafRef.current != null) cancelAnimationFrame(hardwareMeasureLoopRafRef.current);
+    clearHardwareTransitionTimeout();
+    if (hardwareTeaserSlideRafRef.current != null) cancelAnimationFrame(hardwareTeaserSlideRafRef.current);
+    if (hardwareTeaserSettleTimeoutRef.current != null) clearTimeout(hardwareTeaserSettleTimeoutRef.current);
+  }, []);
+
+  return (
+    <div style={{ padding: "8px var(--gap) 40px", animation: "fadeUp 0.2s ease" }}>
       <div className="main-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 0 }}>
         <div style={{ paddingRight: "40px", marginBottom: "32px" }}>
           <p style={{ fontWeight: 700, marginBottom: "10px" }}>Apps</p>
@@ -2404,14 +2714,7 @@ function HomePage({ navigate, theme, onTheme }) {
 
 function NotFoundPage({ navigate, theme, onTheme }) {
   return (
-    <div style={{ padding: "40px var(--gap)", animation: "fadeUp 0.2s ease", maxWidth: "620px" }}>
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 14, marginBottom: "32px" }}>
-        <RouteLink to={ROUTES.home} navigate={navigate} style={{ color: "var(--mid)", textDecoration: "underline", textDecorationColor: "var(--ul)" }}>
-          ← Home
-        </RouteLink>
-        <CompactThemeToggle theme={theme} onTheme={onTheme} />
-      </div>
-
+    <div style={{ padding: "8px var(--gap) 40px", animation: "fadeUp 0.2s ease", maxWidth: "620px" }}>
       <p style={{ fontWeight: 700, marginBottom: "8px" }}>Page not found</p>
       <p style={{ color: "var(--mid)", marginBottom: "24px" }}>
         The route you requested does not exist.
@@ -2654,6 +2957,9 @@ function App() {
 
   return (
     <>
+      <div style={{ padding: "40px var(--gap) 0", animation: "fadeUp 0.2s ease" }}>
+        <SiteHeader navigate={navigate} theme={theme} onTheme={onTheme} />
+      </div>
       {page}
       {tweaksVisible && <TweaksPanel theme={theme} onTheme={onTheme} font={font} onFont={onFont} />}
     </>
