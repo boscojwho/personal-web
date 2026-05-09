@@ -1899,7 +1899,10 @@ function SiteHeader({ navigate, theme, onTheme }) {
   return (
     <div className="site-header" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "14px", marginBottom: "4px" }}>
       <div className="site-header-brand" style={{ display: "flex", alignItems: "center", gap: "14px" }}>
-        <p
+        <RouteLink
+          to={ROUTES.home}
+          navigate={navigate}
+          aria-label="Go to homepage"
           onMouseLeave={() => {
             setHoverNameIndex(null);
             if (bridgeSide === "name") setBridgeSide(null);
@@ -1914,7 +1917,9 @@ function SiteHeader({ navigate, theme, onTheme }) {
             transformStyle: "preserve-3d",
             transform: bridgeSide === "dock" ? "translateX(-3px)" : "translateX(0)",
             transition: bridgeTransition,
-            cursor: "default",
+            cursor: "pointer",
+            color: "inherit",
+            textDecoration: "none",
           }}
         >
           {[...DATA.name].map((char, i) => {
@@ -1983,7 +1988,7 @@ function SiteHeader({ navigate, theme, onTheme }) {
               </span>
             );
           })}
-        </p>
+        </RouteLink>
 
         <div
           className="site-icons"
